@@ -81,22 +81,7 @@ export default function OurTeam() {
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
                 
-                <div className="grid md:grid-cols-[280px_1fr] gap-8">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    <div className="aspect-[3/4] overflow-hidden rounded-xl shadow-lg">
-                      <img 
-                        src={TEAM[selectedMember].image} 
-                        alt={TEAM[selectedMember].name}
-                        className="w-full h-full object-cover object-top"
-                      />
-                    </div>
-                  </motion.div>
-                  
-                  <motion.div
+                <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
@@ -156,8 +141,7 @@ export default function OurTeam() {
                         </ul>
                       </motion.div>
                     )}
-                  </motion.div>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           )}
