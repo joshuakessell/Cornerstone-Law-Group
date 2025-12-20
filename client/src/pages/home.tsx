@@ -33,16 +33,16 @@ export default function Home() {
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
         </div>
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20">
-          <div className="max-w-3xl bg-background/70 backdrop-blur-sm p-8 md:p-12 rounded-2xl">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center">
+          <div className="max-w-3xl bg-background/70 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
               <span className="text-primary italic">The Cornerstone</span> of Life.
             </h1>
-            <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed">
+            <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed mx-auto">
               Constructive legal solutions that protect your future. We redefine family law with clarity, strategy, and compassion.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="rounded-full text-lg px-8 h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all">
                 <Link href="/contact">Schedule a Consultation</Link>
               </Button>
