@@ -104,7 +104,10 @@ export function Header() {
           >
             Make a Payment
           </a>
-          <Button asChild className="mt-4 w-full rounded-full py-6 text-lg">
+          <Button asChild className="mt-4 w-full rounded-full py-6 text-lg bg-primary hover:bg-primary/90">
+            <Link href="/client-intake">New Client Intake</Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full rounded-full py-6 text-lg border-primary text-primary">
             <Link href="/contact">Schedule Consultation</Link>
           </Button>
           
