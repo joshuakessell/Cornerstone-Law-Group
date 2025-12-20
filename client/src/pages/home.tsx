@@ -14,13 +14,18 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image with Overlay */}
+        {/* Background Video with Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroImage} 
-            alt="Cornerstone Law Group Office" 
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
             className="w-full h-full object-cover"
-          />
+            poster={heroImage}
+          >
+            <source src="https://cornerstonelawtexas.com/wp-content/uploads/2022/10/CSLG.mp4" type="video/mp4" />
+          </video>
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-transparent"></div>
         </div>
 
