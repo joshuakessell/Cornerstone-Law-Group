@@ -4,6 +4,7 @@ import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
 import { ArrowRight, Shield, Heart, Scale } from "lucide-react";
+import { motion } from "framer-motion";
 import heroImage from "@assets/generated_images/elegant_law_firm_office_interior_with_city_view.png";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";

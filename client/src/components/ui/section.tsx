@@ -1,10 +1,15 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
   container?: boolean;
   padded?: boolean;
   background?: "default" | "muted" | "primary" | "none";
+  animate?: boolean;
+  id?: string;
 }
 
 export function Section({ 
@@ -13,7 +18,8 @@ export function Section({
   container = true, 
   padded = true,
   background = "default",
-  ...props 
+  animate = true,
+  id,
 }: SectionProps) {
   
   const bgStyles = {
@@ -23,20 +29,36 @@ export function Section({
     none: ""
   };
 
+  const content = container ? (
+    <div className="container mx-auto px-6 md:px-12">
+      {children}
+    </div>
+  ) : children;
+
+  const sectionClasses = cn(
+    bgStyles[background],
+    padded && "py-12 md:py-16",
+    className
+  );
+
+  if (animate) {
+    return (
+      <motion.section 
+        id={id}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={sectionClasses}
+      >
+        {content}
+      </motion.section>
+    );
+  }
+
   return (
-    <section 
-      className={cn(
-        bgStyles[background],
-        padded && "py-16 md:py-24",
-        className
-      )} 
-      {...props}
-    >
-      {container ? (
-        <div className="container mx-auto px-6 md:px-12">
-          {children}
-        </div>
-      ) : children}
+    <section id={id} className={sectionClasses}>
+      {content}
     </section>
   );
 }
