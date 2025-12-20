@@ -41,42 +41,42 @@
   --font-serif: 'Playfair Display', serif;
 }
 
-/* Light Mode (Default) - Professional, Trustworthy, Warm */
+/* Dark Professional Theme - Matching Cornerstone Law Texas */
 :root {
-  /* Warm White / Paper Background */
-  --background: 40 20% 98%; 
-  /* Deep Charcoal for Text */
-  --foreground: 220 30% 20%; 
+  /* Deep Charcoal/Navy Background */
+  --background: 220 20% 12%;
+  /* Light Text */
+  --foreground: 40 10% 92%;
 
-  /* Pure White Cards */
-  --card: 0 0% 100%;
-  --card-foreground: 220 30% 20%;
+  /* Slightly lighter cards for contrast */
+  --card: 220 18% 16%;
+  --card-foreground: 40 10% 92%;
   
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 30% 20%;
+  --popover: 220 18% 18%;
+  --popover-foreground: 40 10% 92%;
   
-  /* Navy Blue - Trust, Authority */
-  --primary: 220 40% 25%;
-  --primary-foreground: 0 0% 100%;
+  /* Gold/Amber Primary - Elegant, Premium */
+  --primary: 38 70% 55%;
+  --primary-foreground: 220 20% 10%;
   
-  /* Warm Gold/Beige - Approachable, Premium */
-  --secondary: 35 30% 92%;
-  --secondary-foreground: 220 40% 25%;
+  /* Dark secondary */
+  --secondary: 220 15% 20%;
+  --secondary-foreground: 40 10% 90%;
   
-  /* Light Gray Blue - Muted elements */
-  --muted: 220 15% 94%;
-  --muted-foreground: 220 10% 45%;
+  /* Muted dark elements */
+  --muted: 220 15% 18%;
+  --muted-foreground: 220 10% 60%;
   
   /* Gold Accent */
-  --accent: 35 60% 50%;
-  --accent-foreground: 0 0% 100%;
+  --accent: 38 70% 55%;
+  --accent-foreground: 220 20% 10%;
   
-  --destructive: 0 84% 60%;
+  --destructive: 0 70% 50%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 220 15% 90%;
-  --input: 220 15% 90%;
-  --ring: 220 40% 25%;
+  --border: 220 15% 22%;
+  --input: 220 15% 22%;
+  --ring: 38 70% 55%;
   
   --radius: 0.5rem;
 }
@@ -86,7 +86,7 @@
     @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground selection:bg-accent/20 selection:text-primary;
+    @apply font-sans antialiased bg-background text-foreground selection:bg-accent/20 selection:text-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif font-semibold tracking-tight;
@@ -96,10 +96,5 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-  
-  /* Custom utility for the subtle gradient background used in Pros PM style */
-  .bg-subtle-gradient {
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
 }

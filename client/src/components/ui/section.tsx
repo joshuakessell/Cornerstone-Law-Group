@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   container?: boolean;
   padded?: boolean;
-  background?: "white" | "muted" | "primary" | "none";
+  background?: "default" | "muted" | "primary" | "none";
 }
 
 export function Section({ 
@@ -12,14 +12,14 @@ export function Section({
   className, 
   container = true, 
   padded = true,
-  background = "white",
+  background = "default",
   ...props 
 }: SectionProps) {
   
   const bgStyles = {
-    white: "bg-white",
-    muted: "bg-muted/50",
-    primary: "bg-primary text-white",
+    default: "bg-background",
+    muted: "bg-muted",
+    primary: "bg-primary text-primary-foreground",
     none: ""
   };
 
