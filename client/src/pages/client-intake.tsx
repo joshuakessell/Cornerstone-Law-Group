@@ -136,7 +136,7 @@ export default function ClientIntake() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-muted/30 pt-32 pb-20 px-6">
+      <div className="min-h-screen bg-background pb-20 px-6">
         <Card className="max-w-xl mx-auto text-center p-12 shadow-lg border-primary/10">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-green-600" />
@@ -160,7 +160,7 @@ export default function ClientIntake() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 pt-32 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <Section className="max-w-3xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-2">New Client Intake</h1>
@@ -170,7 +170,7 @@ export default function ClientIntake() {
         <div className="flex justify-between mb-8 px-2 md:px-8 relative">
            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 transform -translate-y-1/2 hidden md:block"></div>
            {STEPS.map((s) => (
-             <div key={s.id} className={`flex flex-col items-center gap-2 relative z-10 bg-muted/30 px-2 ${step >= s.id ? "text-primary" : "text-gray-400"}`}>
+             <div key={s.id} className={`flex flex-col items-center gap-2 relative z-10 bg-muted/30 px-2 ${step >= s.id ? "text-primary" : "text-muted-foreground"}`}>
                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-colors ${
                  step >= s.id ? "bg-primary text-white border-primary" : "bg-white border-gray-300"
                }`}>
