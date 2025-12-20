@@ -2,27 +2,43 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
+
+import Home from "@/pages/home";
+// We will create these pages next
+import OurApproach from "@/pages/our-approach";
+import OurTeam from "@/pages/our-team";
+import Services from "@/pages/services";
+import Contact from "@/pages/contact";
+import ClientArea from "@/pages/client-area";
 
 function Router() {
   return (
-    <Switch>
-      {/* Add pages below */}
-      {/* <Route path="/" component={Home}/> */}
-      {/* Fallback to 404 */}
-      <Route component={NotFound} />
-    </Switch>
+    <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
+      <Header />
+      <main className="flex-grow pt-[72px]"> {/* pt to account for fixed header */}
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/our-approach" component={OurApproach} />
+          <Route path="/our-team" component={OurTeam} />
+          <Route path="/services" component={Services} />
+          <Route path="/contact" component={Contact} />
+          <Route path="/client-area" component={ClientArea} />
+          <Route component={NotFound} />
+        </Switch>
+      </main>
+      <Footer />
+    </div>
   );
 }
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <Toaster />
+      <Router />
     </QueryClientProvider>
   );
 }
