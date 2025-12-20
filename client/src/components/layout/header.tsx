@@ -55,7 +55,7 @@ export function Header() {
             </Link>
           ))}
           <a 
-            href="https://secure.lawpay.com" 
+            href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-sm font-medium text-gray-600 hover:text-accent transition-colors"
@@ -97,7 +97,7 @@ export function Header() {
             </Link>
           ))}
            <a 
-            href="https://secure.lawpay.com" 
+            href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-lg font-medium py-2 text-gray-600"

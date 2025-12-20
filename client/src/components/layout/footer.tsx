@@ -31,7 +31,7 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                 <a href="https://secure.lawpay.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors text-sm">
+                 <a href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors text-sm">
                    Make a Payment
                  </a>
               </li>
