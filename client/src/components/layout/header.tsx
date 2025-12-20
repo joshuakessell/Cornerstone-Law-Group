@@ -63,7 +63,7 @@ export function Header() {
             Make a Payment
           </a>
           <Button asChild className="rounded-full px-6 shadow-lg bg-primary hover:bg-primary/90 text-white transition-all hover:scale-105">
-            <Link href="/contact">Schedule Consultation</Link>
+            <Link href="/client-intake">New Client Intake</Link>
           </Button>
         </nav>
 
