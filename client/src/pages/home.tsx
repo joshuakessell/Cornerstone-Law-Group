@@ -33,12 +33,12 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl bg-background/70 backdrop-blur-sm p-8 md:p-12 rounded-2xl">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
               <span className="text-primary italic">The Cornerstone</span> of Life.
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl leading-relaxed">
+            <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed">
               Constructive legal solutions that protect your future. We redefine family law with clarity, strategy, and compassion.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
