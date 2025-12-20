@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,8 +12,7 @@ import { CheckCircle2, ChevronRight, ChevronLeft, Save } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-
-// --- Schema Definitions ---
+import { useMutation } from "@tanstack/react-query";
 
 const personalSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -35,7 +34,7 @@ const opposingSchema = z.object({
 
 const childrenSchema = z.object({
   hasChildren: z.enum(["yes", "no"]),
-  childrenDetails: z.string().optional(), // keeping it simple as a text area for the mockup
+  childrenDetails: z.string().optional(),
 });
 
 const issuesSchema = z.object({
@@ -44,7 +43,6 @@ const issuesSchema = z.object({
   goals: z.string().min(10, "Please describe your primary goals"),
 });
 
-// Combined schema for the final review/submit
 const formSchema = z.intersection(
   z.intersection(personalSchema, opposingSchema),
   z.intersection(childrenSchema, issuesSchema)
@@ -65,24 +63,50 @@ export default function ClientIntake() {
   const { toast } = useToast();
   const [submitted, setSubmitted] = useState(false);
 
-  // Initialize form with combined schema, but we will validate partially per step
+  const submitMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      const response = await fetch("/api/intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to submit");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      setSubmitted(true);
+      toast({
+        title: "Intake Form Submitted",
+        description: "Your information has been securely received. We will review it shortly.",
+      });
+      window.scrollTo(0, 0);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Submission Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema), // This resolves the FULL schema
+    resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
       hasChildren: "no",
     }
   });
 
-  const { trigger, getValues, watch } = form;
-
-  // Watch fields for dynamic display in review
+  const { trigger, watch } = form;
   const values = watch();
 
   const nextStep = async () => {
     let isValid = false;
     
-    // Validate fields for current step
     if (step === 1) {
       isValid = await trigger(["fullName", "dateOfBirth", "address", "phone", "email"]);
     } else if (step === 2) {
@@ -107,22 +131,7 @@ export default function ClientIntake() {
   };
 
   const onSubmit = (data: FormData) => {
-    // Mock Database Submission
-    const submissions = JSON.parse(localStorage.getItem("intake_submissions") || "[]");
-    const newSubmission = {
-      id: Date.now(),
-      submittedAt: new Date().toISOString(),
-      status: "New",
-      data: data
-    };
-    localStorage.setItem("intake_submissions", JSON.stringify([...submissions, newSubmission]));
-
-    setSubmitted(true);
-    toast({
-      title: "Intake Form Submitted",
-      description: "Your information has been securely received. We will review it shortly.",
-    });
-    window.scrollTo(0, 0);
+    submitMutation.mutate(data);
   };
 
   if (submitted) {
@@ -158,7 +167,6 @@ export default function ClientIntake() {
           <p className="text-gray-600">Please provide your details so we can better understand your case.</p>
         </div>
 
-        {/* Progress Steps */}
         <div className="flex justify-between mb-8 px-2 md:px-8 relative">
            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 transform -translate-y-1/2 hidden md:block"></div>
            {STEPS.map((s) => (
@@ -182,21 +190,20 @@ export default function ClientIntake() {
             <Form {...form}>
               <form className="space-y-6">
                 
-                {/* Step 1: Personal Info */}
                 {step === 1 && (
                   <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                     <div className="grid md:grid-cols-2 gap-4">
                       <FormField control={form.control} name="fullName" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Full Legal Name</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-fullName" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
                       <FormField control={form.control} name="dateOfBirth" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Date of Birth</FormLabel>
-                          <FormControl><Input type="date" {...field} /></FormControl>
+                          <FormControl><Input type="date" {...field} data-testid="input-dateOfBirth" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
@@ -204,7 +211,7 @@ export default function ClientIntake() {
                     <FormField control={form.control} name="address" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Current Address</FormLabel>
-                        <FormControl><Input {...field} /></FormControl>
+                        <FormControl><Input {...field} data-testid="input-address" /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -212,14 +219,14 @@ export default function ClientIntake() {
                       <FormField control={form.control} name="phone" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-phone" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
                       <FormField control={form.control} name="email" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email Address</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-email" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
@@ -228,14 +235,14 @@ export default function ClientIntake() {
                       <FormField control={form.control} name="occupation" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Occupation (Optional)</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-occupation" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
                       <FormField control={form.control} name="employer" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Employer (Optional)</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-employer" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
@@ -243,13 +250,12 @@ export default function ClientIntake() {
                   </div>
                 )}
 
-                {/* Step 2: Opposing Party */}
                 {step === 2 && (
                   <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                      <FormField control={form.control} name="opposingName" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Opposing Party Name (Spouse/Partner)</FormLabel>
-                          <FormControl><Input {...field} /></FormControl>
+                          <FormControl><Input {...field} data-testid="input-opposingName" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
@@ -258,7 +264,7 @@ export default function ClientIntake() {
                           <FormLabel>Relationship to You</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger data-testid="select-relationship">
                                 <SelectValue placeholder="Select relationship" />
                               </SelectTrigger>
                             </FormControl>
@@ -276,14 +282,14 @@ export default function ClientIntake() {
                         <FormField control={form.control} name="dateOfMarriage" render={({ field }) => (
                           <FormItem>
                             <FormLabel>Date of Marriage (if applicable)</FormLabel>
-                            <FormControl><Input type="date" {...field} /></FormControl>
+                            <FormControl><Input type="date" {...field} data-testid="input-dateOfMarriage" /></FormControl>
                             <FormMessage />
                           </FormItem>
                         )} />
                         <FormField control={form.control} name="dateOfSeparation" render={({ field }) => (
                           <FormItem>
                             <FormLabel>Date of Separation</FormLabel>
-                            <FormControl><Input type="date" {...field} /></FormControl>
+                            <FormControl><Input type="date" {...field} data-testid="input-dateOfSeparation" /></FormControl>
                             <FormMessage />
                           </FormItem>
                         )} />
@@ -291,14 +297,13 @@ export default function ClientIntake() {
                        <FormField control={form.control} name="opposingAttorney" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Does the other party have an attorney? (Name if known)</FormLabel>
-                          <FormControl><Input {...field} placeholder="Leave blank if unknown" /></FormControl>
+                          <FormControl><Input {...field} placeholder="Leave blank if unknown" data-testid="input-opposingAttorney" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
                   </div>
                 )}
 
-                {/* Step 3: Children */}
                 {step === 3 && (
                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                       <FormField control={form.control} name="hasChildren" render={({ field }) => (
@@ -306,7 +311,7 @@ export default function ClientIntake() {
                           <FormLabel>Are there minor children involved?</FormLabel>
                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger data-testid="select-hasChildren">
                                 <SelectValue placeholder="Select..." />
                               </SelectTrigger>
                             </FormControl>
@@ -324,7 +329,7 @@ export default function ClientIntake() {
                           <FormItem>
                             <FormLabel>Please list names and dates of birth for all children</FormLabel>
                             <FormControl>
-                              <Textarea {...field} className="min-h-[150px]" placeholder="Example:&#10;John Doe, DOB: 01/01/2015&#10;Jane Doe, DOB: 05/12/2018" />
+                              <Textarea {...field} className="min-h-[150px]" placeholder="Example:&#10;John Doe, DOB: 01/01/2015&#10;Jane Doe, DOB: 05/12/2018" data-testid="textarea-childrenDetails" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -333,7 +338,6 @@ export default function ClientIntake() {
                    </div>
                 )}
 
-                {/* Step 4: Legal Issues */}
                 {step === 4 && (
                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                      <FormField control={form.control} name="primaryIssue" render={({ field }) => (
@@ -341,7 +345,7 @@ export default function ClientIntake() {
                           <FormLabel>Primary Legal Issue</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger data-testid="select-primaryIssue">
                                 <SelectValue placeholder="Select the main issue" />
                               </SelectTrigger>
                             </FormControl>
@@ -363,7 +367,7 @@ export default function ClientIntake() {
                         <FormItem>
                           <FormLabel>Brief Description of Situation</FormLabel>
                           <FormControl>
-                            <Textarea {...field} className="min-h-[120px]" placeholder="Please describe why you are seeking legal counsel..." />
+                            <Textarea {...field} className="min-h-[120px]" placeholder="Please describe why you are seeking legal counsel..." data-testid="textarea-description" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -373,7 +377,7 @@ export default function ClientIntake() {
                         <FormItem>
                           <FormLabel>What are your primary goals?</FormLabel>
                           <FormControl>
-                            <Textarea {...field} className="min-h-[100px]" placeholder="What is the most important outcome for you?" />
+                            <Textarea {...field} className="min-h-[100px]" placeholder="What is the most important outcome for you?" data-testid="textarea-goals" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -381,7 +385,6 @@ export default function ClientIntake() {
                    </div>
                 )}
 
-                {/* Step 5: Review */}
                 {step === 5 && (
                   <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                     <div className="bg-gray-50 p-6 rounded-lg space-y-4 text-sm">
@@ -423,20 +426,25 @@ export default function ClientIntake() {
           </CardContent>
           <CardFooter className="flex justify-between border-t bg-gray-50/50 p-6">
             {step > 1 ? (
-              <Button variant="outline" onClick={prevStep} className="gap-2">
+              <Button variant="outline" onClick={prevStep} className="gap-2" data-testid="button-previous">
                 <ChevronLeft className="w-4 h-4" /> Previous
               </Button>
             ) : (
-              <div></div> // Spacer
+              <div></div>
             )}
             
             {step < 5 ? (
-              <Button onClick={nextStep} className="bg-primary hover:bg-primary/90 gap-2">
+              <Button onClick={nextStep} className="bg-primary hover:bg-primary/90 gap-2" data-testid="button-next">
                 Next Step <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
-               <Button onClick={form.handleSubmit(onSubmit)} className="bg-accent hover:bg-accent/90 text-white gap-2 shadow-lg">
-                Submit Intake Form <Save className="w-4 h-4" />
+               <Button 
+                 onClick={form.handleSubmit(onSubmit)} 
+                 className="bg-accent hover:bg-accent/90 text-white gap-2 shadow-lg"
+                 disabled={submitMutation.isPending}
+                 data-testid="button-submit"
+               >
+                {submitMutation.isPending ? "Submitting..." : "Submit Intake Form"} <Save className="w-4 h-4" />
               </Button>
             )}
           </CardFooter>
