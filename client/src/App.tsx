@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
@@ -26,13 +27,31 @@ function ScrollToTop() {
   return null;
 }
 
-function Router() {
+const pageVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 }
+};
+
+const pageTransition = {
+  duration: 0.3,
+  ease: [0.4, 0, 0.2, 1] as const
+};
+
+function AnimatedRoutes() {
+  const [location] = useLocation();
+  
   return (
-    <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
-      <ScrollToTop />
-      <Header />
-      <main className="flex-grow pt-[72px]"> {/* pt to account for fixed header */}
-        <Switch>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        transition={pageTransition}
+      >
+        <Switch location={location}>
           <Route path="/" component={Home} />
           <Route path="/our-approach" component={OurApproach} />
           <Route path="/our-team" component={OurTeam} />
@@ -43,6 +62,18 @@ function Router() {
           <Route path="/admin" component={Admin} />
           <Route component={NotFound} />
         </Switch>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+function Router() {
+  return (
+    <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
+      <ScrollToTop />
+      <Header />
+      <main className="flex-grow pt-[72px]">
+        <AnimatedRoutes />
       </main>
       <Footer />
     </div>
