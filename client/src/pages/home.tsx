@@ -83,7 +83,7 @@ export default function Home() {
           </>
         )}
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-8 flex justify-center ml-[20px] mr-[20px] pl-[20px] pr-[20px]">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 flex justify-center ml-[20px] mr-[20px] pl-[20px] pr-[20px] pt-[0px] pb-[0px]">
           <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl mt-[90px] mb-[90px]">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
