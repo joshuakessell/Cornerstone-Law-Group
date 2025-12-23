@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Large Logo Below Header */}
-      <div className="w-full flex justify-center py-8 md:py-12 bg-background border-b border-border">
+      <div className="w-full flex justify-center py-3 md:py-4 bg-background border-b border-border">
         <img
           src="/brand/logo-black.png"
           alt="Cornerstone Law Group"

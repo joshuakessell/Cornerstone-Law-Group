@@ -30,19 +30,7 @@ export function Header() {
         scrolled ? "bg-background/95 backdrop-blur-md py-3 shadow-lg border-border" : "bg-transparent py-5 border-transparent"
       )}
     >
-      <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center gap-3" style={{ marginLeft: '0' }}>
-            <img
-              src="/brand/logo-black.png"
-              alt="Cornerstone Law Group"
-              className="h-10 w-auto"
-              draggable={false}
-            />
-          </a>
-        </Link>
-
+      <div className="container mx-auto px-6 md:px-12 flex items-center justify-center">
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-8">
           {NAV_LINKS.map((link) => (
