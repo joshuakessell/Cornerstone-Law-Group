@@ -77,20 +77,10 @@ function AnimatedRoutes() {
 function Router() {
   const [introDone, setIntroDone] = useState(false);
 
-  const introImages = [
-    "/intro/01-driving.png",
-    "/intro/02-boy-couch.png",
-    "/intro/03-kitchen-1.png",
-    "/intro/04-kitchen-2.png",
-    "/intro/05-storm-1.png",
-    "/intro/06-storm-2.png",
-  ];
-
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
       {!introDone && (
         <IntroSlideshow
-          images={introImages}
           logoSrc="/brand/logo-black.png"
           onComplete={() => setIntroDone(true)}
           showOncePerSession={true}

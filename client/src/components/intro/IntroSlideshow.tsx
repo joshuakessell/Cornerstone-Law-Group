@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 type Props = {
   onComplete: () => void;
-  images: string[];
   logoSrc: string;
   showOncePerSession?: boolean;
 };
@@ -17,23 +16,18 @@ function preload(src: string) {
   });
 }
 
+type Phase = "introVideo" | "tagline" | "logoCenter" | "logoSlide" | "fadeIn";
+
 export function IntroSlideshow({
   onComplete,
-  images,
   logoSrc,
   showOncePerSession = true,
 }: Props) {
   const reduceMotion = useReducedMotion();
   const [ready, setReady] = useState(false);
-  const [idx, setIdx] = useState(0);
-
-  const [phase, setPhase] = useState<
-    "slideshow" | "flash" | "tagline" | "logoCenter" | "handoff"
-  >("slideshow");
+  const [phase, setPhase] = useState<Phase>("introVideo");
 
   const sessionKey = "cornerstone_intro_done_v1";
-
-  const perImageMs = useMemo(() => 1600, []);
 
   useEffect(() => {
     if (reduceMotion) {
@@ -51,60 +45,69 @@ export function IntroSlideshow({
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const warm = [images[0], images[1], logoSrc].filter(Boolean) as string[];
-      await Promise.all(warm.map(preload));
+      await preload(logoSrc);
       if (!cancelled) setReady(true);
     })();
     return () => {
       cancelled = true;
     };
-  }, [images, logoSrc]);
-
-  useEffect(() => {
-    if (!ready) return;
-    if (phase !== "slideshow") return;
-
-    const timer = window.setInterval(() => {
-      setIdx((prev: number) => {
-        const next = prev + 1;
-        if (next >= images.length) {
-          window.clearInterval(timer);
-          setPhase("flash");
-          return prev;
-        }
-        return next;
-      });
-    }, perImageMs);
-
-    return () => window.clearInterval(timer);
-  }, [ready, phase, images.length, perImageMs]);
+  }, [logoSrc]);
 
   useEffect(() => {
     if (!ready) return;
 
-    if (phase === "flash") {
-      const t = window.setTimeout(() => setPhase("tagline"), 400);
-      return () => window.clearTimeout(t);
+    const timers: number[] = [];
+
+    if (phase === "introVideo") {
+      // Show "Intro Video Here" for 10 seconds
+      const t1 = window.setTimeout(() => {
+        setPhase("tagline");
+      }, 10000);
+      timers.push(t1);
     }
 
     if (phase === "tagline") {
-      const t = window.setTimeout(() => setPhase("logoCenter"), 950);
-      return () => window.clearTimeout(t);
+      // Show "It doesn't have to be like this..." for 3 seconds
+      const t2 = window.setTimeout(() => {
+        setPhase("logoCenter");
+      }, 3000);
+      timers.push(t2);
     }
 
-    if (phase === "handoff") {
-      if (showOncePerSession) sessionStorage.setItem(sessionKey, "1");
-      const t = window.setTimeout(() => onComplete(), 650);
-      return () => window.clearTimeout(t);
+    if (phase === "logoCenter") {
+      // Show logo centered, then slide after a brief pause
+      const t3 = window.setTimeout(() => {
+        setPhase("logoSlide");
+      }, 800);
+      timers.push(t3);
     }
+
+    if (phase === "logoSlide") {
+      // After logo slides to position, fade in website
+      const t4 = window.setTimeout(() => {
+        setPhase("fadeIn");
+      }, 650);
+      timers.push(t4);
+    }
+
+    if (phase === "fadeIn") {
+      // Complete the intro
+      const t5 = window.setTimeout(() => {
+        if (showOncePerSession) sessionStorage.setItem(sessionKey, "1");
+        onComplete();
+      }, 500);
+      timers.push(t5);
+    }
+
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+    };
   }, [ready, phase, onComplete, showOncePerSession]);
 
-  if (!ready) return <div className="fixed inset-0 z-[100] bg-black" />;
-
-  const current = images[Math.min(idx, images.length - 1)];
+  if (!ready) return <div className="fixed inset-0 z-[100] bg-background" />;
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-hidden bg-black">
+    <div className="fixed inset-0 z-[100] overflow-hidden bg-background">
       <button
         type="button"
         className="absolute right-4 top-4 z-[120] rounded-md bg-black/40 px-3 py-2 text-sm text-white backdrop-blur hover:bg-black/55"
@@ -116,58 +119,33 @@ export function IntroSlideshow({
         Skip
       </button>
 
-      <div className="absolute inset-0">
-        <AnimatePresence mode="wait">
-          {phase === "slideshow" && (
-            <motion.img
-              key={current}
-              src={current}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
-              draggable={false}
-            />
-          )}
-        </AnimatePresence>
-
-        {phase !== "slideshow" && (
-          <img
-            src={images[images.length - 1]}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-            draggable={false}
-          />
-        )}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/15 to-black/25" />
-      </div>
-
+      {/* Intro Video Here Text */}
       <AnimatePresence>
-        {(phase === "flash" ||
-          phase === "tagline" ||
-          phase === "logoCenter" ||
-          phase === "handoff") && (
+        {phase === "introVideo" && (
           <motion.div
-            className="absolute inset-0 bg-white"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-          />
+            className="absolute inset-0 z-[110] flex items-center justify-center"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <div className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Intro Video Here
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Tagline Text */}
       <AnimatePresence>
-        {(phase === "tagline" || phase === "logoCenter" || phase === "handoff") && (
+        {phase === "tagline" && (
           <motion.div
             className="absolute inset-0 z-[110] flex items-center justify-center px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.45 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
           >
-            <div className="max-w-3xl text-center text-neutral-900">
+            <div className="max-w-3xl text-center text-foreground">
               <div className="text-2xl font-semibold tracking-tight sm:text-3xl">
                 It doesn&apos;t have to be like this...
               </div>
@@ -176,43 +154,70 @@ export function IntroSlideshow({
         )}
       </AnimatePresence>
 
+      {/* Logo - Centered then slides to top left */}
+      {(phase === "logoCenter" || phase === "logoSlide" || phase === "fadeIn") && (
+        <motion.img
+          key="logo"
+          src={logoSrc}
+          alt="Cornerstone Law Group"
+          className="absolute z-[115]"
+          initial={{
+            left: "50%",
+            top: "50%",
+            x: "-50%",
+            y: "-50%",
+            width: 320,
+            height: "auto",
+            opacity: 0,
+          }}
+          animate={
+            phase === "logoCenter"
+              ? {
+                  opacity: 1,
+                }
+              : phase === "logoSlide" || phase === "fadeIn"
+              ? {
+                  left: 24,
+                  top: 20,
+                  x: 0,
+                  y: 0,
+                  width: "auto",
+                  height: 40,
+                  opacity: 1,
+                }
+              : {}
+          }
+          transition={
+            phase === "logoCenter"
+              ? {
+                  opacity: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+                }
+              : phase === "logoSlide"
+              ? {
+                  left: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  top: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  x: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  y: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  width: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  height: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                }
+              : {}
+          }
+          draggable={false}
+        />
+      )}
+
+      {/* Fade in overlay for website reveal */}
       <AnimatePresence>
-        {(phase === "logoCenter" || phase === "handoff") && (
-          <motion.img
-            src={logoSrc}
-            alt="Cornerstone Law Group"
-            className="absolute z-[115] h-auto w-[320px] sm:w-[420px] md:w-[520px]"
-            style={{ left: "50%", top: "58%", transform: "translate(-50%, -50%)" }}
-            initial={{ opacity: 0, scale: 0.985 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              ...(phase === "handoff"
-                ? {
-                    left: "24px",
-                    top: "18px",
-                    transform: "translate(0, 0)",
-                    width: "220px",
-                  }
-                : {}),
-            }}
-            transition={{
-              opacity: { duration: 0.4 },
-              scale: { duration: 0.4 },
-              left: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
-              top: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
-              width: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
-            }}
-            onAnimationComplete={() => {
-              if (phase === "logoCenter") {
-                window.setTimeout(() => setPhase("handoff"), 450);
-              }
-            }}
-            draggable={false}
+        {phase === "fadeIn" && (
+          <motion.div
+            className="absolute inset-0 z-[105] bg-background"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           />
         )}
       </AnimatePresence>
     </div>
   );
 }
-
