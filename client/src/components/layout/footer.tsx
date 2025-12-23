@@ -9,27 +9,20 @@ export function Footer() {
         {/* Main Footer Content - Dynamically segmented and spaced */}
         <div className="pt-8 sm:pt-10 md:pt-12 pb-6 sm:pb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12">
-            {/* Segment 1: Logo and Company Name */}
-            <div className="flex flex-col sm:col-span-2 lg:col-span-1">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-0">
-                <img
-                  src="/brand/logo-black.png"
-                  alt="Cornerstone Law Group"
-                  className="h-10 sm:h-12 w-auto shrink-0"
-                  draggable={false}
-                />
-                <div className="flex-1">
-                  <h3 className="text-lg sm:text-xl font-semibold tracking-tight mb-1">CORNERSTONE</h3>
-                  <p className="text-xs sm:text-sm uppercase tracking-wider text-neutral-600 mb-1">LAW GROUP</p>
-                  <p className="text-[10px] sm:text-xs uppercase tracking-wider text-neutral-500">ATTORNEYS | COUNSELORS | MEDIATORS</p>
-                </div>
-              </div>
+            {/* Segment 1: Logo */}
+            <div className="col-span-1 sm:col-span-1 lg:col-span-1">
+              <img
+                src="/brand/cornerstone_logo_footer.png"
+                alt="Cornerstone Law Group"
+                className="h-20 w-auto"
+                draggable={false}
+              />
             </div>
 
             {/* Segment 2: Contact Info */}
-            <div className="sm:col-span-1 lg:col-span-1">
+            <div className="col-span-1 sm:col-span-1 lg:col-span-1">
               <div className="text-xs sm:text-sm space-y-1.5 sm:space-y-2">
-                <p className="font-semibold text-xs sm:text-sm">CLINT C. BROWN, MANAGING PARTNER</p>
+                <p className="font-semibold text-xs sm:text-sm">CLINT C. BROWN, <span className="text-primary">MANAGING PARTNER</span></p>
                 <p className="font-semibold text-xs sm:text-sm">CORNERSTONE LAW GROUP, P.C.</p>
                 <p className="text-neutral-600 text-xs sm:text-sm">
                   {COMPANY_INFO.address.street} | Ste. 220
@@ -46,8 +39,8 @@ export function Footer() {
             </div>
 
             {/* Segment 3: Social and Contact Methods */}
-            <div className="sm:col-span-2 lg:col-span-1">
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+              <div className="flex flex-col gap-3 sm:gap-4 text-xs sm:text-sm">
                 <a 
                   href={COMPANY_INFO.social.linkedin}
                   target="_blank"

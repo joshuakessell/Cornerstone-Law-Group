@@ -28,8 +28,8 @@ export function Header() {
       className="sticky top-0 left-0 right-0 z-50 bg-background py-3 border-b border-border"
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Logo - Left side */}
-        <Link href="/" className="flex items-center shrink-0">
+        {/* Logo - Left side (Desktop only) */}
+        <Link href="/" className="hidden lg:flex items-center shrink-0">
           <a>
             <img
               src="/brand/logo-black.png"
