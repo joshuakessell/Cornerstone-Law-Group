@@ -32,11 +32,31 @@ export function Header() {
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-center">
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
+        <nav className="hidden lg:flex items-center gap-6">
+          {NAV_LINKS.slice(0, 4).map((link) => (
             <Link key={link.href} href={link.href}>
               <a className={cn(
-                "text-sm font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
+                "text-base font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
+                location === link.href ? "text-primary font-semibold after:w-full" : "text-muted-foreground"
+              )}>
+                {link.label}
+              </a>
+            </Link>
+          ))}
+          <Link href="/">
+            <a className="mx-4">
+              <img
+                src="/brand/logo-black.png"
+                alt="Cornerstone Law Group"
+                className="h-10 w-auto"
+                draggable={false}
+              />
+            </a>
+          </Link>
+          {NAV_LINKS.slice(4).map((link) => (
+            <Link key={link.href} href={link.href}>
+              <a className={cn(
+                "text-base font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
                 location === link.href ? "text-primary font-semibold after:w-full" : "text-muted-foreground"
               )}>
                 {link.label}
@@ -47,7 +67,7 @@ export function Header() {
             href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            className="text-base font-medium text-muted-foreground hover:text-primary transition-colors"
           >
             Make a Payment
           </a>
