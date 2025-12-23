@@ -42,7 +42,6 @@ export default function Home() {
           draggable={false}
         />
       </div>
-      
       {/* Hero Section with Video Background */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Video Background */}
@@ -77,7 +76,7 @@ export default function Home() {
           <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
         )}
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center ml-[20px] mr-[20px]">
           <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
@@ -97,7 +96,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Trust Section */}
       <Section background="none" padded className="border-y border-border">
         <div className="grid md:grid-cols-3 gap-8">
@@ -124,7 +122,6 @@ export default function Home() {
           </div>
         </div>
       </Section>
-
       {/* Alternating Content: Approach */}
       <Section padded background="none">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -153,7 +150,6 @@ export default function Home() {
           </div>
         </div>
       </Section>
-
       {/* Services Preview */}
       <Section background="muted" padded>
         <div className="text-center max-w-2xl mx-auto mb-16">
@@ -188,7 +184,6 @@ export default function Home() {
           </Button>
         </div>
       </Section>
-
       {/* Alternating Content: Family/Trust */}
       <Section padded background="none">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -217,7 +212,6 @@ export default function Home() {
           </div>
         </div>
       </Section>
-
       <ContactCTA />
     </div>
   );
