@@ -27,30 +27,22 @@ export function Header() {
     <header 
       className="sticky top-0 left-0 right-0 z-50 bg-background py-3 border-b border-border"
     >
-      <div className="container mx-auto px-6 md:px-12 flex items-center justify-center">
+      <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
+        {/* Logo - Left side */}
+        <Link href="/" className="flex items-center shrink-0">
+          <a>
+            <img
+              src="/brand/logo-black.png"
+              alt="Cornerstone Law Group"
+              className="h-20 w-auto"
+              draggable={false}
+            />
+          </a>
+        </Link>
+
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6">
-          {NAV_LINKS.slice(0, 4).map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a className={cn(
-                "text-base font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
-                location === link.href ? "text-primary font-semibold after:w-full" : "text-muted-foreground"
-              )}>
-                {link.label}
-              </a>
-            </Link>
-          ))}
-          <Link href="/">
-            <a className="mx-4">
-              <img
-                src="/brand/logo-black.png"
-                alt="Cornerstone Law Group"
-                className="h-16 w-auto"
-                draggable={false}
-              />
-            </a>
-          </Link>
-          {NAV_LINKS.slice(4).map((link) => (
+        <nav className="hidden lg:flex items-center gap-6 flex-1 justify-center">
+          {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href}>
               <a className={cn(
                 "text-base font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
@@ -85,6 +77,20 @@ export function Header() {
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
+        
+        {/* Mobile Logo - Show when menu is closed */}
+        {!isOpen && (
+          <Link href="/" className="lg:hidden absolute left-1/2 transform -translate-x-1/2">
+            <a>
+              <img
+                src="/brand/logo-black.png"
+                alt="Cornerstone Law Group"
+                className="h-16 w-auto"
+                draggable={false}
+              />
+            </a>
+          </Link>
+        )}
       </div>
 
       {/* Mobile Menu */}

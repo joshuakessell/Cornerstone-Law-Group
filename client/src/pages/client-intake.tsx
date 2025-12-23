@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 type MatterType = 
   | "divorce"
@@ -86,11 +86,24 @@ export default function ClientIntake() {
         {matterType && (
           <Card className="shadow-xl">
             <CardHeader>
-              <CardTitle className="font-serif text-2xl">Let's Get Started</CardTitle>
-              <CardDescription>
-                We'll start with a basic intake form, then you can continue to a more detailed form
-                if needed.
-              </CardDescription>
+              <div className="flex items-center gap-4 mb-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setMatterType(null)}
+                  className="shrink-0"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+                <div className="flex-1">
+                  <CardTitle className="font-serif text-2xl">Let's Get Started</CardTitle>
+                  <CardDescription>
+                    We'll start with a basic intake form, then you can continue to a more detailed form
+                    if needed.
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-muted/50 p-4 rounded-lg">
