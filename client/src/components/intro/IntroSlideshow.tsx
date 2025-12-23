@@ -59,10 +59,10 @@ export function IntroSlideshow({
     const timers: number[] = [];
 
     if (phase === "introVideo") {
-      // Show "Intro Video Here" for 10 seconds
+      // Show "Intro Video Here" for 5 seconds
       const t1 = window.setTimeout(() => {
         setPhase("tagline");
-      }, 10000);
+      }, 5000);
       timers.push(t1);
     }
 
