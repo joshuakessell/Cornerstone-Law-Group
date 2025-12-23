@@ -26,17 +26,17 @@ export function Header() {
     <header 
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        scrolled ? "bg-background/95 backdrop-blur-md py-3 shadow-lg border-border" : "bg-transparent py-5 border-transparent"
+        scrolled ? "bg-background/95 backdrop-blur-md py-2 shadow-lg border-border" : "bg-transparent py-4 border-transparent"
       )}
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
         <Link href="/">
-          <a className="flex items-center gap-3" style={{ marginLeft: '0' }}>
+          <a className="flex items-center">
             <img
               src="/brand/logo-black.png"
               alt="Cornerstone Law Group"
-              className="h-10 w-auto"
+              className="h-12 md:h-14 lg:h-16 w-auto"
               draggable={false}
             />
           </a>
@@ -79,7 +79,7 @@ export function Header() {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed inset-x-0 top-[70px] bg-card border-b border-border shadow-lg transition-all duration-300 ease-in-out lg:hidden overflow-hidden",
+        "fixed inset-x-0 top-[80px] bg-card border-b border-border shadow-lg transition-all duration-300 ease-in-out lg:hidden overflow-hidden",
         isOpen ? "max-h-screen opacity-100 py-6" : "max-h-0 opacity-0 py-0"
       )}>
         <div className="container mx-auto px-6 flex flex-col gap-4">

@@ -91,7 +91,7 @@ function Router() {
         <>
           <ScrollToTop />
           <Header />
-          <main className="flex-grow pt-[72px]">
+          <main className="flex-grow pt-[80px] md:pt-[88px] lg:pt-[96px]">
             <AnimatedRoutes />
           </main>
           <Footer />
