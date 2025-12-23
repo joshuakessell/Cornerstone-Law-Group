@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Phone } from "lucide-react";
 import { useState, useEffect } from "react";
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,16 +66,20 @@ export function Header() {
           <Button asChild className="rounded-full px-6 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105">
             <Link href="/client-intake">New Client Intake</Link>
           </Button>
+          <ThemeToggle />
         </nav>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="lg:hidden p-2 text-primary hover:bg-muted rounded-full transition-colors"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile Toggle and Theme Toggle */}
+        <div className="lg:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button 
+            className="p-2 text-primary hover:bg-muted rounded-full transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

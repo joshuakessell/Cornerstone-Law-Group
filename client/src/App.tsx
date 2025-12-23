@@ -5,9 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IntroSlideshow } from "@/components/intro/IntroSlideshow";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
@@ -23,28 +22,28 @@ import IntakeSubmissions from "@/pages/admin/intake-submissions";
 
 function ScrollToTop() {
   const [location] = useLocation();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
-  
+
   return null;
 }
 
 const pageVariants = {
   initial: { opacity: 0, y: 10 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 }
+  exit: { opacity: 0, y: -10 },
 };
 
 const pageTransition = {
   duration: 0.3,
-  ease: [0.4, 0, 0.2, 1] as const
+  ease: [0.4, 0, 0.2, 1] as const,
 };
 
 function AnimatedRoutes() {
   const [location] = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -66,7 +65,10 @@ function AnimatedRoutes() {
           <Route path="/intake/basic" component={IntakeBasic} />
           <Route path="/intake/divorce" component={IntakeDivorce} />
           <Route path="/admin" component={Admin} />
-          <Route path="/admin/intake-submissions" component={IntakeSubmissions} />
+          <Route
+            path="/admin/intake-submissions"
+            component={IntakeSubmissions}
+          />
           <Route component={NotFound} />
         </Switch>
       </motion.div>
@@ -75,28 +77,14 @@ function AnimatedRoutes() {
 }
 
 function Router() {
-  const [introDone, setIntroDone] = useState(false);
-
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
-      {!introDone && (
-        <IntroSlideshow
-          logoSrc="/brand/logo-black.png"
-          onComplete={() => setIntroDone(true)}
-          showOncePerSession={true}
-        />
-      )}
-
-      {introDone && (
-        <>
-          <ScrollToTop />
-          <Header />
-          <main className="flex-grow pt-[80px] md:pt-[88px] lg:pt-[96px]">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </>
-      )}
+      <ScrollToTop />
+      <Header />
+      <main className="flex-grow pt-[72px]">
+        <AnimatedRoutes />
+      </main>
+      <Footer />
     </div>
   );
 }

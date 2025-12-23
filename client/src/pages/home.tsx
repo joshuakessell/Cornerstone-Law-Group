@@ -3,34 +3,103 @@ import { Button } from "@/components/ui/button";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
-import { ArrowRight, Shield, Heart, Scale } from "lucide-react";
+import { ArrowRight, Shield, Heart, Scale, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";
 
+const VIDEO_PREFERENCE_KEY = "cs_video_disabled";
+
 export default function Home() {
+  const [videoDisabled, setVideoDisabled] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Check if user has disabled video
+    const saved = localStorage.getItem(VIDEO_PREFERENCE_KEY);
+    if (saved === "true") {
+      setVideoDisabled(true);
+    }
+  }, []);
+
+  const handleStopVideo = () => {
+    setVideoDisabled(true);
+    localStorage.setItem(VIDEO_PREFERENCE_KEY, "true");
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
-      
-      {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-12 md:py-16">
-        {/* Background with solid colors */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+      {/* Large Logo Below Header */}
+      <div className="w-full flex justify-center py-8 md:py-12 bg-background border-b border-border">
+        <img
+          src="/brand/logo-black.png"
+          alt="Cornerstone Law Group"
+          className="h-24 md:h-32 lg:h-40 w-auto"
+          draggable={false}
+        />
+      </div>
+      {/* Hero Section with Video Background */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Video Background */}
+        {!videoDisabled && (
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover z-0"
+            >
+              <source src="/media/CSLG2.mp4" type="video/mp4" />
+            </video>
+            {/* Tinted Overlay */}
+            <div className="absolute inset-0 z-[1] bg-background/60"></div>
+            {/* Stop Video Button */}
+            <button
+              onClick={handleStopVideo}
+              className="absolute bottom-6 right-6 z-[10] bg-background/90 hover:bg-background text-foreground px-6 py-3 rounded-full shadow-lg border border-border flex items-center gap-2 font-medium transition-all hover:scale-105"
+              aria-label="Stop video"
+            >
+              <X className="w-5 h-5" />
+              Stop Video
+            </button>
+          </>
+        )}
 
+        {/* Fallback Background (when video is disabled) */}
+        {videoDisabled && (
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+        )}
         <div className="container mx-auto px-6 md:px-12 relative z-10 flex justify-center">
           <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
-              Family... <br/>
-              <span className="text-primary italic">The Cornerstone</span> of Life.
+              Family... <br />
+              <span className="text-primary italic">The Cornerstone</span> of
+              Life.
             </h1>
             <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-xl leading-relaxed mx-auto">
-              Constructive legal solutions that protect your future. We redefine family law with clarity, strategy, and compassion.
+              Constructive legal solutions that protect your future. We redefine
+              family law with clarity, strategy, and compassion.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="rounded-full text-lg px-8 h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full text-lg px-8 h-14 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
+              >
                 <Link href="/contact">Schedule a Consultation</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full text-lg px-8 h-14 border-2 border-primary text-primary hover:bg-primary/10">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="rounded-full text-lg px-8 h-14 border-2 border-primary text-primary hover:bg-primary/10"
+              >
                 <Link href="/services">View Services</Link>
               </Button>
             </div>
@@ -43,23 +112,32 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-card p-8 rounded-xl shadow-lg border border-border hover:border-primary/30 transition-colors">
             <Shield className="w-10 h-10 text-primary mb-6" />
-            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">Protecting Assets</h3>
+            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">
+              Protecting Assets
+            </h3>
             <p className="text-muted-foreground leading-relaxed">
-              Complex property division requires sophisticated analysis. We ensure your financial future is secure.
+              Complex property division requires sophisticated analysis. We
+              ensure your financial future is secure.
             </p>
           </div>
           <div className="bg-card p-8 rounded-xl shadow-lg border border-border hover:border-primary/30 transition-colors">
             <Heart className="w-10 h-10 text-primary mb-6" />
-            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">Child-Centered</h3>
+            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">
+              Child-Centered
+            </h3>
             <p className="text-muted-foreground leading-relaxed">
-              We prioritize the well-being of your children, crafting custody arrangements that foster stability.
+              We prioritize the well-being of your children, crafting custody
+              arrangements that foster stability.
             </p>
           </div>
           <div className="bg-card p-8 rounded-xl shadow-lg border border-border hover:border-primary/30 transition-colors">
             <Scale className="w-10 h-10 text-primary mb-6" />
-            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">Strategic Advocacy</h3>
+            <h3 className="text-xl font-serif font-bold mb-3 text-foreground">
+              Strategic Advocacy
+            </h3>
             <p className="text-muted-foreground leading-relaxed">
-              Whether in mediation or the courtroom, we provide the clear, strategic guidance you need.
+              Whether in mediation or the courtroom, we provide the clear,
+              strategic guidance you need.
             </p>
           </div>
         </div>
@@ -70,22 +148,33 @@ export default function Home() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1 relative">
             <div className="absolute -inset-4 bg-primary/10 rounded-2xl transform -rotate-2"></div>
-            <img 
-              src={consultationImage} 
-              alt="Consultation" 
+            <img
+              src={consultationImage}
+              alt="Consultation"
               className="relative rounded-lg shadow-2xl w-full object-cover aspect-[4/3]"
             />
           </div>
           <div className="order-1 lg:order-2">
-            <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">Our Approach</span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-foreground">We Do Things Differently</h2>
+            <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">
+              Our Approach
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              We Do Things Differently
+            </h2>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              At Cornerstone Law Group, we believe that divorce doesn't have to be a war. We focus on constructive resolutions that preserve your dignity and resources.
+              At Cornerstone Law Group, we believe that divorce doesn't have to
+              be a war. We focus on constructive resolutions that preserve your
+              dignity and resources.
             </p>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Our team specializes in Collaborative Law and Mediation—processes designed to keep your family out of court whenever possible.
+              Our team specializes in Collaborative Law and Mediation—processes
+              designed to keep your family out of court whenever possible.
             </p>
-            <Button asChild variant="link" className="text-primary font-bold text-lg p-0 hover:text-primary/80 transition-colors">
+            <Button
+              asChild
+              variant="link"
+              className="text-primary font-bold text-lg p-0 hover:text-primary/80 transition-colors"
+            >
               <Link href="/our-approach" className="flex items-center gap-2">
                 Learn about our approach <ArrowRight className="w-5 h-5" />
               </Link>
@@ -97,8 +186,12 @@ export default function Home() {
       {/* Services Preview */}
       <Section background="muted" padded>
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">Practice Areas</span>
-          <h2 className="font-serif text-4xl font-bold mb-4 text-foreground">Comprehensive Family Law Services</h2>
+          <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">
+            Practice Areas
+          </span>
+          <h2 className="font-serif text-4xl font-bold mb-4 text-foreground">
+            Comprehensive Family Law Services
+          </h2>
           <p className="text-muted-foreground">
             Dedicated representation for every stage of your family's journey.
           </p>
@@ -121,9 +214,14 @@ export default function Home() {
             </Link>
           ))}
         </div>
-        
+
         <div className="text-center mt-12">
-          <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-primary text-primary hover:bg-primary/10">
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="rounded-full px-8 border-primary text-primary hover:bg-primary/10"
+          >
             <Link href="/services">View All Services</Link>
           </Button>
         </div>
@@ -133,25 +231,36 @@ export default function Home() {
       <Section padded background="none">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
-            <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">Why Choose Us</span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-foreground">A Future You Can Look Forward To</h2>
+            <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">
+              Why Choose Us
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-foreground">
+              A Future You Can Look Forward To
+            </h2>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              The end of a marriage marks the beginning of a new chapter. Our goal is to ensure that chapter starts on the strongest possible foundation.
+              The end of a marriage marks the beginning of a new chapter. Our
+              goal is to ensure that chapter starts on the strongest possible
+              foundation.
             </p>
             <div className="space-y-6">
-              {TESTIMONIALS.map((testimonial, idx) => (
-                <blockquote key={idx} className="border-l-4 border-primary pl-4 italic text-muted-foreground bg-card p-4 rounded-r-lg">
+              {TESTIMONIALS.slice(0, 3).map((testimonial, idx) => (
+                <blockquote
+                  key={idx}
+                  className="border-l-4 border-primary pl-4 italic text-foreground bg-card p-4 rounded-r-lg"
+                >
                   "{testimonial.quote}"
-                  <footer className="mt-2 text-sm font-bold text-primary not-italic">— {testimonial.author}</footer>
+                  <footer className="mt-2 text-sm font-bold text-primary not-italic">
+                    — {testimonial.author}
+                  </footer>
                 </blockquote>
               ))}
             </div>
           </div>
           <div className="relative">
-             <div className="absolute -inset-4 bg-primary/5 rounded-2xl transform rotate-2"></div>
-             <img 
-              src={familyImage} 
-              alt="Happy Family" 
+            <div className="absolute -inset-4 bg-primary/5 rounded-2xl transform rotate-2"></div>
+            <img
+              src={familyImage}
+              alt="Happy Family"
               className="relative rounded-lg shadow-2xl w-full object-cover aspect-[4/3]"
             />
           </div>

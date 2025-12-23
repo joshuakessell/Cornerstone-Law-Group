@@ -48,7 +48,7 @@ export default function Contact() {
       <div className="bg-primary text-white py-24 md:py-32">
         <div className="container mx-auto px-6 md:px-12">
           <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6">Contact Us</h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-2xl leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
             Take the first step towards clarity. Schedule a consultation to discuss your case with our experienced team.
           </p>
         </div>
@@ -169,7 +169,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-primary mb-1">Office Address</h3>
-                    <p className="text-gray-600 text-lg">
+                    <p className="text-foreground/90 text-lg">
                       {COMPANY_INFO.address.street}<br/>
                       {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
                     </p>
@@ -182,7 +182,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-primary mb-1">Phone</h3>
-                    <a href={`tel:${COMPANY_INFO.phone}`} className="text-gray-600 text-lg hover:text-accent transition-colors">
+                    <a href={`tel:${COMPANY_INFO.phone}`} className="text-foreground/90 text-lg hover:text-accent transition-colors">
                       {COMPANY_INFO.phone}
                     </a>
                   </div>
@@ -194,7 +194,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-primary mb-1">Email</h3>
-                    <a href={`mailto:${COMPANY_INFO.email}`} className="text-gray-600 text-lg hover:text-accent transition-colors">
+                    <a href={`mailto:${COMPANY_INFO.email}`} className="text-foreground/90 text-lg hover:text-accent transition-colors">
                       {COMPANY_INFO.email}
                     </a>
                   </div>
@@ -206,7 +206,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-primary mb-1">Hours</h3>
-                    <p className="text-gray-600">
+                    <p className="text-foreground/90">
                       Mon – Thu: {COMPANY_INFO.hours.mon_thu}<br/>
                       Fri: {COMPANY_INFO.hours.fri}<br/>
                       Sat – Sun: Closed
@@ -217,11 +217,11 @@ export default function Contact() {
             </div>
 
             {/* Map Placeholder */}
-            <div className="bg-gray-100 rounded-xl overflow-hidden h-[300px] relative border border-gray-200 shadow-inner flex items-center justify-center">
+            <div className="bg-muted rounded-xl overflow-hidden h-[300px] relative border border-border shadow-inner flex items-center justify-center">
               <div className="text-center p-6">
-                <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">Map Component Placeholder</p>
-                <p className="text-gray-400 text-sm mt-2">Embedded Google Map would load here.</p>
+                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground font-medium">Map Component Placeholder</p>
+                <p className="text-muted-foreground/70 text-sm mt-2">Embedded Google Map would load here.</p>
                 <p className="text-primary font-bold mt-4">{COMPANY_INFO.address.street}, {COMPANY_INFO.address.city}</p>
               </div>
             </div>
