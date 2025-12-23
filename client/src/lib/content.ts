@@ -16,7 +16,7 @@ export const COMPANY_INFO = {
   },
   social: {
     facebook: "#",
-    linkedin: "#"
+    linkedin: "https://www.linkedin.com/in/clint-cornerstonelawtexas/"
   }
 };
 

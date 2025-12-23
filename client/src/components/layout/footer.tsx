@@ -4,83 +4,101 @@ import { Phone, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-white text-neutral-900 border-t border-neutral-200 pt-12 pb-8">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-8">
-          {/* Logo and Company Name */}
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-            <img
-              src="/brand/logo-black.png"
-              alt="Cornerstone Law Group"
-              className="h-12 w-auto"
-              draggable={false}
-            />
-            <div>
-              <h3 className="text-xl font-semibold tracking-tight mb-1">CORNERSTONE</h3>
-              <p className="text-sm uppercase tracking-wider text-neutral-600 mb-1">LAW GROUP</p>
-              <p className="text-xs uppercase tracking-wider text-neutral-500">ATTORNEYS | COUNSELORS | MEDIATORS</p>
-            </div>
-          </div>
-
-          {/* Contact Info */}
-          <div className="text-sm space-y-1">
-            <p className="font-semibold">CLINT C. BROWN, MANAGING PARTNER</p>
-            <p className="font-semibold">CORNERSTONE LAW GROUP, P.C.</p>
-            <p className="text-neutral-600">
-              {COMPANY_INFO.address.street} | Ste. 220
-            </p>
-            <p className="text-neutral-600">
-              {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} | {COMPANY_INFO.address.zip}
-            </p>
-            <p className="text-neutral-600">
-              <a href={`https://${COMPANY_INFO.email.split('@')[1]}`} className="hover:text-primary transition-colors">
-                {COMPANY_INFO.email.split('@')[1]}
-              </a>
-            </p>
-            <div className="flex items-center gap-4 mt-2">
-              <a 
-                href={COMPANY_INFO.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block"
-                aria-label="LinkedIn"
-              >
-                <svg 
-                  className="w-5 h-5 text-primary hover:text-primary/80 transition-colors" 
-                  fill="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
-              </a>
-              <div className="flex items-center gap-2 text-neutral-600">
-                <span className="font-medium">V</span>
-                <a href={`tel:${COMPANY_INFO.phone}`} className="hover:text-primary transition-colors">
-                  {COMPANY_INFO.phone}
-                </a>
+    <footer className="bg-white text-neutral-900 border-t border-neutral-200">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Main Footer Content - Dynamically segmented and spaced */}
+        <div className="pt-8 sm:pt-10 md:pt-12 pb-6 sm:pb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12">
+            {/* Segment 1: Logo and Company Name */}
+            <div className="flex flex-col sm:col-span-2 lg:col-span-1">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-0">
+                <img
+                  src="/brand/logo-black.png"
+                  alt="Cornerstone Law Group"
+                  className="h-10 sm:h-12 w-auto shrink-0"
+                  draggable={false}
+                />
+                <div className="flex-1">
+                  <h3 className="text-lg sm:text-xl font-semibold tracking-tight mb-1">CORNERSTONE</h3>
+                  <p className="text-xs sm:text-sm uppercase tracking-wider text-neutral-600 mb-1">LAW GROUP</p>
+                  <p className="text-[10px] sm:text-xs uppercase tracking-wider text-neutral-500">ATTORNEYS | COUNSELORS | MEDIATORS</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-neutral-600">
-                <span className="font-medium">F</span>
-                <span>214.370.3005</span>
+            </div>
+
+            {/* Segment 2: Contact Info */}
+            <div className="sm:col-span-1 lg:col-span-1">
+              <div className="text-xs sm:text-sm space-y-1.5 sm:space-y-2">
+                <p className="font-semibold text-xs sm:text-sm">CLINT C. BROWN, MANAGING PARTNER</p>
+                <p className="font-semibold text-xs sm:text-sm">CORNERSTONE LAW GROUP, P.C.</p>
+                <p className="text-neutral-600 text-xs sm:text-sm">
+                  {COMPANY_INFO.address.street} | Ste. 220
+                </p>
+                <p className="text-neutral-600 text-xs sm:text-sm">
+                  {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} | {COMPANY_INFO.address.zip}
+                </p>
+                <p className="text-neutral-600 text-xs sm:text-sm">
+                  <a href={`https://${COMPANY_INFO.email.split('@')[1]}`} className="hover:text-primary transition-colors">
+                    {COMPANY_INFO.email.split('@')[1]}
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            {/* Segment 3: Social and Contact Methods */}
+            <div className="sm:col-span-2 lg:col-span-1">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm">
+                <a 
+                  href={COMPANY_INFO.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <svg 
+                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  <span className="hidden sm:inline">LinkedIn</span>
+                </a>
+                <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
+                  <span className="font-medium shrink-0">V</span>
+                  <a href={`tel:${COMPANY_INFO.phone}`} className="hover:text-primary transition-colors whitespace-nowrap">
+                    {COMPANY_INFO.phone}
+                  </a>
+                </div>
+                <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
+                  <span className="font-medium shrink-0">F</span>
+                  <span className="whitespace-nowrap">214.370.3005</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-neutral-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
-          <p>&copy; {new Date().getFullYear()} Cornerstone Law Group, P.C. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="/privacy">
-              <a className="hover:text-primary transition-colors">Privacy Policy</a>
-            </Link>
-            <Link href="/disclaimer">
-              <a className="hover:text-primary transition-colors">Disclaimer</a>
-            </Link>
+        {/* Bottom Section - Copyright and Links */}
+        <div className="border-t border-neutral-200 pt-4 sm:pt-6 pb-4 sm:pb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-neutral-500">
+            <p className="text-center sm:text-left">&copy; {new Date().getFullYear()} Cornerstone Law Group, P.C. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6">
+              <Link href="/privacy">
+                <a className="hover:text-primary transition-colors whitespace-nowrap">Privacy Policy</a>
+              </Link>
+              <Link href="/disclaimer">
+                <a className="hover:text-primary transition-colors whitespace-nowrap">Disclaimer</a>
+              </Link>
+            </div>
           </div>
         </div>
         
-        <div className="mt-6 p-4 bg-neutral-50 rounded text-[10px] text-neutral-600 leading-relaxed text-center md:text-left">
-          DISCLAIMER: The information provided on this website is for general informational purposes only and does not constitute legal advice. Visiting this site or contacting Cornerstone Law Group, P.C. does not create an attorney-client relationship.
+        {/* Disclaimer Section */}
+        <div className="border-t border-neutral-200 pt-4 sm:pt-6 pb-6 sm:pb-8">
+          <div className="p-3 sm:p-4 bg-neutral-50 rounded text-[9px] sm:text-[10px] text-neutral-600 leading-relaxed text-center sm:text-left">
+            DISCLAIMER: The information provided on this website is for general informational purposes only and does not constitute legal advice. Visiting this site or contacting Cornerstone Law Group, P.C. does not create an attorney-client relationship.
+          </div>
         </div>
       </div>
     </footer>

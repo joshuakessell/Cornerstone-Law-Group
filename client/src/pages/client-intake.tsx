@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Download, FileText } from "lucide-react";
 
 type MatterType = 
   | "divorce"
@@ -42,6 +42,24 @@ export default function ClientIntake() {
   };
 
   const hasContinueForm = getContinuePath() !== null;
+
+  // Map matter types to their corresponding docx file names
+  const getDocxFileName = (matterType: MatterType): string | null => {
+    if (!matterType || matterType === "not-sure") return null;
+    
+    const docxMap: Record<string, string> = {
+      "divorce": "Intake - Divorce.docx",
+      "modification": "Intake - Modification.docx",
+      "enforcement": "Intake - Enforcement.docx",
+      "adoption": "Intake - Adoption.docx",
+      "mediation": "Intake - Mediation.docx",
+      "marital-agreement": "Intake - Marital Agreement.docx",
+      "prenuptial-agreement": "Intake - Prenuptual Agreement.docx",
+      "wills-trusts-estates": "Intake - Wills Trusts & Estates.docx",
+    };
+    
+    return docxMap[matterType] || null;
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -111,12 +129,23 @@ export default function ClientIntake() {
                   All new clients start with our basic intake form. This collects essential
                   information about you and your matter.
                 </p>
-                <Button asChild className="w-full" size="lg">
-                  <Link href="/intake/basic">
-                    Start Basic Information
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
+                <div className="space-y-3">
+                  <Button asChild className="w-full" size="lg">
+                    <Link href="/intake/basic">
+                      Start Basic Information
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
+                  <a
+                    href="/documents/Intake Basic Information.docx"
+                    download
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
+                  >
+                    <Download className="w-4 h-4" />
+                    <FileText className="w-4 h-4" />
+                    Download Basic Intake Form (DOCX)
+                  </a>
+                </div>
               </div>
 
               {hasContinueForm && (
@@ -126,17 +155,30 @@ export default function ClientIntake() {
                     {matterOptions.find((o) => o.id === matterType)?.label.toLowerCase()} intake form
                     for more comprehensive information.
                   </p>
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                  >
-                    <Link href={getContinuePath()!}>
-                      Continue to {matterOptions.find((o) => o.id === matterType)?.label} Intake
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
-                  </Button>
+                  <div className="space-y-3">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full"
+                      size="lg"
+                    >
+                      <Link href={getContinuePath()!}>
+                        Continue to {matterOptions.find((o) => o.id === matterType)?.label} Intake
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Link>
+                    </Button>
+                    {getDocxFileName(matterType) && (
+                      <a
+                        href={`/documents/${getDocxFileName(matterType)}`}
+                        download
+                        className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
+                      >
+                        <Download className="w-4 h-4" />
+                        <FileText className="w-4 h-4" />
+                        Download {matterOptions.find((o) => o.id === matterType)?.label} Intake Form (DOCX)
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -146,6 +188,17 @@ export default function ClientIntake() {
                     A detailed intake form for {matterOptions.find((o) => o.id === matterType)?.label.toLowerCase()} is coming next.
                     For now, please complete the basic intake form above.
                   </p>
+                  {getDocxFileName(matterType) && (
+                    <a
+                      href={`/documents/${getDocxFileName(matterType)}`}
+                      download
+                      className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
+                    >
+                      <Download className="w-4 h-4" />
+                      <FileText className="w-4 h-4" />
+                      Download {matterOptions.find((o) => o.id === matterType)?.label} Intake Form (DOCX)
+                    </a>
+                  )}
                 </div>
               )}
 
