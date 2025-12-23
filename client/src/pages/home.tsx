@@ -13,11 +13,11 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden py-12 md:py-16">
         {/* Background with solid colors */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 flex justify-center">
           <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
