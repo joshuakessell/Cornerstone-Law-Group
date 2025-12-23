@@ -37,23 +37,24 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', serif;
 }
 
 /* Dark Professional Theme - Matching Cornerstone Law Texas */
-:root {
+:root,
+.dark {
   /* Deep Charcoal/Navy Background */
   --background: 220 20% 12%;
-  /* Light Text */
-  --foreground: 40 10% 92%;
+  /* Light Text - Improved contrast for readability */
+  --foreground: 40 10% 96%;
 
   /* Slightly lighter cards for contrast */
   --card: 220 18% 16%;
-  --card-foreground: 40 10% 92%;
+  --card-foreground: 40 10% 96%;
   
   --popover: 220 18% 18%;
-  --popover-foreground: 40 10% 92%;
+  --popover-foreground: 40 10% 96%;
   
   /* Gold/Amber Primary - Elegant, Premium */
   --primary: 38 70% 55%;
@@ -61,11 +62,11 @@
   
   /* Dark secondary */
   --secondary: 220 15% 20%;
-  --secondary-foreground: 40 10% 90%;
+  --secondary-foreground: 40 10% 95%;
   
-  /* Muted dark elements */
+  /* Muted dark elements - Improved contrast */
   --muted: 220 15% 18%;
-  --muted-foreground: 220 10% 60%;
+  --muted-foreground: 220 10% 75%;
   
   /* Gold Accent */
   --accent: 38 70% 55%;
@@ -81,12 +82,51 @@
   --radius: 0.5rem;
 }
 
+/* Light Theme */
+.light {
+  /* Light Background */
+  --background: 0 0% 100%;
+  /* Dark Text - Improved contrast */
+  --foreground: 220 20% 8%;
+
+  /* Light cards */
+  --card: 0 0% 98%;
+  --card-foreground: 220 20% 8%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 8%;
+  
+  /* Gold/Amber Primary - Elegant, Premium */
+  --primary: 38 70% 55%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* Light secondary */
+  --secondary: 220 10% 96%;
+  --secondary-foreground: 220 20% 8%;
+  
+  /* Muted light elements - Improved contrast */
+  --muted: 220 10% 96%;
+  --muted-foreground: 220 10% 35%;
+  
+  /* Gold Accent */
+  --accent: 38 70% 55%;
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 10% 85%;
+  --input: 220 10% 85%;
+  --ring: 38 70% 55%;
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply font-sans antialiased bg-background text-foreground selection:bg-accent/20 selection:text-foreground;
+    font-weight: 600; /* Avenir Next LT Pro Demi equivalent - Inter Demi (600) */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif font-semibold tracking-tight;

@@ -5,9 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IntroSlideshow } from "@/components/intro/IntroSlideshow";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
@@ -75,28 +74,14 @@ function AnimatedRoutes() {
 }
 
 function Router() {
-  const [introDone, setIntroDone] = useState(false);
-
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
-      {!introDone && (
-        <IntroSlideshow
-          logoSrc="/brand/logo-black.png"
-          onComplete={() => setIntroDone(true)}
-          showOncePerSession={true}
-        />
-      )}
-
-      {introDone && (
-        <>
-          <ScrollToTop />
-          <Header />
-          <main className="flex-grow pt-[72px]">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </>
-      )}
+      <ScrollToTop />
+      <Header />
+      <main className="flex-grow pt-[72px]">
+        <AnimatedRoutes />
+      </main>
+      <Footer />
     </div>
   );
 }

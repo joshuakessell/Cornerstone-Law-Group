@@ -3,19 +3,79 @@ import { Button } from "@/components/ui/button";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
-import { ArrowRight, Shield, Heart, Scale } from "lucide-react";
+import { ArrowRight, Shield, Heart, Scale, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";
 
+const VIDEO_PREFERENCE_KEY = "cs_video_disabled";
+
 export default function Home() {
+  const [videoDisabled, setVideoDisabled] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Check if user has disabled video
+    const saved = localStorage.getItem(VIDEO_PREFERENCE_KEY);
+    if (saved === "true") {
+      setVideoDisabled(true);
+    }
+  }, []);
+
+  const handleStopVideo = () => {
+    setVideoDisabled(true);
+    localStorage.setItem(VIDEO_PREFERENCE_KEY, "true");
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Large Logo Below Header */}
+      <div className="w-full flex justify-center py-8 md:py-12 bg-background border-b border-border">
+        <img
+          src="/brand/logo-black.png"
+          alt="Cornerstone Law Group"
+          className="h-24 md:h-32 lg:h-40 w-auto"
+          draggable={false}
+        />
+      </div>
       
-      {/* Hero Section */}
+      {/* Hero Section with Video Background */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background with solid colors */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+        {/* Video Background */}
+        {!videoDisabled && (
+          <>
+            <video
+              ref={videoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover z-0"
+            >
+              <source src="/media/CSLG2.mp4" type="video/mp4" />
+            </video>
+            {/* Tinted Overlay */}
+            <div className="absolute inset-0 z-[1] bg-background/60"></div>
+            {/* Stop Video Button */}
+            <button
+              onClick={handleStopVideo}
+              className="absolute bottom-6 right-6 z-[10] bg-background/90 hover:bg-background text-foreground px-6 py-3 rounded-full shadow-lg border border-border flex items-center gap-2 font-medium transition-all hover:scale-105"
+              aria-label="Stop video"
+            >
+              <X className="w-5 h-5" />
+              Stop Video
+            </button>
+          </>
+        )}
+
+        {/* Fallback Background (when video is disabled) */}
+        {videoDisabled && (
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+        )}
 
         <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center">
           <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl">
@@ -139,8 +199,8 @@ export default function Home() {
               The end of a marriage marks the beginning of a new chapter. Our goal is to ensure that chapter starts on the strongest possible foundation.
             </p>
             <div className="space-y-6">
-              {TESTIMONIALS.map((testimonial, idx) => (
-                <blockquote key={idx} className="border-l-4 border-primary pl-4 italic text-muted-foreground bg-card p-4 rounded-r-lg">
+              {TESTIMONIALS.slice(0, 3).map((testimonial, idx) => (
+                <blockquote key={idx} className="border-l-4 border-primary pl-4 italic text-foreground bg-card p-4 rounded-r-lg">
                   "{testimonial.quote}"
                   <footer className="mt-2 text-sm font-bold text-primary not-italic">— {testimonial.author}</footer>
                 </blockquote>

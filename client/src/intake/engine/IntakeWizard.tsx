@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { IntakeDef, FieldDef } from "./types";
 import { evaluateShowIf } from "./logic";
 import { useIntakeDraft } from "./useIntakeDraft";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Download } from "lucide-react";
 
 function formatValue(v: any) {
   if (typeof v === "boolean") return v ? "Yes" : "No";
@@ -321,6 +322,39 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
                     <div className="mt-1 text-sm text-foreground">{formatValue(row.value)}</div>
                   </div>
                 ))}
+              </div>
+
+              {/* PDF Download Section */}
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border">
+                <div className="flex items-start gap-3">
+                  <FileText className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground mb-2">
+                      Prefer pen and paper?
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Click here to download and fill out our classic PDF form to bring with you after you schedule your consultation.
+                    </p>
+                    <a
+                      href={`/documents/${def.intakeType === "basic" ? "Intake Basic Information.docx" : `Intake - ${def.intakeType.charAt(0).toUpperCase() + def.intakeType.slice(1)}.docx`}`}
+                      download
+                      className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download PDF Form
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Section */}
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Need to speak with someone directly?
+                </p>
+                <Button asChild variant="outline" className="w-full sm:w-auto">
+                  <Link href="/contact">Contact Us</Link>
+                </Button>
               </div>
 
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
