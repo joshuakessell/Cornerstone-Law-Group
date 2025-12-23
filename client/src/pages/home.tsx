@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
-import { ArrowRight, Shield, Heart, Scale, X } from "lucide-react";
+import { ArrowRight, Shield, Heart, Scale, X, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
@@ -29,6 +29,11 @@ export default function Home() {
     if (videoRef.current) {
       videoRef.current.pause();
     }
+  };
+
+  const handlePlayVideo = () => {
+    setVideoDisabled(false);
+    localStorage.setItem(VIDEO_PREFERENCE_KEY, "false");
   };
 
   return (
@@ -64,7 +69,18 @@ export default function Home() {
 
         {/* Fallback Background (when video is disabled) */}
         {videoDisabled && (
-          <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+          <>
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
+            {/* Play Video Button */}
+            <button
+              onClick={handlePlayVideo}
+              className="absolute bottom-6 right-6 z-[10] bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105"
+              aria-label="Play video"
+            >
+              <Play className="w-5 h-5" />
+              Play Video
+            </button>
+          </>
         )}
 
         <div className="container mx-auto px-6 md:px-12 relative z-10 pt-8 flex justify-center ml-[20px] mr-[20px] pl-[20px] pr-[20px]">

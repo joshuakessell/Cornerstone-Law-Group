@@ -78,7 +78,7 @@ function Router() {
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
       <ScrollToTop />
       <Header />
-      <main className="flex-grow pt-[72px]">
+      <main className="flex-grow">
         <AnimatedRoutes />
       </main>
       <Footer />
