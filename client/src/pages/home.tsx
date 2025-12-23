@@ -33,15 +33,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Large Logo Below Header */}
-      <div className="w-full flex justify-center py-3 md:py-4 bg-background border-b border-border">
-        <img
-          src="/brand/logo-black.png"
-          alt="Cornerstone Law Group"
-          className="h-24 md:h-32 lg:h-40 w-auto"
-          draggable={false}
-        />
-      </div>
       {/* Hero Section with Video Background */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Video Background */}

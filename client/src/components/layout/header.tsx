@@ -48,7 +48,7 @@ export function Header() {
               <img
                 src="/brand/logo-black.png"
                 alt="Cornerstone Law Group"
-                className="h-10 w-auto"
+                className="h-16 w-auto"
                 draggable={false}
               />
             </a>
