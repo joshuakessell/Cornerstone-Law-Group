@@ -12,26 +12,38 @@ import consultationImage from "@assets/generated_images/professional_client_cons
 const VIDEO_PREFERENCE_KEY = "cs_video_disabled";
 
 export default function Home() {
-  const [videoDisabled, setVideoDisabled] = useState(false);
+  const [videoDisabled, setVideoDisabled] = useState(() => {
+    // Initialize from localStorage on first render
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(VIDEO_PREFERENCE_KEY) === "true";
+    }
+    return false;
+  });
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Effect to handle video play/pause when state changes
   useEffect(() => {
-    // Check if user has disabled video
-    const saved = localStorage.getItem(VIDEO_PREFERENCE_KEY);
-    if (saved === "true") {
-      setVideoDisabled(true);
+    if (videoRef.current) {
+      if (videoDisabled) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play().catch(() => {
+          // Autoplay may be blocked, that's okay
+        });
+      }
     }
-  }, []);
+  }, [videoDisabled]);
 
-  const handleStopVideo = () => {
+  const handleStopVideo = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setVideoDisabled(true);
     localStorage.setItem(VIDEO_PREFERENCE_KEY, "true");
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
   };
 
-  const handlePlayVideo = () => {
+  const handlePlayVideo = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setVideoDisabled(false);
     localStorage.setItem(VIDEO_PREFERENCE_KEY, "false");
   };
@@ -58,11 +70,13 @@ export default function Home() {
             {/* Stop Video Button */}
             <button
               onClick={handleStopVideo}
-              className="absolute bottom-6 right-6 z-[10] bg-background/90 hover:bg-background text-foreground px-6 py-3 rounded-full shadow-lg border border-border flex items-center gap-2 font-medium transition-all hover:scale-105"
+              onTouchEnd={handleStopVideo}
+              type="button"
+              className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-[20] bg-background/90 hover:bg-background text-foreground px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg border border-border flex items-center gap-2 font-medium transition-all hover:scale-105 cursor-pointer touch-manipulation"
               aria-label="Stop video"
             >
-              <X className="w-5 h-5" />
-              Stop Video
+              <X className="w-4 h-4 md:w-5 md:h-5" />
+              <span className="text-sm md:text-base">Stop Video</span>
             </button>
           </>
         )}
@@ -74,11 +88,13 @@ export default function Home() {
             {/* Play Video Button */}
             <button
               onClick={handlePlayVideo}
-              className="absolute bottom-6 right-6 z-[10] bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105"
+              onTouchEnd={handlePlayVideo}
+              type="button"
+              className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-[20] bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105 cursor-pointer touch-manipulation"
               aria-label="Play video"
             >
-              <Play className="w-5 h-5" />
-              Play Video
+              <Play className="w-4 h-4 md:w-5 md:h-5" />
+              <span className="text-sm md:text-base">Play Video</span>
             </button>
           </>
         )}
