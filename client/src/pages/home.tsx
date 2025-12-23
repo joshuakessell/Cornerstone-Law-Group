@@ -5,7 +5,6 @@ import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
 import { ArrowRight, Shield, Heart, Scale } from "lucide-react";
 import { motion } from "framer-motion";
-import heroImage from "@assets/generated_images/elegant_law_firm_office_interior_with_city_view.png";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";
 
@@ -15,26 +14,11 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background Video with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            muted 
-            loop 
-            playsInline
-            className="w-full h-full object-cover"
-            poster={heroImage}
-          >
-            <source src="https://cornerstonelawtexas.com/wp-content/uploads/2022/10/CSLG.mp4" type="video/mp4" />
-          </video>
-          {/* Side gradient for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent"></div>
-          {/* Bottom fade to dark background */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-        </div>
+        {/* Background with solid colors */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
 
         <div className="container mx-auto px-6 md:px-12 relative z-10 pt-20 flex justify-center">
-          <div className="max-w-3xl bg-background/70 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center">
+          <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
               <span className="text-primary italic">The Cornerstone</span> of Life.

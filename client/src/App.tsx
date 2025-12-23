@@ -5,8 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { IntroSlideshow } from "@/components/intro/IntroSlideshow";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
@@ -15,7 +16,10 @@ import Services from "@/pages/services";
 import Contact from "@/pages/contact";
 import ClientArea from "@/pages/client-area";
 import ClientIntake from "@/pages/client-intake";
+import IntakeBasic from "@/pages/intake/intake-basic";
+import IntakeDivorce from "@/pages/intake/intake-divorce";
 import Admin from "@/pages/admin";
+import IntakeSubmissions from "@/pages/admin/intake-submissions";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -59,7 +63,10 @@ function AnimatedRoutes() {
           <Route path="/contact" component={Contact} />
           <Route path="/client-area" component={ClientArea} />
           <Route path="/client-intake" component={ClientIntake} />
+          <Route path="/intake/basic" component={IntakeBasic} />
+          <Route path="/intake/divorce" component={IntakeDivorce} />
           <Route path="/admin" component={Admin} />
+          <Route path="/admin/intake-submissions" component={IntakeSubmissions} />
           <Route component={NotFound} />
         </Switch>
       </motion.div>
@@ -68,14 +75,38 @@ function AnimatedRoutes() {
 }
 
 function Router() {
+  const [introDone, setIntroDone] = useState(false);
+
+  const introImages = [
+    "/intro/01-driving.png",
+    "/intro/02-boy-couch.png",
+    "/intro/03-kitchen-1.png",
+    "/intro/04-kitchen-2.png",
+    "/intro/05-storm-1.png",
+    "/intro/06-storm-2.png",
+  ];
+
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
-      <ScrollToTop />
-      <Header />
-      <main className="flex-grow pt-[72px]">
-        <AnimatedRoutes />
-      </main>
-      <Footer />
+      {!introDone && (
+        <IntroSlideshow
+          images={introImages}
+          logoSrc="/brand/logo-black.png"
+          onComplete={() => setIntroDone(true)}
+          showOncePerSession={true}
+        />
+      )}
+
+      {introDone && (
+        <>
+          <ScrollToTop />
+          <Header />
+          <main className="flex-grow pt-[72px]">
+            <AnimatedRoutes />
+          </main>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

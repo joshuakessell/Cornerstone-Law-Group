@@ -32,13 +32,13 @@ export function Header() {
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
         <Link href="/">
-          <a className="flex flex-col group">
-            <span className="font-serif text-2xl md:text-3xl font-bold text-primary tracking-tight group-hover:text-primary/80 transition-colors">
-              Cornerstone
-            </span>
-            <span className="text-[10px] md:text-xs tracking-[0.2em] text-muted-foreground uppercase font-sans group-hover:text-primary transition-colors">
-              Law Group, P.C.
-            </span>
+          <a className="flex items-center gap-3" style={{ marginLeft: '0' }}>
+            <img
+              src="/brand/logo-black.png"
+              alt="Cornerstone Law Group"
+              className="h-10 w-auto"
+              draggable={false}
+            />
           </a>
         </Link>
 
