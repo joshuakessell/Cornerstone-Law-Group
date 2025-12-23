@@ -16,7 +16,7 @@ function preload(src: string) {
   });
 }
 
-type Phase = "introVideo" | "tagline" | "logoCenter" | "logoFadeOut" | "fadeIn";
+type Phase = "introVideo" | "tagline" | "logoCenter" | "logoSlide" | "fadeIn";
 
 export function IntroSlideshow({
   onComplete,
@@ -75,18 +75,18 @@ export function IntroSlideshow({
     }
 
     if (phase === "logoCenter") {
-      // Show logo centered for 2 seconds, then fade out
+      // Show logo centered, then slide after a brief pause
       const t3 = window.setTimeout(() => {
-        setPhase("logoFadeOut");
-      }, 2000);
+        setPhase("logoSlide");
+      }, 800);
       timers.push(t3);
     }
 
-    if (phase === "logoFadeOut") {
-      // Logo fades out, then fade in website
+    if (phase === "logoSlide") {
+      // After logo slides to position, fade in website
       const t4 = window.setTimeout(() => {
         setPhase("fadeIn");
-      }, 800);
+      }, 650);
       timers.push(t4);
     }
 
@@ -95,7 +95,7 @@ export function IntroSlideshow({
       const t5 = window.setTimeout(() => {
         if (showOncePerSession) sessionStorage.setItem(sessionKey, "1");
         onComplete();
-      }, 600);
+      }, 500);
       timers.push(t5);
     }
 
@@ -154,25 +154,58 @@ export function IntroSlideshow({
         )}
       </AnimatePresence>
 
-      {/* Logo - Centered, then fades out */}
-      <AnimatePresence>
-        {(phase === "logoCenter" || phase === "logoFadeOut") && (
-          <motion.div
-            className="absolute inset-0 z-[115] flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase === "logoCenter" ? 1 : 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-          >
-            <img
-              src={logoSrc}
-              alt="Cornerstone Law Group"
-              className="w-64 sm:w-80 md:w-96 h-auto"
-              draggable={false}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Logo - Centered then slides to top left */}
+      {(phase === "logoCenter" || phase === "logoSlide" || phase === "fadeIn") && (
+        <motion.img
+          key="logo"
+          src={logoSrc}
+          alt="Cornerstone Law Group"
+          className="absolute z-[115]"
+          initial={{
+            left: "50%",
+            top: "50%",
+            x: "-50%",
+            y: "-50%",
+            width: 320,
+            height: "auto",
+            opacity: 0,
+          }}
+          animate={
+            phase === "logoCenter"
+              ? {
+                  opacity: 1,
+                }
+              : phase === "logoSlide" || phase === "fadeIn"
+              ? {
+                  left: 24,
+                  top: 20,
+                  x: 0,
+                  y: 0,
+                  width: "auto",
+                  height: 40,
+                  opacity: 1,
+                }
+              : {}
+          }
+          transition={
+            phase === "logoCenter"
+              ? {
+                  opacity: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+                }
+              : phase === "logoSlide"
+              ? {
+                  left: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  top: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  x: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  y: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  width: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                  height: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+                }
+              : {}
+          }
+          draggable={false}
+        />
+      )}
 
       {/* Fade in overlay for website reveal */}
       <AnimatePresence>
@@ -181,7 +214,7 @@ export function IntroSlideshow({
             className="absolute inset-0 z-[105] bg-background"
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           />
         )}
       </AnimatePresence>
