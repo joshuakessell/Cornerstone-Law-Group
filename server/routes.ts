@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import type { Server } from "http";
 import { storage } from "./storage";
 import { insertIntakeSubmissionSchema } from "@shared/schema";
 import { fromError } from "zod-validation-error";
@@ -16,8 +16,8 @@ export async function registerRoutes(
       const validatedData = insertIntakeSubmissionSchema.parse(req.body);
       const submission = await storage.createIntakeSubmission(validatedData);
       res.json(submission);
-    } catch (error: any) {
-      if (error.name === "ZodError") {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === "ZodError") {
         const validationError = fromError(error);
         return res.status(400).json({ error: validationError.toString() });
       }

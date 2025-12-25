@@ -48,6 +48,7 @@ export default function OurTeam() {
                   src={member.image} 
                   alt={member.name}
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
                 />
               </div>
               <div className="mt-4 text-center">

@@ -4,103 +4,55 @@ import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES, TESTIMONIALS } from "@/lib/content";
 import { Link } from "wouter";
 import { ArrowRight, Shield, Heart, Scale, X, Play } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useLocalStorageBoolean } from "@/hooks/useLocalStorageBoolean";
+import { HeroVideo } from "@/components/home/HeroVideo";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";
 
-const VIDEO_PREFERENCE_KEY = "cs_video_disabled";
-
 export default function Home() {
-  const [videoDisabled, setVideoDisabled] = useState(() => {
-    // Initialize from localStorage on first render
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(VIDEO_PREFERENCE_KEY) === "true";
-    }
-    return false;
-  });
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoDisabled, setVideoDisabled] = useLocalStorageBoolean("cs_video_disabled", false);
 
-  // Effect to handle video play/pause when state changes
-  useEffect(() => {
-    if (videoRef.current) {
-      if (videoDisabled) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play().catch(() => {
-          // Autoplay may be blocked, that's okay
-        });
-      }
-    }
-  }, [videoDisabled]);
-
-  const handleStopVideo = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setVideoDisabled(true);
-    localStorage.setItem(VIDEO_PREFERENCE_KEY, "true");
-  };
-
-  const handlePlayVideo = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setVideoDisabled(false);
-    localStorage.setItem(VIDEO_PREFERENCE_KEY, "false");
+  const handleToggleVideo = () => {
+    setVideoDisabled(!videoDisabled);
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section with Video Background */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
-        {/* Video Background */}
-        {!videoDisabled && (
-          <>
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover z-0"
-            >
-              <source src="/media/CSLG2.mp4" type="video/mp4" />
-            </video>
-            {/* Tinted Overlay */}
-            <div className="absolute inset-0 z-[1] bg-background/60"></div>
-            {/* Stop Video Button */}
-            <button
-              onClick={handleStopVideo}
-              onTouchEnd={handleStopVideo}
-              type="button"
-              className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-[20] bg-background/90 hover:bg-background text-foreground px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg border border-border flex items-center gap-2 font-medium transition-all hover:scale-105 cursor-pointer touch-manipulation"
-              aria-label="Stop video"
-            >
-              <X className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-sm md:text-base">Stop Video</span>
-            </button>
-          </>
-        )}
+        <HeroVideo
+          preferenceKey="cs_video_disabled"
+          srcWebm="/media/CSLG2.webm"
+          srcMp4="/media/CSLG2.mp4"
+          poster="/media/CSLG2-poster.jpg"
+        />
 
-        {/* Fallback Background (when video is disabled) */}
-        {videoDisabled && (
-          <>
-            <div className="absolute inset-0 z-0 bg-gradient-to-br from-background via-background to-muted/30"></div>
-            {/* Play Video Button */}
-            <button
-              onClick={handlePlayVideo}
-              onTouchEnd={handlePlayVideo}
-              type="button"
-              className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-[20] bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105 cursor-pointer touch-manipulation"
-              aria-label="Play video"
-            >
+        {/* Video Toggle Button */}
+        <button
+          onPointerUp={handleToggleVideo}
+          type="button"
+          className={`absolute bottom-4 right-4 md:bottom-6 md:right-6 z-[20] px-4 py-2 md:px-6 md:py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105 cursor-pointer touch-manipulation ${
+            videoDisabled
+              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+              : "bg-background/90 hover:bg-background text-foreground border border-border"
+          }`}
+          aria-label={videoDisabled ? "Play video" : "Stop video"}
+        >
+          {videoDisabled ? (
+            <>
               <Play className="w-4 h-4 md:w-5 md:h-5" />
               <span className="text-sm md:text-base">Play Video</span>
-            </button>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <X className="w-4 h-4 md:w-5 md:h-5" />
+              <span className="text-sm md:text-base">Stop Video</span>
+            </>
+          )}
+        </button>
 
-        <div className="container mx-auto px-6 md:px-12 relative z-10 flex justify-center ml-[20px] mr-[20px] pl-[20px] pr-[20px] pt-[0px] pb-[0px]">
-          <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl mt-[90px] mb-[90px]">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 flex justify-center">
+          <div className="max-w-3xl bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-2xl text-center border border-border shadow-xl my-20 md:my-24">
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 text-foreground">
               Family... <br/>
               <span className="text-primary italic">The Cornerstone</span> of Life.
@@ -154,6 +106,7 @@ export default function Home() {
               src={consultationImage} 
               alt="Consultation" 
               className="relative rounded-lg shadow-2xl w-full object-cover aspect-[4/3]"
+              loading="lazy"
             />
           </div>
           <div className="order-1 lg:order-2">
@@ -231,6 +184,7 @@ export default function Home() {
               src={familyImage} 
               alt="Happy Family" 
               className="relative rounded-lg shadow-2xl w-full object-cover aspect-[4/3]"
+              loading="lazy"
             />
           </div>
         </div>

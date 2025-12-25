@@ -4,22 +4,26 @@ import { evaluateShowIf } from "./logic";
 import { useIntakeDraft } from "./useIntakeDraft";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Download } from "lucide-react";
+import { TextField } from "./fields/TextField";
+import { TextAreaField } from "./fields/TextAreaField";
+import { RadioField } from "./fields/RadioField";
+import { CheckboxField } from "./fields/CheckboxField";
+import { SelectField } from "./fields/SelectField";
+import { DateField } from "./fields/DateField";
 
-function formatValue(v: any) {
+function formatValue(v: unknown): string {
   if (typeof v === "boolean") return v ? "Yes" : "No";
   if (v === null || v === undefined || v === "") return "—";
   return String(v);
 }
 
-function visibleFields(stepFields: FieldDef[], answers: Record<string, any>) {
+function visibleFields(stepFields: FieldDef[], answers: Record<string, unknown>): FieldDef[] {
   return stepFields.filter((f) => evaluateShowIf(f.showIf, answers));
 }
 
-function validateStep(stepFields: FieldDef[], answers: Record<string, any>) {
+function validateStep(stepFields: FieldDef[], answers: Record<string, unknown>): Record<string, string> {
   const errors: Record<string, string> = {};
   const fields = visibleFields(stepFields, answers);
 
@@ -46,7 +50,7 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
 
   const allVisibleForReview = useMemo(() => {
-    const rows: { label: string; value: any }[] = [];
+    const rows: { label: string; value: unknown }[] = [];
     for (const s of steps) {
       for (const f of visibleFields(s.fields, answers)) {
         rows.push({ label: f.label, value: answers[f.id] });
@@ -55,13 +59,106 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
     return rows;
   }, [answers, steps]);
 
-  const setField = (id: string, value: any) => {
+  const setField = (id: string, value: unknown) => {
     setAnswers((prev) => ({ ...prev, [id]: value }));
     setErrors((prev) => {
       const next = { ...prev };
       delete next[id];
       return next;
     });
+  };
+
+  const getFieldValue = (value: unknown, fieldType: string): string | boolean => {
+    if (fieldType === "checkbox") {
+      return value === true;
+    }
+    return typeof value === "string" ? value : "";
+  };
+
+  const renderTextField = (field: FieldDef, value: unknown, commonProps: { id: string; label: string; required?: boolean; error?: string }) => {
+    const fieldType = field.type === "email" ? "email" : field.type === "tel" ? "tel" : "text";
+    return (
+      <TextField
+        {...commonProps}
+        type={fieldType}
+        value={getFieldValue(value, "text") as string}
+        onChange={(v) => setField(field.id, v)}
+        placeholder={field.placeholder}
+      />
+    );
+  };
+
+  const renderField = (field: FieldDef) => {
+    const error = errors[field.id];
+    const value = answers[field.id];
+
+    const commonProps = {
+      id: field.id,
+      label: field.label,
+      required: field.required,
+      error,
+    };
+
+    switch (field.type) {
+      case "textarea":
+        return (
+          <TextAreaField
+            {...commonProps}
+            value={getFieldValue(value, "text") as string}
+            onChange={(v) => setField(field.id, v)}
+            placeholder={field.placeholder}
+            rows={4}
+          />
+        );
+
+      case "radio":
+        if (!field.options) return null;
+        return (
+          <RadioField
+            {...commonProps}
+            value={getFieldValue(value, "text") as string}
+            onChange={(v) => setField(field.id, v)}
+            options={field.options}
+          />
+        );
+
+      case "checkbox":
+        return (
+          <CheckboxField
+            {...commonProps}
+            value={getFieldValue(value, "checkbox") as boolean}
+            onChange={(v) => setField(field.id, v)}
+            description={field.helperText}
+          />
+        );
+
+      case "select":
+        if (!field.options) return null;
+        return (
+          <SelectField
+            {...commonProps}
+            value={getFieldValue(value, "text") as string}
+            onChange={(v) => setField(field.id, v)}
+            options={field.options}
+            placeholder={field.placeholder || "Select…"}
+          />
+        );
+
+      case "date":
+        return (
+          <DateField
+            {...commonProps}
+            value={getFieldValue(value, "text") as string}
+            onChange={(v) => setField(field.id, v)}
+          />
+        );
+
+      case "email":
+      case "tel":
+      case "text":
+      default:
+        return renderTextField(field, value, commonProps);
+    }
   };
 
   const onNext = () => {
@@ -85,7 +182,6 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
       answers,
     };
 
-    console.log("INTAKE_SUBMISSION_POC:", payload);
     saveSubmission(payload);
     clearDraft();
     setSubmitted(true);
@@ -140,23 +236,24 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
             {steps.map((s, i) => {
               const active = i === stepIndex;
               const done = i < stepIndex;
+              const className = active
+                ? "bg-primary text-primary-foreground"
+                : done
+                  ? "bg-muted text-foreground"
+                  : "bg-muted/50 text-muted-foreground";
               return (
                 <div
                   key={s.id}
-                  className={[
-                    "rounded-full px-3 py-1 text-sm",
-                    active ? "bg-primary text-primary-foreground" : done ? "bg-muted text-foreground" : "bg-muted/50 text-muted-foreground",
-                  ].join(" ")}
+                  className={`rounded-full px-3 py-1 text-sm ${className}`}
                 >
                   {i + 1}. {s.title}
                 </div>
               );
             })}
             <div
-              className={[
-                "rounded-full px-3 py-1 text-sm",
-                isReview ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground",
-              ].join(" ")}
+              className={`rounded-full px-3 py-1 text-sm ${
+                isReview ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground"
+              }`}
             >
               Review
             </div>
@@ -175,122 +272,14 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
               </div>
 
               <div className="grid gap-5">
-                {visibleFields(currentStep.fields, answers).map((f) => {
-                  const err = errors[f.id];
-                  const value = answers[f.id];
-
-                  const commonLabel = (
-                    <div className="flex items-baseline justify-between gap-3">
-                      <Label htmlFor={f.id}>
-                        {f.label}{f.required ? " *" : ""}
-                      </Label>
-                      {err && <span className="text-xs text-destructive">{err}</span>}
-                    </div>
-                  );
-
-                  if (f.type === "textarea") {
-                    return (
-                      <div key={f.id} className="grid gap-2">
-                        {commonLabel}
-                        <textarea
-                          id={f.id}
-                          className="min-h-[120px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                          placeholder={f.placeholder}
-                          value={value ?? ""}
-                          onChange={(e) => setField(f.id, e.target.value)}
-                        />
-                        {f.helperText && <p className="text-xs text-muted-foreground">{f.helperText}</p>}
-                      </div>
-                    );
-                  }
-
-                  if (f.type === "radio" && f.options) {
-                    return (
-                      <div key={f.id} className="grid gap-2">
-                        {commonLabel}
-                        <div className="flex flex-col gap-2">
-                          {f.options.map((opt) => (
-                            <label key={opt.value} className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-                              <input
-                                type="radio"
-                                name={f.id}
-                                checked={value === opt.value}
-                                onChange={() => setField(f.id, opt.value)}
-                                className="cursor-pointer"
-                              />
-                              {opt.label}
-                            </label>
-                          ))}
-                        </div>
-                        {f.helperText && <p className="text-xs text-muted-foreground">{f.helperText}</p>}
-                      </div>
-                    );
-                  }
-
-                  if (f.type === "checkbox") {
-                    return (
-                      <div key={f.id} className="grid gap-2">
-                        <div className="flex items-center justify-between gap-3">
-                          <Label htmlFor={f.id} className="font-medium cursor-pointer">
-                            {f.label}{f.required ? " *" : ""}
-                          </Label>
-                          <input
-                            id={f.id}
-                            type="checkbox"
-                            checked={value === true}
-                            onChange={(e) => setField(f.id, e.target.checked)}
-                            className="cursor-pointer"
-                          />
-                        </div>
-                        {err && <span className="text-xs text-destructive">{err}</span>}
-                        {f.helperText && <p className="text-xs text-muted-foreground">{f.helperText}</p>}
-                      </div>
-                    );
-                  }
-
-                  if (f.type === "select" && f.options) {
-                    return (
-                      <div key={f.id} className="grid gap-2">
-                        {commonLabel}
-                        <select
-                          id={f.id}
-                          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                          value={value ?? ""}
-                          onChange={(e) => setField(f.id, e.target.value)}
-                        >
-                          <option value="">Select…</option>
-                          {f.options.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
-                        {f.helperText && <p className="text-xs text-muted-foreground">{f.helperText}</p>}
-                      </div>
-                    );
-                  }
-
-                  // default input
-                  const inputType =
-                    f.type === "email" ? "email" :
-                    f.type === "tel" ? "tel" :
-                    f.type === "date" ? "date" :
-                    "text";
-
-                  return (
-                    <div key={f.id} className="grid gap-2">
-                      {commonLabel}
-                      <Input
-                        id={f.id}
-                        type={inputType}
-                        placeholder={f.placeholder}
-                        value={value ?? ""}
-                        onChange={(e) => setField(f.id, e.target.value)}
-                      />
-                      {f.helperText && <p className="text-xs text-muted-foreground">{f.helperText}</p>}
-                    </div>
-                  );
-                })}
+                {visibleFields(currentStep.fields, answers).map((field) => (
+                  <div key={field.id}>
+                    {renderField(field)}
+                    {field.helperText && field.type !== "checkbox" && (
+                      <p className="text-xs text-muted-foreground mt-1">{field.helperText}</p>
+                    )}
+                  </div>
+                ))}
               </div>
 
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">

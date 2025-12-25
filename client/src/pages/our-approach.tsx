@@ -53,6 +53,7 @@ export default function OurApproach() {
               src="/brand/Collaborative-Law-scaled.jpg" 
               alt="Collaborative Law Meeting" 
               className="relative rounded-lg shadow-xl w-full object-cover aspect-[4/3]"
+              loading="lazy"
             />
           </div>
           <div>

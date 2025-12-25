@@ -1,6 +1,5 @@
-import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
+import { COMPANY_INFO } from "@/lib/content";
 import { Link } from "wouter";
-import { Phone, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
   return (

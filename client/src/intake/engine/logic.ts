@@ -1,12 +1,12 @@
 import { ShowIf } from "./types";
 
-export function getValue(obj: Record<string, any>, key: string) {
+export function getValue(obj: Record<string, unknown>, key: string): unknown {
   return obj?.[key];
 }
 
 export function evaluateShowIf(
   showIf: ShowIf | undefined,
-  answers: Record<string, any>
+  answers: Record<string, unknown>
 ): boolean {
   if (!showIf) return true;
 
@@ -24,4 +24,5 @@ export function evaluateShowIf(
   }
   return true;
 }
+
 

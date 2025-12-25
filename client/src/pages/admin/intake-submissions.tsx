@@ -11,7 +11,7 @@ interface Submission {
   intakeType: string;
   title: string;
   submittedAt: string;
-  answers: Record<string, any>;
+  answers: Record<string, unknown>;
 }
 
 export default function IntakeSubmissions() {
@@ -109,4 +109,5 @@ export default function IntakeSubmissions() {
     </div>
   );
 }
+
 

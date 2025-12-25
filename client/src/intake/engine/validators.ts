@@ -2,13 +2,13 @@ export type ValidationRule = {
   type: 'required' | 'minLength' | 'maxLength' | 'email' | 'phone' | 'pattern' | 'custom';
   value?: string | number;
   message: string;
-  validator?: (value: any, allValues: Record<string, any>) => boolean;
+  validator?: (value: unknown, allValues: Record<string, unknown>) => boolean;
 };
 
 export function validateField(
-  value: any,
+  value: unknown,
   rules: ValidationRule[],
-  allValues: Record<string, any> = {}
+  allValues: Record<string, unknown> = {}
 ): string | null {
   for (const rule of rules) {
     switch (rule.type) {
@@ -62,7 +62,7 @@ export function validateField(
 
 export function validateStep(
   fields: Array<{ id: string; validation?: ValidationRule[] }>,
-  values: Record<string, any>
+  values: Record<string, unknown>
 ): Record<string, string> {
   const errors: Record<string, string> = {};
   
@@ -77,4 +77,5 @@ export function validateStep(
   
   return errors;
 }
+
 

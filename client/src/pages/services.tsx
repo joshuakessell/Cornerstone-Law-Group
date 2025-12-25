@@ -2,7 +2,6 @@ import { Section } from "@/components/ui/section";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES } from "@/lib/content";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowDown } from "lucide-react";
 
 export default function Services() {
   return (

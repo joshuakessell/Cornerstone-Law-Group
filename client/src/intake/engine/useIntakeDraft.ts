@@ -5,7 +5,7 @@ const submitsKey = () => `cs_intake_submissions_v1`;
 
 export function useIntakeDraft(intakeType: string) {
   const key = useMemo(() => draftKey(intakeType), [intakeType]);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [loaded, setLoaded] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
@@ -19,7 +19,9 @@ export function useIntakeDraft(intakeType: string) {
         setLastSavedAt(parsed?.lastSavedAt ?? null);
         setHasDraft(true);
       }
-    } catch {}
+    } catch (error) {
+      console.error("Error loading draft:", error);
+    }
     setLoaded(true);
   }, [key]);
 
@@ -30,25 +32,31 @@ export function useIntakeDraft(intakeType: string) {
       localStorage.setItem(key, JSON.stringify(payload));
       setLastSavedAt(payload.lastSavedAt);
       setHasDraft(true);
-    } catch {}
+    } catch (error) {
+      console.error("Error saving draft:", error);
+    }
   }, [answers, key, loaded]);
 
   const clearDraft = () => {
     try {
       localStorage.removeItem(key);
-    } catch {}
+    } catch (error) {
+      console.error("Error clearing draft:", error);
+    }
     setHasDraft(false);
     setLastSavedAt(null);
     setAnswers({});
   };
 
-  const saveSubmission = (submission: any) => {
+  const saveSubmission = (submission: unknown) => {
     try {
       const raw = localStorage.getItem(submitsKey());
       const existing = raw ? JSON.parse(raw) : [];
       const next = [submission, ...(Array.isArray(existing) ? existing : [])];
       localStorage.setItem(submitsKey(), JSON.stringify(next));
-    } catch {}
+    } catch (error) {
+      console.error("Error saving submission:", error);
+    }
   };
 
   return {

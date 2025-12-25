@@ -4,21 +4,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { COMPANY_INFO } from "@/lib/content";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { format } from "date-fns";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Valid phone number required"),
   topic: z.string({ required_error: "Please select a topic" }),
-  message: z.string().min(10, "Please provide a brief message")
+  message: z.string().optional(),
+  // Divorce fields
+  divorceActiveCase: z.string().optional(),
+  divorceCauseNumber: z.string().optional(),
+  divorceWithChildren: z.string().optional(),
+  divorceCollaborative: z.string().optional(),
+  // Modification/Enforcement fields
+  modificationCauseNumber: z.string().optional(),
+  modificationCounty: z.string().optional(),
+  // Premarital/Marital fields
+  maritalPlanningMarriage: z.string().optional(),
+  maritalHasDate: z.string().optional(),
+  maritalWeddingDate: z.date().optional(),
+  maritalPropertyAgreement: z.string().optional(),
+}).refine((data) => {
+  // Divorce: if active case is yes, cause number is required
+  if (data.topic === "divorce" && data.divorceActiveCase === "yes") {
+    return !!data.divorceCauseNumber;
+  }
+  return true;
+}, {
+  message: "Cause number is required when active case is pending",
+  path: ["divorceCauseNumber"],
+}).refine((data) => {
+  // Premarital: if planning marriage and has date is yes, wedding date is required
+  if (data.topic === "premarital" && data.maritalPlanningMarriage === "yes" && data.maritalHasDate === "yes") {
+    return !!data.maritalWeddingDate;
+  }
+  return true;
+}, {
+  message: "Wedding date is required",
+  path: ["maritalWeddingDate"],
 });
 
 export default function Contact() {
@@ -29,12 +64,16 @@ export default function Contact() {
       name: "",
       email: "",
       phone: "",
-      message: ""
-    }
+      message: "",
+    },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log("Form submitted:", data);
+  const topic = form.watch("topic");
+  const divorceActiveCase = form.watch("divorceActiveCase");
+  const maritalPlanningMarriage = form.watch("maritalPlanningMarriage");
+  const maritalHasDate = form.watch("maritalHasDate");
+
+  const onSubmit = (_data: z.infer<typeof formSchema>) => {
     toast({
       title: "Message Sent",
       description: "Thank you for contacting us. We will reach out shortly to schedule your consultation.",
@@ -120,6 +159,9 @@ export default function Contact() {
                           <SelectItem value="divorce">Divorce</SelectItem>
                           <SelectItem value="custody">Child Custody</SelectItem>
                           <SelectItem value="modification">Modification</SelectItem>
+                          <SelectItem value="enforcement">Enforcement</SelectItem>
+                          <SelectItem value="premarital">Premarital Agreement</SelectItem>
+                          <SelectItem value="marital">Marital Agreement</SelectItem>
                           <SelectItem value="mediation">Mediation</SelectItem>
                           <SelectItem value="estate">Estate Planning</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
@@ -130,17 +172,291 @@ export default function Contact() {
                   )}
                 />
 
+                {/* Divorce Conditional Fields */}
+                {topic === "divorce" && (
+                  <div className="space-y-6 p-4 bg-muted/50 rounded-lg border border-border">
+                    <FormField
+                      control={form.control}
+                      name="divorceActiveCase"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Do you have an active case pending?</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex gap-6"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="yes" id="divorce-active-yes" />
+                                <Label htmlFor="divorce-active-yes" className="cursor-pointer">Yes</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="no" id="divorce-active-no" />
+                                <Label htmlFor="divorce-active-no" className="cursor-pointer">No</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {divorceActiveCase === "yes" && (
+                      <FormField
+                        control={form.control}
+                        name="divorceCauseNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base">Cause Number</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter cause number" className="h-12 bg-gray-50 border-gray-200" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    <FormField
+                      control={form.control}
+                      name="divorceWithChildren"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Do you have children?</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex gap-6"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="yes" id="divorce-children-yes" />
+                                <Label htmlFor="divorce-children-yes" className="cursor-pointer">Yes</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="no" id="divorce-children-no" />
+                                <Label htmlFor="divorce-children-no" className="cursor-pointer">No</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="divorceCollaborative"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Are you interested in collaborative divorce?</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex gap-6"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="yes" id="divorce-collab-yes" />
+                                <Label htmlFor="divorce-collab-yes" className="cursor-pointer">Yes</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="no" id="divorce-collab-no" />
+                                <Label htmlFor="divorce-collab-no" className="cursor-pointer">No</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
+                {/* Modification/Enforcement Conditional Fields */}
+                {(topic === "modification" || topic === "enforcement") && (
+                  <div className="space-y-6 p-4 bg-muted/50 rounded-lg border border-border">
+                    <FormField
+                      control={form.control}
+                      name="modificationCauseNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">Existing Cause Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter cause number" className="h-12 bg-gray-50 border-gray-200" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="modificationCounty"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">County Case Filed In</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter county name" className="h-12 bg-gray-50 border-gray-200" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
+                {/* Premarital/Marital Conditional Fields */}
+                {(topic === "premarital" || topic === "marital") && (
+                  <div className="space-y-6 p-4 bg-muted/50 rounded-lg border border-border">
+                    {topic === "premarital" && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name="maritalPlanningMarriage"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-base">Are you planning to get married?</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  value={field.value}
+                                  className="flex gap-6"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="yes" id="marital-planning-yes" />
+                                    <Label htmlFor="marital-planning-yes" className="cursor-pointer">Yes</Label>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="no" id="marital-planning-no" />
+                                    <Label htmlFor="marital-planning-no" className="cursor-pointer">No</Label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {maritalPlanningMarriage === "yes" && (
+                          <>
+                            <FormField
+                              control={form.control}
+                              name="maritalHasDate"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-base">Do you have a wedding date?</FormLabel>
+                                  <FormControl>
+                                    <RadioGroup
+                                      onValueChange={field.onChange}
+                                      value={field.value}
+                                      className="flex gap-6"
+                                    >
+                                      <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="yes" id="marital-date-yes" />
+                                        <Label htmlFor="marital-date-yes" className="cursor-pointer">Yes</Label>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="no" id="marital-date-no" />
+                                        <Label htmlFor="marital-date-no" className="cursor-pointer">No</Label>
+                                      </div>
+                                    </RadioGroup>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            {maritalHasDate === "yes" && (
+                              <FormField
+                                control={form.control}
+                                name="maritalWeddingDate"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-col">
+                                    <FormLabel className="text-base">Wedding Date</FormLabel>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <FormControl>
+                                          <Button
+                                            variant="outline"
+                                            className={cn(
+                                              "h-12 w-full justify-start text-left font-normal bg-gray-50 border-gray-200",
+                                              !field.value && "text-muted-foreground"
+                                            )}
+                                          >
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                          </Button>
+                                        </FormControl>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                          mode="single"
+                                          selected={field.value}
+                                          onSelect={field.onChange}
+                                          disabled={(date) => date < new Date()}
+                                          initialFocus
+                                        />
+                                      </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    <FormField
+                      control={form.control}
+                      name="maritalPropertyAgreement"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base">
+                            {topic === "premarital"
+                              ? "Are you presently married and looking to make a property agreement?"
+                              : "Are you looking to make a property agreement?"}
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              className="flex gap-6"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="yes" id="marital-property-yes" />
+                                <Label htmlFor="marital-property-yes" className="cursor-pointer">Yes</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="no" id="marital-property-no" />
+                                <Label htmlFor="marital-property-no" className="cursor-pointer">No</Label>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+
+                {/* Message field - required for "other", optional otherwise */}
                 <FormField
                   control={form.control}
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <Label className="text-base">Message (Optional)</Label>
+                      <FormLabel className="text-base">
+                        {topic === "other" ? "Message" : "Additional Message (Optional)"}
+                      </FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Please briefly describe your situation..." 
-                          className="min-h-[150px] bg-gray-50 border-gray-200 resize-none" 
-                          {...field} 
+                        <Textarea
+                          placeholder="Please briefly describe your situation..."
+                          className="min-h-[150px] bg-gray-50 border-gray-200 resize-none"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
