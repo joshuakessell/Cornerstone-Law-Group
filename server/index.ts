@@ -5,7 +5,12 @@ import { createServer } from "http";
 import helmet from "helmet";
 
 const app = express();
-app.use(helmet());
+const isProduction = process.env.NODE_ENV === "production";
+app.use(
+  helmet({
+    contentSecurityPolicy: isProduction ? undefined : false,
+  }),
+);
 const httpServer = createServer(app);
 
 declare module "http" {

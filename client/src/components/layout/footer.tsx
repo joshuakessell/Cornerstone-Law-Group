@@ -6,20 +6,16 @@ export function Footer() {
     <footer className="bg-white text-neutral-900 border-t border-neutral-200">
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
         {/* Main Footer Content - Dynamically segmented and spaced */}
-        <div className="pt-8 sm:pt-10 md:pt-12 pb-6 sm:pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12">
-            {/* Segment 1: Logo */}
-            <div className="col-span-1 sm:col-span-1 lg:col-span-1">
+        <div className="pt-6 sm:pt-8 md:pt-10 pb-5 sm:pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
+            {/* Segment 1: Logo + Contact Info */}
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3">
               <img
                 src="/brand/cornerstone_logo_footer.png"
                 alt="Cornerstone Law Group"
-                className="h-20 w-auto"
+                className="block h-32 w-auto"
                 draggable={false}
               />
-            </div>
-
-            {/* Segment 2: Contact Info */}
-            <div className="col-span-1 sm:col-span-1 lg:col-span-1">
               <div className="text-xs sm:text-sm space-y-1.5 sm:space-y-2">
                 <p className="font-semibold text-xs sm:text-sm">CLINT C. BROWN, <span className="text-primary">MANAGING PARTNER</span></p>
                 <p className="font-semibold text-xs sm:text-sm">CORNERSTONE LAW GROUP, P.C.</p>
@@ -37,35 +33,33 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Segment 3: Social and Contact Methods */}
-            <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-              <div className="flex flex-col gap-3 sm:gap-4 text-xs sm:text-sm">
-                <a 
-                  href={COMPANY_INFO.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                  aria-label="LinkedIn"
+            {/* Segment 2: Social and Contact Methods */}
+            <div className="flex flex-col items-start sm:items-end gap-2 sm:gap-3 text-xs sm:text-sm">
+              <a 
+                href={COMPANY_INFO.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+                aria-label="LinkedIn"
+              >
+                <svg 
+                  className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" 
+                  fill="currentColor" 
+                  viewBox="0 0 24 24"
                 >
-                  <svg 
-                    className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" 
-                    fill="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  <span className="hidden sm:inline">LinkedIn</span>
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                <span className="hidden sm:inline">LinkedIn</span>
+              </a>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
+                <span className="font-medium shrink-0">V</span>
+                <a href={`tel:${COMPANY_INFO.phone}`} className="hover:text-primary transition-colors whitespace-nowrap">
+                  {COMPANY_INFO.phone}
                 </a>
-                <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
-                  <span className="font-medium shrink-0">V</span>
-                  <a href={`tel:${COMPANY_INFO.phone}`} className="hover:text-primary transition-colors whitespace-nowrap">
-                    {COMPANY_INFO.phone}
-                  </a>
-                </div>
-                <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
-                  <span className="font-medium shrink-0">F</span>
-                  <span className="whitespace-nowrap">214.370.3005</span>
-                </div>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-neutral-600">
+                <span className="font-medium shrink-0">F</span>
+                <span className="whitespace-nowrap">214.370.3005</span>
               </div>
             </div>
           </div>

@@ -22,6 +22,7 @@ export default function Home() {
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <HeroVideo
           preferenceKey="cs_video_disabled"
+          videoDisabled={videoDisabled}
           srcWebm="/media/CSLG2.webm"
           srcMp4="/media/CSLG2.mp4"
           poster="/media/CSLG2-poster.jpg"

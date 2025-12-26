@@ -37,8 +37,19 @@ export default function ClientIntake() {
   };
 
   const getContinuePath = () => {
-    if (matterType === "divorce") return "/intake/divorce";
-    return null;
+    if (!matterType || matterType === "not-sure") return null;
+    const pathMap: Record<Exclude<MatterType, null>, string> = {
+      divorce: "/intake/divorce",
+      modification: "/intake/modification",
+      enforcement: "/intake/enforcement",
+      adoption: "/intake/adoption",
+      mediation: "/intake/mediation",
+      "marital-agreement": "/intake/marital-agreement",
+      "prenuptial-agreement": "/intake/prenuptial-agreement",
+      "wills-trusts-estates": "/intake/wills-trusts-estates",
+      "not-sure": "",
+    };
+    return pathMap[matterType] || null;
   };
 
   const hasContinueForm = getContinuePath() !== null;
@@ -86,7 +97,7 @@ export default function ClientIntake() {
                 <Button
                   key={option.id}
                   onClick={() => handleMatterSelect(option.id)}
-                  className="w-full justify-start h-auto py-4"
+                  className="w-full justify-start h-auto py-4 cursor-pointer"
                   variant="outline"
                 >
                   <div className="text-left">
@@ -131,7 +142,7 @@ export default function ClientIntake() {
                 </p>
                 <div className="space-y-3">
                   <Button asChild className="w-full" size="lg">
-                    <Link href="/intake/basic">
+                    <Link href="/intake/basic" onClick={() => window.scrollTo(0, 0)}>
                       Start Basic Information
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
@@ -162,7 +173,7 @@ export default function ClientIntake() {
                       className="w-full"
                       size="lg"
                     >
-                      <Link href={getContinuePath()!}>
+                      <Link href={getContinuePath()!} onClick={() => window.scrollTo(0, 0)}>
                         Continue to {matterOptions.find((o) => o.id === matterType)?.label} Intake
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
@@ -207,7 +218,7 @@ export default function ClientIntake() {
                   Need to speak with someone directly?
                 </p>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href="/contact">Contact Us</Link>
+                  <Link href="/contact" onClick={() => window.scrollTo(0, 0)}>Contact Us</Link>
                 </Button>
               </div>
             </CardContent>

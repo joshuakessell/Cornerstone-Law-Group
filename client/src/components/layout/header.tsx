@@ -23,9 +23,15 @@ export function Header() {
         <Link href="/" className="hidden lg:flex items-center shrink-0">
           <a>
             <img
+              src="/brand/cornerstone_logo_footer.png"
+              alt="Cornerstone Law Group"
+              className="h-20 w-auto dark:hidden"
+              draggable={false}
+            />
+            <img
               src="/brand/logo-black.png"
               alt="Cornerstone Law Group"
-              className="h-20 w-auto"
+              className="hidden h-20 w-auto dark:block"
               draggable={false}
             />
           </a>
@@ -69,19 +75,23 @@ export function Header() {
           </button>
         </div>
         
-        {/* Mobile Logo - Show when menu is closed */}
-        {!isOpen && (
-          <Link href="/" className="lg:hidden absolute left-1/2 transform -translate-x-1/2">
-            <a>
-              <img
-                src="/brand/logo-black.png"
-                alt="Cornerstone Law Group"
-                className="h-16 w-auto"
-                draggable={false}
-              />
-            </a>
-          </Link>
-        )}
+        {/* Mobile Logo */}
+        <Link href="/" className="lg:hidden absolute left-1/2 transform -translate-x-1/2">
+          <a>
+            <img
+              src="/brand/cornerstone_logo_footer.png"
+              alt="Cornerstone Law Group"
+              className="h-20 w-auto dark:hidden"
+              draggable={false}
+            />
+            <img
+              src="/brand/logo-black.png"
+              alt="Cornerstone Law Group"
+              className="hidden h-20 w-auto dark:block"
+              draggable={false}
+            />
+          </a>
+        </Link>
       </div>
 
       {/* Mobile Menu */}
@@ -123,7 +133,9 @@ export function Header() {
              <a href={`tel:${COMPANY_INFO.phone}`} className="flex items-center gap-2 text-primary font-bold">
                <Phone className="h-4 w-4" /> {COMPANY_INFO.phone}
              </a>
-             <span className="text-sm text-muted-foreground">{COMPANY_INFO.address.street}, {COMPANY_INFO.address.city}</span>
+             <span className="text-sm text-muted-foreground">
+               {COMPANY_INFO.address.street}, {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
+             </span>
           </div>
         </div>
       </div>

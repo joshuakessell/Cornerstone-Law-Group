@@ -187,6 +187,22 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
     setSubmitted(true);
   };
 
+  const getDocxName = () => {
+    const docMap: Record<string, string> = {
+      basic: "Intake Basic Information.docx",
+      divorce: "Intake - Divorce.docx",
+      adoption: "Intake - Adoption.docx",
+      enforcement: "Intake - Enforcement.docx",
+      mediation: "Intake - Mediation.docx",
+      modification: "Intake - Modification.docx",
+      "marital-agreement": "Intake - Marital Agreement.docx",
+      "prenuptial-agreement": "Intake - Prenuptual Agreement.docx",
+      "wills-trusts-estates": "Intake - Wills Trusts & Estates.docx",
+    };
+
+    return docMap[def.intakeType];
+  };
+
   if (submitted) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -324,14 +340,16 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
                     <p className="text-xs text-muted-foreground mb-3">
                       Click here to download and fill out our classic PDF form to bring with you after you schedule your consultation.
                     </p>
-                    <a
-                      href={`/documents/${def.intakeType === "basic" ? "Intake Basic Information.docx" : `Intake - ${def.intakeType.charAt(0).toUpperCase() + def.intakeType.slice(1)}.docx`}`}
-                      download
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download PDF Form
-                    </a>
+                    {getDocxName() && (
+                      <a
+                        href={`/documents/${getDocxName()}`}
+                        download
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download PDF Form
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

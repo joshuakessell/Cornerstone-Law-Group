@@ -5,8 +5,8 @@ import { Link } from "wouter";
 
 export default function ClientArea() {
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center bg-muted/30">
-      <Section className="text-center max-w-lg mx-auto bg-white p-12 rounded-2xl shadow-xl border border-gray-100">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center bg-muted/30 py-6">
+      <Section className="text-center max-w-lg mx-auto bg-white dark:bg-card/80 p-12 rounded-2xl shadow-xl border border-gray-100 dark:border-border/60">
         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
           <Lock className="w-10 h-10 text-primary" />
         </div>

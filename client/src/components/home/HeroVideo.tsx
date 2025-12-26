@@ -6,6 +6,7 @@ interface HeroVideoProps {
   srcWebm?: string;
   poster?: string;
   preferenceKey: string;
+  videoDisabled?: boolean;
 }
 
 export function HeroVideo({
@@ -13,9 +14,11 @@ export function HeroVideo({
   srcWebm,
   poster,
   preferenceKey,
+  videoDisabled: videoDisabledProp,
 }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoDisabled] = useLocalStorageBoolean(preferenceKey, false);
+  const [storedVideoDisabled] = useLocalStorageBoolean(preferenceKey, false);
+  const videoDisabled = videoDisabledProp ?? storedVideoDisabled;
   const [isReady, setIsReady] = useState(false);
   const [playAttempted, setPlayAttempted] = useState(false);
 
@@ -85,6 +88,7 @@ export function HeroVideo({
 
     if (videoDisabled) {
       video.pause();
+      setPlayAttempted(false);
     } else {
       // Only attempt play if video is ready
       if (isReady && video.readyState >= 2) {
@@ -123,4 +127,3 @@ export function HeroVideo({
     </>
   );
 }
-

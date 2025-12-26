@@ -6,10 +6,10 @@ import { TESTIMONIALS } from "@/lib/content";
 export default function OurApproach() {
   return (
     <>
-      <div className="bg-primary text-white py-24 md:py-32 relative overflow-hidden">
+      <div className="bg-primary text-white py-16 md:py-20 relative overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6">Our Approach</h1>
-          <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Our Approach</h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
             We believe in resolving conflict, not escalating it. Our goal is to help you move forward with dignity and financial security.
           </p>
         </div>

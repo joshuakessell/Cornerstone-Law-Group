@@ -17,6 +17,13 @@ import ClientArea from "@/pages/client-area";
 import ClientIntake from "@/pages/client-intake";
 import IntakeBasic from "@/pages/intake/intake-basic";
 import IntakeDivorce from "@/pages/intake/intake-divorce";
+import IntakeAdoption from "@/pages/intake/intake-adoption";
+import IntakeEnforcement from "@/pages/intake/intake-enforcement";
+import IntakeMediation from "@/pages/intake/intake-mediation";
+import IntakeModification from "@/pages/intake/intake-modification";
+import IntakeMaritalAgreement from "@/pages/intake/intake-marital-agreement";
+import IntakePrenuptialAgreement from "@/pages/intake/intake-prenuptial-agreement";
+import IntakeWillsTrustsEstates from "@/pages/intake/intake-wills-trusts-estates";
 import Admin from "@/pages/admin";
 import IntakeSubmissions from "@/pages/admin/intake-submissions";
 
@@ -64,6 +71,13 @@ function AnimatedRoutes() {
           <Route path="/client-intake" component={ClientIntake} />
           <Route path="/intake/basic" component={IntakeBasic} />
           <Route path="/intake/divorce" component={IntakeDivorce} />
+          <Route path="/intake/adoption" component={IntakeAdoption} />
+          <Route path="/intake/enforcement" component={IntakeEnforcement} />
+          <Route path="/intake/mediation" component={IntakeMediation} />
+          <Route path="/intake/modification" component={IntakeModification} />
+          <Route path="/intake/marital-agreement" component={IntakeMaritalAgreement} />
+          <Route path="/intake/prenuptial-agreement" component={IntakePrenuptialAgreement} />
+          <Route path="/intake/wills-trusts-estates" component={IntakeWillsTrustsEstates} />
           <Route path="/admin" component={Admin} />
           <Route path="/admin/intake-submissions" component={IntakeSubmissions} />
           <Route component={NotFound} />

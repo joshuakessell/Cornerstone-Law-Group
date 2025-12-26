@@ -58,6 +58,7 @@ const formSchema = z.object({
 
 export default function Contact() {
   const { toast } = useToast();
+  const mapQuery = `${COMPANY_INFO.address.street}, ${COMPANY_INFO.address.city}, ${COMPANY_INFO.address.state} ${COMPANY_INFO.address.zip}`;
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,10 +85,10 @@ export default function Contact() {
 
   return (
     <>
-      <div className="bg-primary text-white py-24 md:py-32">
+      <div className="bg-primary text-white py-16 md:py-20">
         <div className="container mx-auto px-6 md:px-12">
-          <h1 className="font-serif text-5xl md:text-6xl font-bold mb-6">Contact Us</h1>
-          <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
             Take the first step towards clarity. Schedule a consultation to discuss your case with our experienced team.
           </p>
         </div>
@@ -532,14 +533,15 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Map Placeholder */}
-            <div className="bg-muted rounded-xl overflow-hidden h-[300px] relative border border-border shadow-inner flex items-center justify-center">
-              <div className="text-center p-6">
-                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground font-medium">Map Component Placeholder</p>
-                <p className="text-muted-foreground/70 text-sm mt-2">Embedded Google Map would load here.</p>
-                <p className="text-primary font-bold mt-4">{COMPANY_INFO.address.street}, {COMPANY_INFO.address.city}</p>
-              </div>
+            {/* Map */}
+            <div className="bg-muted rounded-xl overflow-hidden h-[300px] relative border border-border shadow-inner">
+              <iframe
+                title="Cornerstone Law Group location"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+                className="h-full w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </div>

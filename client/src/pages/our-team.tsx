@@ -10,13 +10,13 @@ export default function OurTeam() {
 
   return (
     <>
-      <div className="bg-primary text-white py-16 md:py-24">
+      <div className="bg-primary text-white py-12 md:py-16">
         <div className="container mx-auto px-6 md:px-12">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="font-serif text-4xl md:text-5xl font-bold mb-4"
+            className="font-serif text-3xl md:text-4xl font-bold mb-3"
           >
             A Team Dedicated to Holistic Client Care
           </motion.h1>
@@ -24,7 +24,7 @@ export default function OurTeam() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl leading-relaxed"
+            className="text-base md:text-lg text-primary-foreground/80 max-w-2xl leading-relaxed"
           >
             Experienced advocates dedicated to guiding you through your legal journey with expertise and compassion.
           </motion.p>
