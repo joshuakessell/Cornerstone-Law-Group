@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLocalStorageBoolean } from "@/hooks/useLocalStorageBoolean";
 
 interface HeroVideoProps {
-  srcMp4?: string;
   srcWebm?: string;
   poster?: string;
   preferenceKey: string;
@@ -10,7 +9,6 @@ interface HeroVideoProps {
 }
 
 export function HeroVideo({
-  srcMp4,
   srcWebm,
   poster,
   preferenceKey,
@@ -112,7 +110,6 @@ export function HeroVideo({
         }`}
       >
         {srcWebm && <source src={srcWebm} type="video/webm" />}
-        {srcMp4 && <source src={srcMp4} type="video/mp4" />}
       </video>
       {/* Tinted Overlay */}
       <div

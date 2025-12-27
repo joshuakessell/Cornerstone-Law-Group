@@ -24,7 +24,6 @@ export default function Home() {
           preferenceKey="cs_video_disabled"
           videoDisabled={videoDisabled}
           srcWebm="/media/CSLG2.webm"
-          srcMp4="/media/CSLG2.mp4"
           poster="/media/CSLG2-poster.jpg"
         />
 
