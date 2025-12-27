@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IntakeDef, FieldDef } from "./types";
 import { evaluateShowIf } from "./logic";
 import { useIntakeDraft } from "./useIntakeDraft";
@@ -12,6 +13,9 @@ import { RadioField } from "./fields/RadioField";
 import { CheckboxField } from "./fields/CheckboxField";
 import { SelectField } from "./fields/SelectField";
 import { DateField } from "./fields/DateField";
+import { useToast } from "@/hooks/use-toast";
+import { completeForm } from "../api";
+import { ensurePacketForCategory, getActivePacket, normalizeCategory } from "../session";
 
 function formatValue(v: unknown): string {
   if (typeof v === "boolean") return v ? "Yes" : "No";
@@ -40,14 +44,43 @@ function validateStep(stepFields: FieldDef[], answers: Record<string, unknown>):
 export function IntakeWizard({ def }: { def: IntakeDef }) {
   const [, setLocation] = useLocation();
   const { answers, setAnswers, clearDraft, saveSubmission } = useIntakeDraft(def.intakeType);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const formType = def.intakeType === "basic" ? "basic-intake" : def.intakeType;
+  const normalizedCategory = normalizeCategory(
+    def.intakeType === "basic" ? getActivePacket()?.category ?? "unsure" : def.intakeType,
+  );
+  const [packet] = useState(() => {
+    const active = getActivePacket();
+    if (def.intakeType === "basic") {
+      return active ?? ensurePacketForCategory(normalizedCategory);
+    }
+    if (active && active.category === normalizedCategory) {
+      return active;
+    }
+    return ensurePacketForCategory(normalizedCategory);
+  });
 
   const [stepIndex, setStepIndex] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const completeMutation = useMutation({
+    mutationFn: (payload: {
+      sessionId: string;
+      packetId: string;
+      formType: string;
+      category: string;
+      answers: Record<string, unknown>;
+    }) => completeForm(payload),
+  });
 
   const steps = def.steps;
   const isReview = stepIndex === steps.length;
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
+  const isCompleting = completeMutation.isPending;
 
   const allVisibleForReview = useMemo(() => {
     const rows: { label: string; value: unknown }[] = [];
@@ -174,17 +207,47 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
     setStepIndex((i) => Math.max(0, i - 1));
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    setSubmitError(null);
+    const packetContext = packet ?? ensurePacketForCategory(normalizedCategory);
+
     const payload = {
       intakeType: def.intakeType,
       title: def.title,
       submittedAt: new Date().toISOString(),
       answers,
+      packetId: packetContext.packetId,
+      sessionId: packetContext.sessionId,
     };
 
-    saveSubmission(payload);
-    clearDraft();
-    setSubmitted(true);
+    try {
+      await completeMutation.mutateAsync({
+        sessionId: packetContext.sessionId,
+        packetId: packetContext.packetId,
+        formType,
+        category: normalizedCategory,
+        answers,
+      });
+
+      saveSubmission(payload);
+      clearDraft();
+      setSubmitted(true);
+      queryClient.invalidateQueries({
+        queryKey: ["client-intake", "completed", packetContext.sessionId, packetContext.packetId],
+      });
+      toast({
+        title: "Form completed",
+        description: "Your completed PDF is now available in Completed Forms.",
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to save the completed form.";
+      setSubmitError(message);
+      toast({
+        title: "Unable to complete form",
+        description: message,
+        variant: "destructive",
+      });
+    }
   };
 
   const getDocxName = () => {
@@ -212,7 +275,7 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
               Thank you. We received your information.
             </h1>
             <p className="mt-2 text-muted-foreground">
-              Proof-of-concept mode: your submission was saved locally in this browser and logged to the console.
+              We've saved your completed intake for this packet. You can review and download it from the Completed Forms card.
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -364,17 +427,25 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
                 </Button>
               </div>
 
+              {submitError && (
+                <div className="mt-4 text-sm text-destructive">
+                  {submitError}
+                </div>
+              )}
+
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
                 <Button
                   variant="outline"
                   onClick={() => setStepIndex(steps.length - 1)}
+                  disabled={isCompleting}
                 >
                   Back
                 </Button>
                 <Button
                   onClick={onSubmit}
+                  disabled={isCompleting}
                 >
-                  Submit
+                  {isCompleting ? "Saving..." : "Submit"}
                 </Button>
               </div>
             </>

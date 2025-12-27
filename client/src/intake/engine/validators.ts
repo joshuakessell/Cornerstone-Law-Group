@@ -30,22 +30,33 @@ export function validateField(
         }
         break;
       
-      case 'email':
+      case 'email': {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (value && !emailRegex.test(value)) {
+        if (typeof value === 'string') {
+          if (value && !emailRegex.test(value)) {
+            return rule.message;
+          }
+        } else if (value) {
           return rule.message;
         }
         break;
+      }
       
-      case 'phone':
+      case 'phone': {
         const phoneRegex = /^[\d\s\-\(\)\+]+$/;
-        if (value && !phoneRegex.test(value) || (value && value.replace(/\D/g, '').length < 10)) {
+        if (typeof value === 'string') {
+          const digitsOnly = value.replace(/\D/g, '');
+          if ((value && !phoneRegex.test(value)) || (value && digitsOnly.length < 10)) {
+            return rule.message;
+          }
+        } else if (value) {
           return rule.message;
         }
         break;
+      }
       
       case 'pattern':
-        if (value && rule.value && !new RegExp(rule.value as string).test(value)) {
+        if (typeof value === 'string' && rule.value && !new RegExp(rule.value as string).test(value)) {
           return rule.message;
         }
         break;
