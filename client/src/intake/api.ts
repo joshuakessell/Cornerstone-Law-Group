@@ -6,10 +6,11 @@ export type CompletedForm = {
   category: string;
   completedAt: string;
   pageCount: number;
+  pdfMode?: "template" | "summary";
   files: {
     pdf: string;
     answers: string;
-    thumb: string;
+    thumb: string | null;
   };
 };
 
@@ -29,12 +30,23 @@ export async function fetchCompletedForms(sessionId: string, packetId: string): 
   return res.json();
 }
 
+export type IntakePresentationGroup = {
+  title: string;
+  fields: Array<{ id: string; label: string; value: unknown }>;
+};
+
+export type IntakePresentation = {
+  title: string;
+  groups: IntakePresentationGroup[];
+};
+
 export async function completeForm(options: {
   sessionId: string;
   packetId: string;
   formType: string;
   category: string;
   answers: Record<string, unknown>;
+  presentation?: IntakePresentation;
 }): Promise<CompletedForm> {
   const res = await apiRequest(
     "POST",
@@ -43,6 +55,7 @@ export async function completeForm(options: {
       sessionId: options.sessionId,
       category: normalizeCategory(options.category),
       answers: options.answers,
+      presentation: options.presentation,
     },
   );
 

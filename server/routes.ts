@@ -1,16 +1,27 @@
 import express, { type Express } from "express";
 import type { Server } from "http";
 import path from "path";
+import fs from "fs";
 import { promises as fsp } from "fs";
 import { storage } from "./storage";
 import { insertIntakeSubmissionSchema } from "@shared/schema";
 import { fromError } from "zod-validation-error";
 import bcrypt from "bcrypt";
 import { ensureUploadsRoot, readPacketIndex, templatesRoot, upsertCompletedForm, uploadsRoot } from "./intake/indexStore";
-import { fillPdfFromTemplate } from "./intake/pdfFill";
+import { buildIntakePdf } from "./intake/pdfBuild";
 import { generateThumbnail } from "./intake/thumb";
 import { sendPacketEmail } from "./intake/email";
 import { convertDocxTemplates } from "./intake/docxConvert";
+import {
+  allowedFormTypes,
+  ensureTemplatesExist,
+  ensureFieldMapsExist,
+  getIntakeDefForFormType,
+  getTemplateMeta,
+  ensurePreviewPng,
+  listFields,
+  type FormType,
+} from "./intake/templateTools";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -19,6 +30,12 @@ export async function registerRoutes(
 
   await ensureUploadsRoot();
   app.use("/uploads", express.static(uploadsRoot));
+
+  // Dev-only: static serving of templates and previews
+  if (process.env.NODE_ENV !== "production") {
+    app.use("/__templates", express.static(templatesRoot));
+    app.use("/__template-previews", express.static(path.join(templatesRoot, "_previews")));
+  }
 
   const allowedCategories = new Set([
     "divorce",
@@ -94,7 +111,7 @@ export async function registerRoutes(
   app.post("/api/client-intake/packets/:packetId/forms/:formType/complete", async (req, res) => {
     try {
       const { packetId, formType } = req.params;
-      const { sessionId, category, answers } = req.body ?? {};
+      const { sessionId, category, answers, presentation } = req.body ?? {};
 
       validateId("packetId", packetId);
       validateId("sessionId", sessionId);
@@ -112,24 +129,45 @@ export async function registerRoutes(
         return res.status(400).json({ message: "answers must be an object" });
       }
 
-      const templatePath = path.join(templatesRoot, `${formType}.template.pdf`);
-      const fieldsPath = path.join(templatesRoot, `${formType}.fields.json`);
       const outputDir = path.join(uploadsRoot, sessionId, packetId, formType);
       const pdfPath = path.join(outputDir, "filled.pdf");
       const answersPath = path.join(outputDir, "answers.json");
       const thumbPath = path.join(outputDir, "thumb.png");
 
-      const { pageCount } = await fillPdfFromTemplate({
-        templatePath,
-        fieldsPath,
-        outputPath: pdfPath,
+      // Build PDF using unified entry point
+      const { pdfBytes, pageCount, mode } = await buildIntakePdf({
+        formType,
+        sessionId,
+        packetId,
+        category: normalizedCategory,
         answers,
+        presentation,
       });
 
+      // Write PDF and answers
       await fsp.mkdir(outputDir, { recursive: true });
+      await fsp.writeFile(pdfPath, pdfBytes);
       await fsp.writeFile(answersPath, JSON.stringify(answers, null, 2), "utf-8");
 
-      await generateThumbnail(pdfPath, thumbPath);
+      // Try to generate thumbnail (non-blocking)
+      let thumbUrl: string | null = null;
+      try {
+        await generateThumbnail(pdfPath, thumbPath);
+        thumbUrl = `/uploads/${sessionId}/${packetId}/${formType}/thumb.png`;
+      } catch (thumbError) {
+        // Thumbnail generation failed, but don't fail the request
+        console.warn(`Thumbnail generation failed for ${formType}:`, thumbError);
+        // Try to use logo as placeholder if available
+        const logoPath = path.resolve(process.cwd(), "client", "public", "brand", "logo-black.png");
+        if (fs.existsSync(logoPath)) {
+          try {
+            await fsp.copyFile(logoPath, thumbPath);
+            thumbUrl = `/uploads/${sessionId}/${packetId}/${formType}/thumb.png`;
+          } catch {
+            // Ignore logo copy failure
+          }
+        }
+      }
 
       const updatedIndex = await upsertCompletedForm({
         sessionId,
@@ -137,6 +175,8 @@ export async function registerRoutes(
         category: normalizedCategory,
         formType,
         pageCount,
+        pdfMode: mode,
+        thumbUrl,
       });
 
       const completed = updatedIndex.completedForms.find((f) => f.formType === formType);
@@ -173,6 +213,106 @@ export async function registerRoutes(
       }
       const result = await convertDocxTemplates();
       res.json(result);
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Dev-only: setup templates and field maps
+  app.post("/api/client-intake/dev/setup-templates", async (_req, res) => {
+    try {
+      if (process.env.NODE_ENV === "production") {
+        return res.status(403).json({ message: "Setup route disabled in production" });
+      }
+
+      const templatesResult = await ensureTemplatesExist();
+      const fieldMapsResult = await ensureFieldMapsExist();
+
+      res.json({
+        templates: templatesResult,
+        fieldMaps: fieldMapsResult,
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Dev-only: get mapper data for a form type
+  app.get("/api/client-intake/dev/mapper/:formType", async (req, res) => {
+    try {
+      if (process.env.NODE_ENV === "production") {
+        return res.status(403).json({ message: "Mapper route disabled in production" });
+      }
+
+      const { formType } = req.params;
+      const page = parseInt(req.query.page as string) || 1;
+
+      if (!allowedFormTypes.includes(formType as FormType)) {
+        return res.status(400).json({ message: `Unsupported form type: ${formType}` });
+      }
+
+      const def = getIntakeDefForFormType(formType as FormType);
+      if (!def) {
+        return res.status(400).json({ message: `No intake definition for form type: ${formType}` });
+      }
+
+      const meta = await getTemplateMeta(formType as FormType);
+      await ensurePreviewPng(formType as FormType, page);
+
+      const fields = listFields(def);
+      const fieldsPath = path.join(templatesRoot, `${formType}.fields.json`);
+      let placements: Array<{ key: string; page: number; x: number; y: number; size: number; label?: string }> = [];
+
+      if (fs.existsSync(fieldsPath)) {
+        const fieldsData = JSON.parse(await fsp.readFile(fieldsPath, "utf-8"));
+        if (fieldsData.fields && Array.isArray(fieldsData.fields)) {
+          placements = fieldsData.fields;
+        }
+      }
+
+      const currentPageMeta = meta.pages[page - 1];
+      if (!currentPageMeta) {
+        return res.status(400).json({ message: `Page ${page} does not exist (total pages: ${meta.pageCount})` });
+      }
+
+      res.json({
+        formType,
+        templatePdfUrl: `/__templates/${formType}.template.pdf`,
+        previewPngUrl: `/__template-previews/${formType}-p${page}.png`,
+        page,
+        pageCount: meta.pageCount,
+        pageWidth: currentPageMeta.width,
+        pageHeight: currentPageMeta.height,
+        fields,
+        placements,
+      });
+    } catch (error) {
+      handleError(res, error);
+    }
+  });
+
+  // Dev-only: save field placements
+  app.post("/api/client-intake/dev/mapper/:formType/save", async (req, res) => {
+    try {
+      if (process.env.NODE_ENV === "production") {
+        return res.status(403).json({ message: "Save route disabled in production" });
+      }
+
+      const { formType } = req.params;
+      const { fields } = req.body;
+
+      if (!allowedFormTypes.includes(formType as FormType)) {
+        return res.status(400).json({ message: `Unsupported form type: ${formType}` });
+      }
+
+      if (!fields || !Array.isArray(fields)) {
+        return res.status(400).json({ message: "fields must be an array" });
+      }
+
+      const fieldsPath = path.join(templatesRoot, `${formType}.fields.json`);
+      await fsp.writeFile(fieldsPath, JSON.stringify({ fields }, null, 2), "utf-8");
+
+      res.json({ ok: true });
     } catch (error) {
       handleError(res, error);
     }

@@ -26,6 +26,7 @@ import IntakePrenuptialAgreement from "@/pages/intake/intake-prenuptial-agreemen
 import IntakeWillsTrustsEstates from "@/pages/intake/intake-wills-trusts-estates";
 import Admin from "@/pages/admin";
 import IntakeSubmissions from "@/pages/admin/intake-submissions";
+import IntakeMapper from "@/pages/admin/intake-mapper";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -80,6 +81,7 @@ function AnimatedRoutes() {
           <Route path="/intake/wills-trusts-estates" component={IntakeWillsTrustsEstates} />
           <Route path="/admin" component={Admin} />
           <Route path="/admin/intake-submissions" component={IntakeSubmissions} />
+          <Route path="/admin/intake-mapper" component={IntakeMapper} />
           <Route component={NotFound} />
         </Switch>
       </motion.div>

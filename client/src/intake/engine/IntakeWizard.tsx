@@ -14,7 +14,7 @@ import { CheckboxField } from "./fields/CheckboxField";
 import { SelectField } from "./fields/SelectField";
 import { DateField } from "./fields/DateField";
 import { useToast } from "@/hooks/use-toast";
-import { completeForm } from "../api";
+import { completeForm, type IntakePresentation } from "../api";
 import { ensurePacketForCategory, getActivePacket, normalizeCategory } from "../session";
 
 function formatValue(v: unknown): string {
@@ -74,6 +74,7 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
       formType: string;
       category: string;
       answers: Record<string, unknown>;
+      presentation?: IntakePresentation;
     }) => completeForm(payload),
   });
 
@@ -220,6 +221,19 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
       sessionId: packetContext.sessionId,
     };
 
+    // Build presentation from intake definition
+    const presentation: IntakePresentation = {
+      title: def.title,
+      groups: def.steps.map((step) => ({
+        title: step.title,
+        fields: visibleFields(step.fields, answers).map((field) => ({
+          id: field.id,
+          label: field.label,
+          value: answers[field.id],
+        })),
+      })),
+    };
+
     try {
       await completeMutation.mutateAsync({
         sessionId: packetContext.sessionId,
@@ -227,6 +241,7 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
         formType,
         category: normalizedCategory,
         answers,
+        presentation,
       });
 
       saveSubmission(payload);

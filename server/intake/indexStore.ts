@@ -10,10 +10,11 @@ export type CompletedFormEntry = {
   category: string;
   completedAt: string;
   pageCount: number;
+  pdfMode?: "template" | "summary";
   files: {
     pdf: string;
     answers: string;
-    thumb: string;
+    thumb: string | null;
   };
 };
 
@@ -40,7 +41,7 @@ export function fileUrls(sessionId: string, packetId: string, formType: string) 
   return {
     pdf: `${base}/filled.pdf`,
     answers: `${base}/answers.json`,
-    thumb: `${base}/thumb.png`,
+    thumb: `${base}/thumb.png` as string | null,
   };
 }
 
@@ -68,8 +69,10 @@ export async function upsertCompletedForm(options: {
   category: string;
   formType: string;
   pageCount: number;
+  pdfMode?: "template" | "summary";
+  thumbUrl?: string | null;
 }): Promise<PacketIndex> {
-  const { sessionId, packetId, category, formType, pageCount } = options;
+  const { sessionId, packetId, category, formType, pageCount, pdfMode, thumbUrl } = options;
   const now = new Date().toISOString();
 
   const existing = (await readPacketIndex(sessionId, packetId)) ?? {
@@ -88,7 +91,11 @@ export async function upsertCompletedForm(options: {
     category: existing.category,
     completedAt: now,
     pageCount,
-    files: urls,
+    pdfMode,
+    files: {
+      ...urls,
+      thumb: thumbUrl !== undefined ? thumbUrl : urls.thumb,
+    },
   };
 
   const idx = existing.completedForms.findIndex((f) => f.formType === formType);

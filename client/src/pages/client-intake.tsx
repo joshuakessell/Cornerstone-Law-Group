@@ -386,8 +386,12 @@ export default function ClientIntake() {
                         className="flex gap-3 items-start border rounded-md p-3 hover:bg-muted/50 cursor-pointer"
                         onClick={() => openViewer(form)}
                       >
-                        <div className="w-16 h-20 overflow-hidden rounded-md border bg-muted/40">
-                          <img src={form.files.thumb} alt={`${formLabel(form.formType)} thumbnail`} className="h-full w-full object-cover" />
+                        <div className="w-16 h-20 overflow-hidden rounded-md border bg-muted/40 flex items-center justify-center">
+                          {form.files.thumb ? (
+                            <img src={form.files.thumb} alt={`${formLabel(form.formType)} thumbnail`} className="h-full w-full object-cover" />
+                          ) : (
+                            <FileText className="h-8 w-8 text-muted-foreground" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
