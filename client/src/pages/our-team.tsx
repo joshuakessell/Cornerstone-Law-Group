@@ -4,12 +4,18 @@ import { ContactCTA } from "@/components/ui/contact-cta";
 import { TEAM } from "@/lib/content";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Award, GraduationCap } from "lucide-react";
+import { SEO } from "@/lib/seo";
 
 export default function OurTeam() {
   const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
   return (
     <>
+      <SEO
+        title="Our Team"
+        description="Experienced advocates dedicated to guiding you through your legal journey with expertise and compassion. Meet the Cornerstone Law Group team."
+        path="/our-team"
+      />
       <div className="bg-primary text-white py-12 md:py-16">
         <div className="container mx-auto px-6 md:px-12">
           <motion.h1 

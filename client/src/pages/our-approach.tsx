@@ -2,10 +2,16 @@ import { Section } from "@/components/ui/section";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { CheckCircle2, Users, Scale, HeartHandshake } from "lucide-react";
 import { TESTIMONIALS } from "@/lib/content";
+import { SEO } from "@/lib/seo";
 
 export default function OurApproach() {
   return (
     <>
+      <SEO
+        title="Our Approach"
+        description="We believe in resolving conflict, not escalating it. Our collaborative law and mediation approach helps you move forward with dignity and financial security."
+        path="/our-approach"
+      />
       <div className="bg-primary text-white py-16 md:py-20 relative overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Our Approach</h1>

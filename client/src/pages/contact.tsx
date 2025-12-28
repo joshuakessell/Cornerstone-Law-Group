@@ -16,6 +16,7 @@ import * as z from "zod";
 import { format } from "date-fns";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { SEO } from "@/lib/seo";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -85,6 +86,11 @@ export default function Contact() {
 
   return (
     <>
+      <SEO
+        title="Contact Us"
+        description="Take the first step towards clarity. Schedule a consultation to discuss your family law case with our experienced team in Dallas."
+        path="/contact"
+      />
       <div className="bg-primary text-white py-16 md:py-20">
         <div className="container mx-auto px-6 md:px-12">
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>

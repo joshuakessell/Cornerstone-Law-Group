@@ -1,6 +1,7 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -14,6 +15,7 @@ import OurTeam from "@/pages/our-team";
 import Services from "@/pages/services";
 import Contact from "@/pages/contact";
 import ClientArea from "@/pages/client-area";
+import ClientPortal from "@/pages/client-portal";
 import ClientIntake from "@/pages/client-intake";
 import IntakeBasic from "@/pages/intake/intake-basic";
 import IntakeDivorce from "@/pages/intake/intake-divorce";
@@ -69,6 +71,7 @@ function AnimatedRoutes() {
           <Route path="/services" component={Services} />
           <Route path="/contact" component={Contact} />
           <Route path="/client-area" component={ClientArea} />
+          <Route path="/client-portal" component={ClientPortal} />
           <Route path="/client-intake" component={ClientIntake} />
           <Route path="/intake/basic" component={IntakeBasic} />
           <Route path="/intake/divorce" component={IntakeDivorce} />
@@ -104,10 +107,12 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Router />
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <Router />
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

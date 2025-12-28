@@ -6,6 +6,7 @@ import { Link } from "wouter";
 import { ArrowRight, Shield, Heart, Scale, X, Play } from "lucide-react";
 import { useLocalStorageBoolean } from "@/hooks/useLocalStorageBoolean";
 import { HeroVideo } from "@/components/home/HeroVideo";
+import { SEO } from "@/lib/seo";
 import familyImage from "@assets/generated_images/happy_family_walking_in_a_park.png";
 import consultationImage from "@assets/generated_images/professional_client_consultation_meeting.png";
 
@@ -17,7 +18,13 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <>
+      <SEO
+        title="Dallas Family Law"
+        description="Compassionate, strategic family law representation in Dallas. Divorce, custody, and collaborative law solutions protecting what matters most."
+        path="/"
+      />
+      <div className="flex flex-col min-h-screen">
       {/* Hero Section with Video Background */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         <HeroVideo
@@ -191,5 +198,6 @@ export default function Home() {
       </Section>
       <ContactCTA />
     </div>
+    </>
   );
 }

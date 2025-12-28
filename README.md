@@ -39,3 +39,105 @@ The intake system supports three PDF generation modes controlled by the `INTAKE_
 - Thumbnails require Poppler's `pdftoppm` on PATH but are optional - form completion will succeed even if thumbnail generation fails. The UI displays a placeholder icon when thumbnails are missing.
 - Template conversion route requires LibreOffice (`soffice`) on PATH.
 
+## Crawling + Pre-rendering
+
+The application uses pre-rendering to make marketing pages readable without JavaScript for better SEO and crawler support.
+
+### Pre-rendered Routes
+
+The following public marketing routes are pre-rendered at build time:
+- `/` (Home)
+- `/our-approach`
+- `/our-team`
+- `/services`
+- `/contact`
+- `/client-portal`
+
+These routes generate static HTML files that include the full page content in the initial HTML response, making them readable by search engine crawlers and accessible without JavaScript.
+
+### SEO Files
+
+- **robots.txt**: Located at `client/public/robots.txt`, allows all crawlers and points to the sitemap.
+- **sitemap.xml**: Located at `client/public/sitemap.xml`, lists all crawlable public routes with priorities and change frequencies.
+
+Both files are automatically copied to the build output during the Vite build process.
+
+### Environment Variables
+
+For production builds, set these environment variables:
+
+- `VITE_SITE_ORIGIN`: The canonical site URL (e.g., `https://cornerstone-law-group.replit.app`). Used for canonical URLs and Open Graph tags. Defaults to the Replit domain if not set.
+- `VITE_CLIO_PORTAL_URL`: The Clio for Clients portal login URL. Defaults to `https://app.clio.com` if not set.
+
+### Build Process
+
+**Prerequisites**: Playwright browsers must be installed before building:
+```bash
+npx playwright install chromium
+```
+Alternatively, you can use:
+```bash
+pnpm exec playwright install chromium
+```
+
+The build process automatically pre-renders marketing routes:
+
+```bash
+pnpm build
+```
+
+This will:
+1. Build the Vite client application
+2. Start a temporary static server
+3. Use Playwright to render each route and capture the HTML
+4. Save pre-rendered HTML files to `dist/public/<route>/index.html`
+5. Stop the temporary server
+6. Build the Express server
+
+### Running in Production
+
+```bash
+pnpm start
+```
+
+The server will:
+- Serve pre-rendered HTML for marketing routes (so crawlers get actual content)
+- Fall back to SPA mode (index.html) for authenticated/interactive routes
+- Serve robots.txt and sitemap.xml from the site root
+
+### Verification
+
+To verify that pre-rendered HTML files exist and contain meaningful content:
+
+```bash
+pnpm verify:prerender
+```
+
+This checks that:
+- All expected HTML files exist
+- Each file contains expected headings/text
+- Root divs contain rendered content (not just empty placeholders)
+- Meta tags are present
+
+### Testing Pre-rendered Content
+
+To verify a route returns pre-rendered HTML (not just a shell):
+
+```bash
+curl https://your-domain.com/our-team
+```
+
+You should see HTML containing actual page content (headings, text, etc.) rather than just `<div id="root"></div>`.
+
+### How It Works
+
+1. **Build time**: Playwright renders each marketing route by loading the built SPA in a headless browser and capturing the fully-rendered HTML.
+2. **Runtime**: The Express server checks if a pre-rendered HTML file exists for the requested route:
+   - If yes: serves the pre-rendered HTML (crawlers get real content)
+   - If no: serves the SPA index.html (for client-side routing)
+3. **Meta tags**: Each page uses `react-helmet-async` to set page-specific meta tags (title, description, canonical URL, Open Graph tags) that are included in the pre-rendered HTML.
+
+### Client Portal
+
+The `/client-portal` route provides a landing page that directs users to the Clio for Clients portal. Set `VITE_CLIO_PORTAL_URL` to customize the portal login URL.
+

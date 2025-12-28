@@ -2,10 +2,16 @@ import { Section } from "@/components/ui/section";
 import { ContactCTA } from "@/components/ui/contact-cta";
 import { SERVICES } from "@/lib/content";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { SEO } from "@/lib/seo";
 
 export default function Services() {
   return (
     <>
+      <SEO
+        title="Services"
+        description="Comprehensive legal support for all aspects of family law. Divorce, custody, modification, enforcement, and collaborative law solutions."
+        path="/services"
+      />
       <div className="bg-primary text-white py-16 md:py-20">
         <div className="container mx-auto px-6 md:px-12">
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Our Services</h1>
