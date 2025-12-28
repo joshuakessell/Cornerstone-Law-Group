@@ -41,83 +41,70 @@
   --font-serif: 'Playfair Display', serif;
 }
 
-/* Dark Professional Theme - Matching Cornerstone Law Texas */
+/* Dark / Light design tokens for premium, edgy feel */
 :root,
 .dark {
-  /* Deep Charcoal/Navy Background */
-  --background: 220 20% 12%;
-  /* Light Text - Improved contrast for readability */
-  --foreground: 40 10% 96%;
+  --background: 220 28% 8%;
+  --foreground: 42 35% 95%;
 
-  /* Slightly lighter cards for contrast */
-  --card: 220 18% 16%;
-  --card-foreground: 40 10% 96%;
+  --card: 220 26% 10%;
+  --card-foreground: 42 35% 95%;
   
-  --popover: 220 18% 18%;
-  --popover-foreground: 40 10% 96%;
+  --popover: 220 26% 12%;
+  --popover-foreground: 42 35% 95%;
   
-  /* Gold/Amber Primary - Elegant, Premium */
-  --primary: 38 70% 55%;
-  --primary-foreground: 220 20% 10%;
+  /* Accent gold for CTAs */
+  --primary: 38 80% 52%;
+  --primary-foreground: 230 45% 12%;
   
-  /* Dark secondary */
-  --secondary: 220 15% 20%;
-  --secondary-foreground: 40 10% 95%;
+  /* Deep navy trims */
+  --secondary: 220 24% 16%;
+  --secondary-foreground: 42 30% 92%;
   
-  /* Muted dark elements - Improved contrast */
-  --muted: 220 15% 18%;
-  --muted-foreground: 220 10% 75%;
+  --muted: 220 22% 16%;
+  --muted-foreground: 220 12% 76%;
   
-  /* Gold Accent */
-  --accent: 38 70% 55%;
-  --accent-foreground: 220 20% 10%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 220 35% 12%;
   
   --destructive: 0 70% 50%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 42 35% 95%;
 
-  --border: 220 15% 22%;
-  --input: 220 15% 22%;
-  --ring: 38 70% 55%;
+  --border: 220 20% 18%;
+  --input: 220 20% 18%;
+  --ring: 38 80% 52%;
   
-  --radius: 0.5rem;
+  --radius: 0.65rem;
 }
 
-/* Light Theme */
 .light {
-  /* Light Background */
-  --background: 0 0% 100%;
-  /* Dark Text - Improved contrast */
-  --foreground: 220 20% 8%;
+  --background: 42 32% 96%;
+  --foreground: 220 30% 12%;
 
-  /* Light cards */
-  --card: 0 0% 98%;
-  --card-foreground: 220 20% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 30% 12%;
   
   --popover: 0 0% 100%;
-  --popover-foreground: 220 20% 8%;
+  --popover-foreground: 220 30% 12%;
   
-  /* Gold/Amber Primary - Elegant, Premium */
-  --primary: 38 70% 55%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 38 80% 48%;
+  --primary-foreground: 220 30% 10%;
   
-  /* Light secondary */
-  --secondary: 220 10% 96%;
-  --secondary-foreground: 220 20% 8%;
+  --secondary: 220 12% 92%;
+  --secondary-foreground: 220 28% 12%;
   
-  /* Muted light elements - Improved contrast */
-  --muted: 220 10% 96%;
-  --muted-foreground: 220 10% 35%;
+  --muted: 220 10% 90%;
+  --muted-foreground: 220 14% 36%;
   
-  /* Gold Accent */
-  --accent: 38 70% 55%;
-  --accent-foreground: 0 0% 100%;
+  --accent: 220 16% 86%;
+  --accent-foreground: 220 28% 12%;
   
-  --destructive: 0 70% 50%;
+  --destructive: 0 72% 50%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 220 10% 85%;
-  --input: 220 10% 85%;
-  --ring: 38 70% 55%;
+  --border: 220 18% 82%;
+  --input: 220 18% 82%;
+  --ring: 38 80% 48%;
 }
 
 @layer base {
@@ -129,12 +116,27 @@
     font-weight: 600; /* Avenir Next LT Pro Demi equivalent - Inter Demi (600) */
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-semibold tracking-tight;
+    @apply font-serif font-semibold tracking-tight text-foreground;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .glass {
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--color-card) 85%, transparent);
+  }
+}
+
+@layer base {
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
   }
 }

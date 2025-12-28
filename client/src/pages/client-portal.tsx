@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, ExternalLink, FileText } from "lucide-react";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
-
-const CLIO_PORTAL_URL = import.meta.env.VITE_CLIO_PORTAL_URL || "https://app.clio.com";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export default function ClientPortal() {
   return (
@@ -22,7 +21,7 @@ export default function ClientPortal() {
           
           <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-primary">Client Portal</h1>
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-xl mx-auto">
-            Access your secure client portal to view case documents, communicate with your attorney, and stay up to date on your case.
+            Use Clio for Clients for passwordless, secure access to documents, messages, and tasks. Sign in with the same email we use to contact you.
           </p>
           
           <div className="space-y-4 mb-8">
@@ -32,25 +31,25 @@ export default function ClientPortal() {
               className="w-full rounded-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
             >
               <a 
-                href={CLIO_PORTAL_URL} 
+                href={SITE_CONFIG.portalUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2"
               >
-                Sign in to Client Portal
+                Open Client Portal
                 <ExternalLink className="w-5 h-5" />
               </a>
             </Button>
             
             <p className="text-sm text-muted-foreground">
-              This will take you to Clio for Clients, our secure client portal platform.
+              Tip: use the invitation email or reset with the same email on file for a passwordless link.
             </p>
           </div>
 
           <div className="border-t border-border pt-8 mt-8">
-            <h2 className="font-serif text-xl font-bold mb-4 text-foreground">New Client?</h2>
+            <h2 className="font-serif text-xl font-bold mb-4 text-foreground">New client?</h2>
             <p className="text-muted-foreground mb-6">
-              If you're a new client or need to submit information, start with our client intake process.
+              Start with secure intake. We’ll send portal access after engagement.
             </p>
             <Button 
               asChild 

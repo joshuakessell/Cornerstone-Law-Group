@@ -6,16 +6,26 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
-    // Check localStorage for saved theme preference
     const saved = localStorage.getItem("cs_theme");
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-      document.documentElement.classList.toggle("light", saved === "light");
-      document.documentElement.classList.toggle("dark", saved === "dark");
-    } else {
-      // Default to dark
-      document.documentElement.classList.add("dark");
-    }
+    const systemPrefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+    const initial = saved === "light" || saved === "dark" ? saved : systemPrefersDark ? "dark" : "light";
+
+    setTheme(initial);
+    document.documentElement.classList.toggle("light", initial === "light");
+    document.documentElement.classList.toggle("dark", initial === "dark");
+
+    const handler = (event: MediaQueryListEvent) => {
+      const next = event.matches ? "dark" : "light";
+      if (!localStorage.getItem("cs_theme")) {
+        setTheme(next);
+        document.documentElement.classList.toggle("light", next === "light");
+        document.documentElement.classList.toggle("dark", next === "dark");
+      }
+    };
+
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    media?.addEventListener("change", handler);
+    return () => media?.removeEventListener("change", handler);
   }, []);
 
   const toggleTheme = () => {

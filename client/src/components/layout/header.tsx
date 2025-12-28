@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Phone } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Menu, X, Phone, CalendarClock, CreditCard } from "lucide-react";
+import { useEffect, useState } from "react";
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,97 +16,91 @@ export function Header() {
   }, [location]);
 
   return (
-    <header 
-      className="sticky top-0 left-0 right-0 z-50 bg-background py-3 border-b border-border"
-    >
-      <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Logo - Left side (Desktop only) */}
-        <Link href="/" className="hidden lg:flex items-center shrink-0">
-          <a>
-            <img
-              src="/brand/cornerstone_logo_footer.png"
-              alt="Cornerstone Law Group"
-              className="h-20 w-auto dark:hidden"
-              draggable={false}
-            />
-            <img
-              src="/brand/logo-black.png"
-              alt="Cornerstone Law Group"
-              className="hidden h-20 w-auto dark:block"
-              draggable={false}
-            />
+    <header className="sticky top-0 left-0 right-0 z-50 backdrop-blur bg-background/90 border-b border-border">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-4 px-3 py-2 bg-primary text-primary-foreground rounded">
+        Skip to content
+      </a>
+
+      {/* Utility bar */}
+      <div className="border-b border-border/60 bg-secondary/60">
+        <div className="container mx-auto px-4 md:px-8 flex items-center justify-between gap-3 py-2 text-sm">
+          <div className="flex items-center gap-3">
+            <a href={`tel:${COMPANY_INFO.phone}`} className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+              <Phone className="w-4 h-4" />
+              <span>{COMPANY_INFO.phone}</span>
+            </a>
+            <span className="hidden sm:inline text-muted-foreground">Dallas & surrounding areas</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <a href="/client-portal" className="hover:text-primary transition-colors">Client Portal</a>
+            <a href="/pay-online" className="hover:text-primary transition-colors inline-flex items-center gap-1">
+              <CreditCard className="w-4 h-4" /> Pay Online
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main nav */}
+      <div className="container mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
+        <Link href="/" className="flex items-center gap-3 shrink-0">
+          <a className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center">
+              <span className="text-primary font-serif text-xl">CL</span>
+            </div>
+            <div className="hidden sm:block">
+              <p className="font-semibold text-foreground leading-tight">Cornerstone Law Group, P.C.</p>
+              <p className="text-xs text-muted-foreground">{COMPANY_INFO.tagline}</p>
+            </div>
           </a>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-6 flex-1 justify-center">
+        <nav className="hidden lg:flex items-center gap-6">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href}>
-              <a className={cn(
-                "text-base font-medium transition-colors hover:text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
-                location === link.href ? "text-primary font-semibold after:w-full" : "text-muted-foreground"
-              )}>
+              <a
+                className={cn(
+                  "text-sm font-semibold uppercase tracking-wide hover:text-primary transition-colors pb-1 border-b-2 border-transparent",
+                  location === link.href && "text-primary border-primary"
+                )}
+              >
                 {link.label}
               </a>
             </Link>
           ))}
-          <a 
-            href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-base font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            Make a Payment
-          </a>
-          <Button asChild className="rounded-full px-6 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all hover:scale-105">
-            <Link href="/client-intake">New Client Intake</Link>
-          </Button>
-          <ThemeToggle />
         </nav>
 
-        {/* Mobile Toggle and Theme Toggle */}
-        <div className="lg:hidden flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <button 
-            className="p-2 text-primary hover:bg-muted rounded-full transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
+          <Button asChild size="lg" className="hidden md:inline-flex rounded-full px-5 h-11 shadow-lg">
+            <a href="/schedule" className="inline-flex items-center gap-2">
+              <CalendarClock className="w-4 h-4" />
+              Schedule Consultation
+            </a>
+          </Button>
+          <button
+            className="p-2 rounded-full border border-border hover:border-primary hover:text-primary lg:hidden"
+            onClick={() => setIsOpen((v) => !v)}
             aria-label="Toggle menu"
           >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-        
-        {/* Mobile Logo */}
-        <Link href="/" className="lg:hidden absolute left-1/2 transform -translate-x-1/2">
-          <a>
-            <img
-              src="/brand/cornerstone_logo_footer.png"
-              alt="Cornerstone Law Group"
-              className="h-20 w-auto dark:hidden"
-              draggable={false}
-            />
-            <img
-              src="/brand/logo-black.png"
-              alt="Cornerstone Law Group"
-              className="hidden h-20 w-auto dark:block"
-              draggable={false}
-            />
-          </a>
-        </Link>
       </div>
 
-      {/* Mobile Menu */}
-      <div className={cn(
-        "fixed inset-x-0 top-[70px] bg-card border-b border-border shadow-lg transition-all duration-300 ease-in-out lg:hidden overflow-hidden",
-        isOpen ? "max-h-screen opacity-100 py-6" : "max-h-0 opacity-0 py-0"
-      )}>
-        <div className="container mx-auto px-6 flex flex-col gap-4">
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          "lg:hidden transition-[max-height] duration-300 overflow-hidden border-t border-border bg-card",
+          isOpen ? "max-h-[420px]" : "max-h-0"
+        )}
+      >
+        <div className="px-4 py-4 space-y-3">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href}>
-              <a 
+              <a
                 className={cn(
-                  "text-lg font-medium py-2 border-b border-border",
-                  location === link.href ? "text-primary pl-2 border-l-4 border-l-primary border-b-0 bg-muted" : "text-muted-foreground"
+                  "block py-3 px-3 rounded-lg border border-transparent hover:border-primary/40 hover:bg-muted",
+                  location === link.href ? "text-primary border-primary/40 bg-muted" : "text-foreground"
                 )}
                 onClick={() => setIsOpen(false)}
               >
@@ -113,29 +108,15 @@ export function Header() {
               </a>
             </Link>
           ))}
-           <a 
-            href="https://secure.lawpay.com/pages/cornerstonelawtexas/trust?gr_used=true" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-lg font-medium py-2 text-muted-foreground"
-          >
-            Make a Payment
-          </a>
-          <Button asChild className="mt-4 w-full rounded-full py-6 text-lg bg-primary hover:bg-primary/90">
-            <Link href="/client-intake">New Client Intake</Link>
-          </Button>
-          <Button asChild variant="outline" className="w-full rounded-full py-6 text-lg border-primary text-primary">
-            <Link href="/contact">Schedule Consultation</Link>
-          </Button>
-          
-          <div className="mt-6 p-4 bg-muted rounded-lg flex flex-col gap-2">
-             <span className="text-xs text-muted-foreground uppercase tracking-wider">Contact Us</span>
-             <a href={`tel:${COMPANY_INFO.phone}`} className="flex items-center gap-2 text-primary font-bold">
-               <Phone className="h-4 w-4" /> {COMPANY_INFO.phone}
-             </a>
-             <span className="text-sm text-muted-foreground">
-               {COMPANY_INFO.address.street}, {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
-             </span>
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <Button asChild size="lg" className="rounded-full">
+              <a href="/schedule">Schedule</a>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-full border-primary text-primary">
+              <a href={SITE_CONFIG.intakeUrls.general} target="_blank" rel="noreferrer">
+                Intake
+              </a>
+            </Button>
           </div>
         </div>
       </div>

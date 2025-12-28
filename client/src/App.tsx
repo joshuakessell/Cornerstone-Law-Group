@@ -8,11 +8,23 @@ import { Footer } from "@/components/layout/footer";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { IntroOverlay } from "@/components/site/IntroOverlay";
+import { MobileDock } from "@/components/layout/mobile-dock";
+import { LocalBusinessSchema } from "@/components/site/LocalBusinessSchema";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
 import OurTeam from "@/pages/our-team";
 import Services from "@/pages/services";
+import ServiceDetail from "@/pages/service-detail";
+import TeamMember from "@/pages/team-member";
+import Reviews from "@/pages/reviews";
+import Resources from "@/pages/resources";
+import ResourceGuide from "@/pages/resource-guide";
+import FAQ from "@/pages/resources-faq";
+import Schedule from "@/pages/schedule";
+import PayOnline from "@/pages/pay-online";
+import ServiceAreas from "@/pages/service-areas";
 import Contact from "@/pages/contact";
 import ClientArea from "@/pages/client-area";
 import ClientPortal from "@/pages/client-portal";
@@ -67,9 +79,18 @@ function AnimatedRoutes() {
         <Switch location={location}>
           <Route path="/" component={Home} />
           <Route path="/our-approach" component={OurApproach} />
+          <Route path="/our-team/:slug" component={TeamMember} />
           <Route path="/our-team" component={OurTeam} />
+          <Route path="/services/:slug" component={ServiceDetail} />
           <Route path="/services" component={Services} />
+          <Route path="/service-areas" component={ServiceAreas} />
+          <Route path="/reviews" component={Reviews} />
+          <Route path="/resources/faq" component={FAQ} />
+          <Route path="/resources/:slug" component={ResourceGuide} />
+          <Route path="/resources" component={Resources} />
           <Route path="/contact" component={Contact} />
+          <Route path="/schedule" component={Schedule} />
+          <Route path="/pay-online" component={PayOnline} />
           <Route path="/client-area" component={ClientArea} />
           <Route path="/client-portal" component={ClientPortal} />
           <Route path="/client-intake" component={ClientIntake} />
@@ -96,11 +117,14 @@ function Router() {
   return (
     <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
       <ScrollToTop />
+      <LocalBusinessSchema />
+      <IntroOverlay />
       <Header />
       <main className="flex-grow">
         <AnimatedRoutes />
       </main>
       <Footer />
+      <MobileDock />
     </div>
   );
 }

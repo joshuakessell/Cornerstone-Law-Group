@@ -1,161 +1,51 @@
-import { useState } from "react";
 import { Section } from "@/components/ui/section";
-import { ContactCTA } from "@/components/ui/contact-cta";
 import { TEAM } from "@/lib/content";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Award, GraduationCap } from "lucide-react";
 import { SEO } from "@/lib/seo";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 export default function OurTeam() {
-  const [selectedMember, setSelectedMember] = useState<number | null>(null);
-
   return (
     <>
       <SEO
         title="Our Team"
-        description="Experienced advocates dedicated to guiding you through your legal journey with expertise and compassion. Meet the Cornerstone Law Group team."
+        description="Meet the Cornerstone Law Group, P.C. team—strategic advocates with a calm, client-centered approach."
         path="/our-team"
       />
-      <div className="bg-primary text-white py-12 md:py-16">
-        <div className="container mx-auto px-6 md:px-12">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="font-serif text-3xl md:text-4xl font-bold mb-3"
-          >
-            A Team Dedicated to Holistic Client Care
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-base md:text-lg text-primary-foreground/80 max-w-2xl leading-relaxed"
-          >
-            Experienced advocates dedicated to guiding you through your legal journey with expertise and compassion.
-          </motion.p>
+      <Section background="none" padded>
+        <div className="max-w-3xl space-y-3">
+          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Team</p>
+          <h1 className="font-serif text-4xl text-foreground">Your legal + support team</h1>
+          <p className="text-muted-foreground">
+            Clear cards, no overlapping shapes. Click through for bios, focus areas, and credentials.
+          </p>
         </div>
-      </div>
-
-      <Section padded animate={false}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12">
-          {TEAM.map((member, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`cursor-pointer group relative ${selectedMember === index ? 'ring-4 ring-primary rounded-xl' : ''}`}
-              onClick={() => setSelectedMember(selectedMember === index ? null : index)}
-              data-testid={`team-member-${index}`}
-            >
-              <div className="aspect-[3/4] overflow-hidden rounded-xl bg-muted shadow-lg">
-                <img 
-                  src={member.image} 
-                  alt={member.name}
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="font-serif text-lg md:text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                  {member.name}
-                </h3>
-                <p className="text-primary text-xs md:text-sm font-medium uppercase tracking-wider">
-                  {member.role}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <AnimatePresence mode="wait">
-          {selectedMember !== null && (
-            <motion.div
-              key={selectedMember}
-              initial={{ opacity: 0, y: 20, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: -20, height: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="overflow-hidden"
-            >
-              <div className="bg-card border border-border rounded-2xl shadow-xl p-6 md:p-10 relative">
-                <button 
-                  onClick={() => setSelectedMember(null)}
-                  className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted transition-colors"
-                  data-testid="close-member-details"
-                >
-                  <X className="w-5 h-5 text-muted-foreground" />
-                </button>
-                
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.2 }}
-                  >
-                    <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary mb-2">
-                      {TEAM[selectedMember].name}
-                    </h2>
-                    <p className="text-primary/70 text-sm font-bold uppercase tracking-wider mb-6">
-                      {TEAM[selectedMember].role}
-                    </p>
-                    
-                    <div className="prose prose-lg max-w-none text-muted-foreground mb-8">
-                      {TEAM[selectedMember].fullBio.split('\n\n').map((paragraph, i) => (
-                        <p key={i} className="mb-4 leading-relaxed">{paragraph}</p>
-                      ))}
-                    </div>
-                    
-                    {TEAM[selectedMember].honors && TEAM[selectedMember].honors.length > 0 && (
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="mb-6"
-                      >
-                        <h4 className="flex items-center gap-2 font-serif text-lg font-bold text-foreground mb-3">
-                          <Award className="w-5 h-5 text-primary" />
-                          Honors & Accreditations
-                        </h4>
-                        <ul className="space-y-2">
-                          {TEAM[selectedMember].honors.map((honor, i) => (
-                            <li key={i} className="text-muted-foreground text-sm flex items-start gap-2">
-                              <span className="text-primary mt-1">•</span>
-                              {honor}
-                            </li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                    
-                    {TEAM[selectedMember].education && TEAM[selectedMember].education.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                      >
-                        <h4 className="flex items-center gap-2 font-serif text-lg font-bold text-foreground mb-3">
-                          <GraduationCap className="w-5 h-5 text-primary" />
-                          Education
-                        </h4>
-                        <ul className="space-y-2">
-                          {TEAM[selectedMember].education.map((edu, i) => (
-                            <li key={i} className="text-muted-foreground text-sm flex items-start gap-2">
-                              <span className="text-primary mt-1">•</span>
-                              {edu}
-                            </li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </Section>
 
-      <ContactCTA />
+      <Section background="muted" padded>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {TEAM.map((member) => (
+            <Link key={member.slug} href={`/our-team/${member.slug}`}>
+              <a className="bg-card border border-border rounded-xl p-4 flex flex-col gap-3 hover:border-primary/50 transition-colors">
+                <div className="aspect-[4/3] rounded-lg overflow-hidden bg-muted">
+                  <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                </div>
+                <div>
+                  <p className="font-serif text-xl text-foreground">{member.name}</p>
+                  <p className="text-sm text-primary font-semibold">{member.title}</p>
+                </div>
+                <p className="text-sm text-muted-foreground line-clamp-3">{member.shortBio}</p>
+                <span className="text-primary text-sm font-semibold">View bio →</span>
+              </a>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-10">
+          <Button asChild className="rounded-full px-6">
+            <a href="/schedule">Schedule Consultation</a>
+          </Button>
+        </div>
+      </Section>
     </>
   );
 }

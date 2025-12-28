@@ -1,57 +1,64 @@
 import { Section } from "@/components/ui/section";
-import { ContactCTA } from "@/components/ui/contact-cta";
+import { Button } from "@/components/ui/button";
 import { SERVICES } from "@/lib/content";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
+import { SITE_CONFIG } from "@/lib/siteConfig";
+import { ArrowRight } from "lucide-react";
 
 export default function Services() {
   return (
     <>
       <SEO
-        title="Services"
-        description="Comprehensive legal support for all aspects of family law. Divorce, custody, modification, enforcement, and collaborative law solutions."
+        title="Family Law Services in Dallas"
+        description="Divorce, custody, mediation, collaborative law, and estate planning for Dallas families."
         path="/services"
       />
-      <div className="bg-primary text-white py-16 md:py-20">
-        <div className="container mx-auto px-6 md:px-12">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Our Services</h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
-            Comprehensive legal support for all aspects of family law. We guide you through the complexities with clarity and purpose.
+      <Section background="none" padded>
+        <div className="space-y-4 max-w-3xl">
+          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Services</p>
+          <h1 className="font-serif text-4xl text-foreground">Family law, modernized</h1>
+          <p className="text-muted-foreground">
+            Eight practice areas designed to reduce conflict, protect assets, and prioritize children. Each page below
+            shares how we help, what to expect, FAQs, and next steps.
           </p>
-        </div>
-      </div>
-
-      <Section padded>
-        <div className="max-w-4xl mx-auto space-y-24">
-          {SERVICES.map((service, index) => (
-            <div key={service.slug} id={service.slug} className="scroll-mt-32 border-b border-border pb-16 last:border-0">
-              <span className="text-accent font-bold text-sm mb-2 block">0{index + 1}</span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-primary">{service.title}</h2>
-              <p className="text-lg md:text-xl text-foreground/90 leading-relaxed mb-8">
-                {service.description}
-              </p>
-              
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="details" className="border-0">
-                  <AccordionTrigger className="text-primary font-bold hover:text-accent hover:no-underline text-lg justify-start gap-3">
-                    Learn more about {service.title}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-foreground/90 leading-relaxed text-base pt-4">
-                    <p className="mb-4">
-                      At Cornerstone Law Group, our approach to {service.title.toLowerCase()} is rooted in strategic preparation and compassionate understanding. We know that every family is unique, and we tailor our representation to meet your specific goals.
-                    </p>
-                    <p>
-                      Whether through negotiation, mediation, or litigation when necessary, we are committed to protecting your rights and securing a stable future for you and your loved ones.
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-          ))}
+          <div className="flex gap-3">
+            <Button asChild className="rounded-full px-6">
+              <a href="/schedule">Schedule Consultation</a>
+            </Button>
+            <Button asChild variant="outline" className="rounded-full px-6 border-primary text-primary">
+              <a href={SITE_CONFIG.intakeUrls.general} target="_blank" rel="noreferrer">
+                Start Secure Intake
+              </a>
+            </Button>
+          </div>
         </div>
       </Section>
 
-      <ContactCTA />
+      <Section background="muted" padded>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES.map((service) => (
+            <Link key={service.slug} href={`/services/${service.slug}`}>
+              <a className="group bg-card border border-border rounded-xl p-5 h-full flex flex-col justify-between hover:border-primary/40 hover:-translate-y-1 transition-all">
+                <div className="space-y-3">
+                  <h2 className="font-serif text-2xl text-foreground group-hover:text-primary transition-colors">
+                    {service.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground line-clamp-4">{service.shortDescription}</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    {service.howWeHelp.slice(0, 3).map((item) => (
+                      <li key={item}>• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <span className="mt-4 inline-flex items-center gap-2 text-primary text-sm font-semibold">
+                  View details <ArrowRight className="w-4 h-4" />
+                </span>
+              </a>
+            </Link>
+          ))}
+        </div>
+      </Section>
     </>
   );
 }

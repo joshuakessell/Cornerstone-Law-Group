@@ -141,3 +141,33 @@ You should see HTML containing actual page content (headings, text, etc.) rather
 
 The `/client-portal` route provides a landing page that directs users to the Clio for Clients portal. Set `VITE_CLIO_PORTAL_URL` to customize the portal login URL.
 
+## Environment Variables
+
+This project reads integration URLs from environment variables.
+
+### Prefix rules
+- Next.js: use `NEXT_PUBLIC_` variables
+- Vite: use `VITE_` variables
+
+### Required
+- `{PREFIX}CLIO_SCHEDULER_URL` – Clio Scheduler booking page URL
+- `{PREFIX}CLIO_CLIENT_PORTAL_URL` – Clio for Clients portal login URL
+- `{PREFIX}LAWPAY_URL` – LawPay payment URL
+- `{PREFIX}CLIO_GROW_INTAKE_BASE_URL` – fallback Clio Grow public intake form URL
+
+### Optional per-practice overrides (take precedence over BASE)
+- `{PREFIX}CLIO_GROW_INTAKE_DIVORCE_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_CHILD_CUSTODY_PARENTING_PLANS_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_MODIFICATION_ENFORCEMENT_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_MEDIATION_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_COLLABORATIVE_LAW_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_PRENUPTIAL_MARITAL_AGREEMENTS_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_ADOPTION_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_WILLS_TRUSTS_ESTATES_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_GENERAL_URL` (optional)
+
+### Resolution logic
+For a given practice area:
+1) Use the per-practice override URL if set
+2) Else use `CLIO_GROW_INTAKE_BASE_URL` if set
+3) Else hide the intake CTA or route to `/contact`

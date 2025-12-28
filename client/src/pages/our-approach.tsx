@@ -1,116 +1,74 @@
 import { Section } from "@/components/ui/section";
-import { ContactCTA } from "@/components/ui/contact-cta";
-import { CheckCircle2, Users, Scale, HeartHandshake } from "lucide-react";
-import { TESTIMONIALS } from "@/lib/content";
 import { SEO } from "@/lib/seo";
+import { Button } from "@/components/ui/button";
 
 export default function OurApproach() {
+  const pillars = [
+    { title: "Strategy & Advocacy", copy: "Clear plans, transparent communication, and courtroom-ready preparation." },
+    { title: "Conflict Reduction", copy: "Mediation and collaborative options first when safe and appropriate." },
+    { title: "Family Stability", copy: "Child-centered outcomes and financial clarity that last." },
+  ];
+
+  const steps = ["Intake", "Strategy", "Plan", "Resolution"];
+
   return (
     <>
       <SEO
         title="Our Approach"
-        description="We believe in resolving conflict, not escalating it. Our collaborative law and mediation approach helps you move forward with dignity and financial security."
+        description="A calm, strategic framework that puts children first, reduces conflict, and prepares for court when needed."
         path="/our-approach"
       />
-      <div className="bg-primary text-white py-16 md:py-20 relative overflow-hidden">
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">Our Approach</h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
-            We believe in resolving conflict, not escalating it. Our goal is to help you move forward with dignity and financial security.
+      <Section background="none" padded>
+        <div className="max-w-4xl space-y-4">
+          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Our Approach</p>
+          <h1 className="font-serif text-4xl text-foreground">Calm decisions. Strong outcomes.</h1>
+          <p className="text-muted-foreground">
+            We blend collaborative mindset with decisive advocacy. Every matter starts with stabilization, then we pick
+            the right process: collaboration, mediation, or litigation.
           </p>
-        </div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/5 blur-3xl rounded-l-full transform translate-x-1/2"></div>
-      </div>
-
-      <Section padded>
-        <div className="max-w-4xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-primary text-center">Three Pillars of Representation</h2>
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm text-center">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                <Scale className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-3 text-foreground">Strategic Clarity</h3>
-              <p className="text-foreground/80">We analyze the complex financial and legal aspects of your case to create a clear roadmap.</p>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm text-center">
-               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                <HeartHandshake className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-3 text-foreground">Constructive Solutions</h3>
-              <p className="text-foreground/80">We prioritize negotiation and settlement to save you the stress and cost of litigation.</p>
-            </div>
-            <div className="bg-card p-6 rounded-xl border border-border shadow-sm text-center">
-               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="font-serif text-xl font-bold mb-3 text-foreground">Family Focused</h3>
-              <p className="text-foreground/80">We never lose sight of the human element, especially when children are involved.</p>
-            </div>
-          </div>
+          <Button asChild className="rounded-full px-6">
+            <a href="/contact">Talk with us</a>
+          </Button>
         </div>
       </Section>
 
       <Section background="muted" padded>
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="relative">
-             <div className="absolute -inset-4 bg-white/50 rounded-2xl transform -rotate-2"></div>
-             <img 
-              src="/brand/Collaborative-Law-scaled.jpg" 
-              alt="Collaborative Law Meeting" 
-              className="relative rounded-lg shadow-xl w-full object-cover aspect-[4/3]"
-              loading="lazy"
-            />
-          </div>
-          <div>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-primary">The Collaborative Difference</h2>
-            <p className="text-lg text-foreground/90 mb-6 leading-relaxed">
-              Traditional divorce litigation often destroys families. Collaborative Law is different. It is a private, voluntary process where you, your spouse, and your respective attorneys commit to reaching a settlement without going to court.
-            </p>
-            <ul className="space-y-4">
-              {[
-                "Maintains privacy and confidentiality",
-                "Preserves co-parenting relationships",
-                "Gives you control over the outcome, not a judge",
-                "Often more cost-effective than litigation"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-foreground">
-                  <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {pillars.map((pillar) => (
+            <div key={pillar.title} className="p-5 bg-card border border-border rounded-xl shadow-sm">
+              <h3 className="font-serif text-xl text-foreground mb-2">{pillar.title}</h3>
+              <p className="text-sm text-muted-foreground">{pillar.copy}</p>
+            </div>
+          ))}
         </div>
       </Section>
 
-      {/* Testimonials Section */}
-      <Section padded background="none">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-12 text-center text-foreground">What Our Clients Say</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {TESTIMONIALS.map((testimonial, idx) => (
-              <div key={idx} className="bg-card p-6 rounded-xl border border-border shadow-sm">
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-primary fill-current" viewBox="0 0 20 20">
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                    </svg>
-                  ))}
+      <Section background="none" padded>
+        <div className="max-w-4xl space-y-6">
+          <h2 className="font-serif text-3xl text-foreground">4-step timeline</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {steps.map((step, idx) => (
+              <div key={step} className="p-4 rounded-xl border border-border bg-card flex gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold">
+                  {idx + 1}
                 </div>
-                <blockquote className="text-foreground mb-4 leading-relaxed">
-                  "{testimonial.quote}"
-                </blockquote>
-                <footer className="text-sm font-semibold text-primary">
-                  — {testimonial.author}
-                </footer>
+                <div>
+                  <p className="font-semibold text-foreground">{step}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {step === "Intake"
+                      ? "Stabilize, gather essentials, define success."
+                      : step === "Strategy"
+                        ? "Select collaborative, mediation, or litigation path."
+                        : step === "Plan"
+                          ? "Evidence, experts, timelines, and communication rhythms."
+                          : "Finalize orders and plan for enforcement or future updates."}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </Section>
-
-      <ContactCTA />
     </>
   );
 }
