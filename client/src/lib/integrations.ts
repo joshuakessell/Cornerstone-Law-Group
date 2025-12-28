@@ -69,6 +69,8 @@ const lawpayUrl = lawpayFromEnv ?? (env.DEV ? "/demo/pay" : null);
 const growBaseUrl = growBaseFromEnv ?? (env.DEV ? "/demo/intake" : null);
 const clientPortalUrl = portalFromEnv ?? "https://clients.clio.com/login";
 
+const isDemoUrl = (url?: string | null): boolean => Boolean(url && url.startsWith("/demo"));
+
 const demoUrls = [
   schedulerUrl,
   lawpayUrl,
@@ -93,7 +95,7 @@ export const integrationsConfig: IntegrationsConfig = {
 export const isRelativeUrl = (url?: string | null): url is string =>
   Boolean(url && url.startsWith("/"));
 
-export const isDemoUrl = (url?: string | null): boolean => Boolean(url && url.startsWith("/demo"));
+export { isDemoUrl };
 
 export const resolveUrl = (url?: string | null): string | null => (url ? url : null);
 
