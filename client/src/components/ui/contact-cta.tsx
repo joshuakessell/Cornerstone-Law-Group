@@ -21,8 +21,8 @@ export function ContactCTA() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button asChild size="lg" className="rounded-full text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl hover:shadow-2xl transition-all">
-            <Link href="/contact">
+          <Button asChild size="lg" className="rounded-full text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl hover:shadow-2xl transition-all" type="button">
+            <Link href="/schedule">
               <span className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" /> Schedule Consultation
               </span>

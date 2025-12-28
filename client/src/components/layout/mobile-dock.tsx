@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Phone, CalendarClock, Shield } from "lucide-react";
+import { Link } from "wouter";
 
 export function MobileDock() {
   return (
@@ -12,13 +13,12 @@ export function MobileDock() {
           <Phone className="w-5 h-5 mb-1" />
           Call
         </a>
-        <a
-          href="/schedule"
-          className="flex flex-col items-center justify-center py-3 text-sm font-semibold text-primary hover:text-primary"
-        >
-          <CalendarClock className="w-5 h-5 mb-1" />
-          Schedule
-        </a>
+        <Link href="/schedule">
+          <a className="flex flex-col items-center justify-center py-3 text-sm font-semibold text-primary hover:text-primary">
+            <CalendarClock className="w-5 h-5 mb-1" />
+            Schedule
+          </a>
+        </Link>
         <Button
           asChild
           variant="ghost"

@@ -87,8 +87,8 @@ export default function TeamMember() {
               </div>
             ) : null}
             <div className="space-y-3">
-              <Button asChild className="w-full rounded-full">
-                <a href="/schedule">Schedule Consultation</a>
+              <Button asChild className="w-full rounded-full" type="button">
+                <Link href="/schedule">Schedule Consultation</Link>
               </Button>
               <Button asChild variant="outline" className="w-full rounded-full border-primary text-primary">
                 <a href="/contact">Contact</a>

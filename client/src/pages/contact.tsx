@@ -1,6 +1,5 @@
 import { Section } from "@/components/ui/section";
 import { ContactFlow } from "@/components/site/ContactFlow";
-import { SchedulerEmbed } from "@/components/site/SchedulerEmbed";
 import { COMPANY_INFO } from "@/lib/content";
 import { SEO } from "@/lib/seo";
 
@@ -27,14 +26,9 @@ export default function Contact() {
       <Section background="muted" padded>
         <div className="max-w-5xl space-y-10">
           <div className="space-y-3">
-            <p className="text-sm uppercase tracking-[0.12em] text-primary font-semibold">Step 1 & 2</p>
+            <p className="text-sm uppercase tracking-[0.12em] text-primary font-semibold">Get Started</p>
             <h2 className="font-serif text-3xl text-foreground">Tell us the basics</h2>
             <ContactFlow />
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-sm uppercase tracking-[0.12em] text-primary font-semibold">Step 3</p>
-            <SchedulerEmbed description="Main action: book your confidential consultation. If the embed is blocked, use the open button." />
           </div>
 
           <p className="text-xs text-muted-foreground">

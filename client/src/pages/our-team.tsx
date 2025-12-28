@@ -41,8 +41,8 @@ export default function OurTeam() {
           ))}
         </div>
         <div className="mt-10">
-          <Button asChild className="rounded-full px-6">
-            <a href="/schedule">Schedule Consultation</a>
+          <Button asChild className="rounded-full px-6" type="button">
+            <Link href="/schedule">Schedule Consultation</Link>
           </Button>
         </div>
       </Section>

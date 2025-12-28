@@ -25,8 +25,8 @@ export default function Services() {
             shares how we help, what to expect, FAQs, and next steps.
           </p>
           <div className="flex gap-3">
-            <Button asChild className="rounded-full px-6">
-              <a href="/schedule">Schedule Consultation</a>
+            <Button asChild className="rounded-full px-6" type="button">
+              <Link href="/schedule">Schedule Consultation</Link>
             </Button>
             <Button asChild variant="outline" className="rounded-full px-6 border-primary text-primary">
               {generalIntakeUrl ? (

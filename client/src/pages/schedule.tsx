@@ -21,8 +21,10 @@ export default function Schedule() {
       </Section>
 
       <Section background="muted" padded>
-        <div className="max-w-4xl mx-auto">
-          <SchedulerEmbed description="Select a time that works for you. We’ll confirm details and send secure intake links." />
+        <div className="flex items-center justify-center min-h-[650px] md:min-h-[800px]">
+          <div className="w-full max-w-4xl">
+            <SchedulerEmbed description="Select a time that works for you. We'll confirm details and send secure intake links." />
+          </div>
         </div>
       </Section>
     </>

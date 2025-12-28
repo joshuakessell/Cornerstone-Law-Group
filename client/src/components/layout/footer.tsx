@@ -61,9 +61,11 @@ export function Footer() {
 
           <div className="space-y-3">
             <h3 className="font-semibold text-foreground">Actions</h3>
-            <a href="/schedule" className="block text-primary font-semibold">
-              Schedule Consultation
-            </a>
+            <Link href="/schedule">
+              <a className="block text-primary font-semibold">
+                Schedule Consultation
+              </a>
+            </Link>
             {generalIntakeUrl ? (
               isRelativeUrl(generalIntakeUrl) ? (
                 <Link href={generalIntakeUrl}>

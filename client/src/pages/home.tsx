@@ -37,8 +37,8 @@ export default function Home() {
       />
       <div className="relative overflow-hidden">
         <section className="relative bg-gradient-to-br from-background via-secondary/40 to-background border-b border-border">
-          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,#d6a84b22,transparent_30%),radial-gradient(circle_at_80%_0%,#7dd3fc18,transparent_25%)]" />
-          <div className="container mx-auto px-6 md:px-12 py-16 md:py-24">
+          <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,#d6a84b22,transparent_30%),radial-gradient(circle_at_80%_0%,#7dd3fc18,transparent_25%)] pointer-events-none" />
+          <div className="container mx-auto px-6 md:px-12 py-16 md:py-24 relative z-10">
             <div className="max-w-5xl space-y-8">
               <p className="uppercase tracking-[0.18em] text-xs text-primary font-semibold flex items-center gap-2">
                 <Sparkle className="w-4 h-4" /> Dallas Family Law
@@ -52,8 +52,8 @@ export default function Home() {
                 move forward.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Button asChild size="lg" className="rounded-full px-8">
-                  <a href="/schedule">Schedule Consultation</a>
+                <Button asChild size="lg" className="rounded-full px-8" type="button">
+                  <Link href="/schedule">Schedule Consultation</Link>
                 </Button>
                 <Button
                   asChild
@@ -229,8 +229,8 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg" className="rounded-full px-6 bg-primary-foreground text-primary">
-                <a href="/schedule">Schedule Consultation</a>
+              <Button asChild size="lg" className="rounded-full px-6 bg-primary-foreground text-primary" type="button">
+                <Link href="/schedule">Schedule Consultation</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full px-6 border-primary-foreground text-primary-foreground">
                 {generalIntakeUrl ? (

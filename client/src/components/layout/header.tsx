@@ -72,11 +72,13 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild size="lg" className="hidden md:inline-flex rounded-full px-5 h-11 shadow-lg">
-            <a href="/schedule" className="inline-flex items-center gap-2">
-              <CalendarClock className="w-4 h-4" />
-              Schedule Consultation
-            </a>
+          <Button asChild size="lg" className="hidden md:inline-flex rounded-full px-5 h-11 shadow-lg" type="button">
+            <Link href="/schedule">
+              <span className="inline-flex items-center gap-2">
+                <CalendarClock className="w-4 h-4" />
+                Schedule Consultation
+              </span>
+            </Link>
           </Button>
           <button
             className="p-2 rounded-full border border-border hover:border-primary hover:text-primary lg:hidden"
@@ -110,8 +112,8 @@ export function Header() {
             </Link>
           ))}
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <Button asChild size="lg" className="rounded-full">
-              <a href="/schedule">Schedule</a>
+            <Button asChild size="lg" className="rounded-full" type="button">
+              <Link href="/schedule">Schedule</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full border-primary text-primary">
               {generalIntakeUrl ? (

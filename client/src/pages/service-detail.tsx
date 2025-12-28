@@ -1,4 +1,4 @@
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { SERVICES } from "@/lib/content/services";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
@@ -63,8 +63,8 @@ export default function ServiceDetail() {
                 ))}
               </ul>
               <div className="mt-4 space-y-3">
-                <Button asChild className="w-full rounded-full">
-                  <a href="/schedule">Schedule Consultation</a>
+                <Button asChild className="w-full rounded-full" type="button">
+                  <Link href="/schedule">Schedule Consultation</Link>
                 </Button>
                 <Button
                   asChild

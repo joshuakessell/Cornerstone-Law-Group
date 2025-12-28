@@ -20,8 +20,8 @@ export default function ResourceGuide() {
           <h1 className="font-serif text-4xl text-foreground">{guide.title}</h1>
           <p className="text-muted-foreground">{guide.hero}</p>
           <div className="flex gap-3">
-            <Button asChild className="rounded-full px-6">
-              <a href="/schedule">Schedule Consultation</a>
+            <Button asChild className="rounded-full px-6" type="button">
+              <Link href="/schedule">Schedule Consultation</Link>
             </Button>
             <Button asChild variant="outline" className="rounded-full px-6 border-primary text-primary">
               <Link href="/resources">Back to resources</Link>
@@ -73,8 +73,8 @@ export default function ResourceGuide() {
             <p className="text-primary-foreground/80 mt-2">Calm, confidential consultations for Dallas families.</p>
           </div>
           <div className="flex gap-3">
-            <Button asChild size="lg" className="rounded-full px-6 bg-primary-foreground text-primary">
-              <a href="/schedule">Schedule Consultation</a>
+            <Button asChild size="lg" className="rounded-full px-6 bg-primary-foreground text-primary" type="button">
+              <Link href="/schedule">Schedule Consultation</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full px-6 border-primary-foreground text-primary-foreground">
               <Link href="/contact">Contact Us</Link>

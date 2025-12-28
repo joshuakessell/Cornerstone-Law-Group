@@ -76,7 +76,7 @@ export function SchedulerEmbed({
             id="clio-scheduler-embed"
             src={url}
             title="Clio Scheduler"
-            className="w-full h-[720px]"
+            className="w-full h-[650px] md:h-[800px]"
             loading="lazy"
           />
         </div>
