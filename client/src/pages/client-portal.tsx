@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Lock, ExternalLink, FileText } from "lucide-react";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { integrationsConfig, isRelativeUrl } from "@/lib/integrations";
 
 export default function ClientPortal() {
   return (
@@ -30,15 +30,25 @@ export default function ClientPortal() {
               size="lg" 
               className="w-full rounded-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
             >
-              <a 
-                href={SITE_CONFIG.portalUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-              >
-                Open Client Portal
-                <ExternalLink className="w-5 h-5" />
-              </a>
+              {isRelativeUrl(integrationsConfig.clientPortalUrl) ? (
+                <Link
+                  href={integrationsConfig.clientPortalUrl}
+                  className="flex items-center justify-center gap-2"
+                >
+                  Open Client Portal
+                  <ExternalLink className="w-5 h-5" />
+                </Link>
+              ) : (
+                <a
+                  href={integrationsConfig.clientPortalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2"
+                >
+                  Open Client Portal
+                  <ExternalLink className="w-5 h-5" />
+                </a>
+              )}
             </Button>
             
             <p className="text-sm text-muted-foreground">

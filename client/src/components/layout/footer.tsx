@@ -1,6 +1,6 @@
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
 import { Link } from "wouter";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 
 const quickLinks = [
   ...NAV_LINKS,
@@ -9,6 +9,8 @@ const quickLinks = [
 ];
 
 export function Footer() {
+  const generalIntakeUrl = getGrowIntakeUrl("general");
+
   return (
     <footer className="bg-secondary/40 border-t border-border mt-16">
       <div className="container mx-auto px-6 md:px-12 py-12 space-y-8">
@@ -62,9 +64,26 @@ export function Footer() {
             <a href="/schedule" className="block text-primary font-semibold">
               Schedule Consultation
             </a>
-            <a href={SITE_CONFIG.intakeUrls.general} className="block text-muted-foreground hover:text-primary" target="_blank" rel="noreferrer">
-              Start Secure Intake
-            </a>
+            {generalIntakeUrl ? (
+              isRelativeUrl(generalIntakeUrl) ? (
+                <Link href={generalIntakeUrl}>
+                  <a className="block text-muted-foreground hover:text-primary">Start Secure Intake</a>
+                </Link>
+              ) : (
+                <a
+                  href={generalIntakeUrl}
+                  className="block text-muted-foreground hover:text-primary"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Start Secure Intake
+                </a>
+              )
+            ) : (
+              <Link href="/contact">
+                <a className="block text-muted-foreground hover:text-primary">Contact us</a>
+              </Link>
+            )}
             <a href="/client-portal" className="block text-muted-foreground hover:text-primary">
               Client Portal
             </a>

@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { SERVICES } from "@/lib/content";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
-import { SITE_CONFIG } from "@/lib/siteConfig";
 import { ArrowRight } from "lucide-react";
+import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 
 export default function Services() {
+  const generalIntakeUrl = getGrowIntakeUrl("general");
+
   return (
     <>
       <SEO
@@ -27,9 +29,17 @@ export default function Services() {
               <a href="/schedule">Schedule Consultation</a>
             </Button>
             <Button asChild variant="outline" className="rounded-full px-6 border-primary text-primary">
-              <a href={SITE_CONFIG.intakeUrls.general} target="_blank" rel="noreferrer">
-                Start Secure Intake
-              </a>
+              {generalIntakeUrl ? (
+                isRelativeUrl(generalIntakeUrl) ? (
+                  <Link href={generalIntakeUrl}>Start Secure Intake</Link>
+                ) : (
+                  <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
+                    Start Secure Intake
+                  </a>
+                )
+              ) : (
+                <Link href="/contact">Contact us</Link>
+              )}
             </Button>
           </div>
         </div>

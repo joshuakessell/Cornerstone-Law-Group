@@ -4,7 +4,7 @@ import { SERVICES, TESTIMONIALS, TEAM } from "@/lib/content";
 import { Link } from "wouter";
 import { ArrowRight, HeartHandshake, Shield, Scale, Sparkle, Quote } from "lucide-react";
 import { SEO } from "@/lib/seo";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 
 const facing = [
   {
@@ -25,6 +25,9 @@ const facing = [
 ];
 
 export default function Home() {
+  const divorceIntakeUrl = getGrowIntakeUrl("divorce");
+  const generalIntakeUrl = getGrowIntakeUrl("general");
+
   return (
     <>
       <SEO
@@ -58,9 +61,17 @@ export default function Home() {
                   size="lg"
                   className="rounded-full px-8 border-primary text-primary"
                 >
-                  <a href={SITE_CONFIG.intakeUrls.divorce} target="_blank" rel="noreferrer">
-                    Start Secure Intake
-                  </a>
+                  {divorceIntakeUrl ? (
+                    isRelativeUrl(divorceIntakeUrl) ? (
+                      <Link href={divorceIntakeUrl}>Start Secure Intake</Link>
+                    ) : (
+                      <a href={divorceIntakeUrl} target="_blank" rel="noreferrer">
+                        Start Secure Intake
+                      </a>
+                    )
+                  ) : (
+                    <Link href="/contact">Contact us</Link>
+                  )}
                 </Button>
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -222,9 +233,17 @@ export default function Home() {
                 <a href="/schedule">Schedule Consultation</a>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full px-6 border-primary-foreground text-primary-foreground">
-                <a href={SITE_CONFIG.intakeUrls.general} target="_blank" rel="noreferrer">
-                  Start Secure Intake
-                </a>
+                {generalIntakeUrl ? (
+                  isRelativeUrl(generalIntakeUrl) ? (
+                    <Link href={generalIntakeUrl}>Start Secure Intake</Link>
+                  ) : (
+                    <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
+                      Start Secure Intake
+                    </a>
+                  )
+                ) : (
+                  <Link href="/contact">Contact us</Link>
+                )}
               </Button>
             </div>
           </div>

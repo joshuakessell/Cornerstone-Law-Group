@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { Link } from "wouter";
+import { getGrowIntakeUrl, integrationsConfig, isRelativeUrl } from "@/lib/integrations";
 
 type ServiceKey =
   | "divorce"
@@ -14,6 +15,16 @@ type ServiceKey =
   | "wills-trusts-estates"
   | "adoption"
   | "other";
+
+const intakeSlugMap: Record<ServiceKey, "divorce" | "modification-enforcement" | "mediation" | "prenuptial-marital-agreements" | "wills-trusts-estates" | "adoption" | "general"> = {
+  divorce: "divorce",
+  "modification-enforcement": "modification-enforcement",
+  mediation: "mediation",
+  "prenuptial-marital-agreements": "prenuptial-marital-agreements",
+  "wills-trusts-estates": "wills-trusts-estates",
+  adoption: "adoption",
+  other: "general",
+};
 
 type BranchState = {
   general: {
@@ -77,22 +88,10 @@ export function ContactFlow() {
   });
 
   const intakeLink = useMemo(() => {
-    const key =
-      service === "modification-enforcement"
-        ? "modification-enforcement"
-        : service === "prenuptial-marital-agreements"
-          ? "prenuptial-marital-agreements"
-          : service === "wills-trusts-estates"
-            ? "wills-trusts-estates"
-            : service === "adoption"
-              ? "adoption"
-              : service === "mediation"
-                ? "mediation"
-                : service === "divorce"
-                  ? "divorce"
-                  : "general";
-    return SITE_CONFIG.intakeUrls[key];
+    return getGrowIntakeUrl(intakeSlugMap[service]);
   }, [service]);
+
+  const schedulerUrl = integrationsConfig.schedulerUrl ?? (integrationsConfig.demoActive ? "/demo/scheduler" : null);
 
   const updateDetail = (id: string, value: string) => {
     setState((prev) => ({
@@ -182,12 +181,30 @@ export function ContactFlow() {
 
       <div className="flex flex-col md:flex-row gap-4">
         <Button asChild size="lg" className="rounded-full px-8">
-          <a href={SITE_CONFIG.schedulerUrl}>Schedule Consultation</a>
+          {schedulerUrl ? (
+            isRelativeUrl(schedulerUrl) ? (
+              <Link href={schedulerUrl}>Schedule Consultation</Link>
+            ) : (
+              <a href={schedulerUrl} target="_blank" rel="noreferrer">
+                Schedule Consultation
+              </a>
+            )
+          ) : (
+            <Link href="/contact">Contact Us</Link>
+          )}
         </Button>
         <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-primary text-primary">
-          <a href={intakeLink} target="_blank" rel="noreferrer">
-            Start Secure Intake
-          </a>
+          {intakeLink ? (
+            isRelativeUrl(intakeLink) ? (
+              <Link href={intakeLink}>Start Secure Intake</Link>
+            ) : (
+              <a href={intakeLink} target="_blank" rel="noreferrer">
+                Start Secure Intake
+              </a>
+            )
+          ) : (
+            <Link href="/contact">Contact us</Link>
+          )}
         </Button>
         <Button asChild variant="ghost" size="lg" className="rounded-full px-8">
           <a href="tel:2142149500">Call (214) 214-9500</a>

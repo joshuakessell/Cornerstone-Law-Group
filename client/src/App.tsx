@@ -41,6 +41,11 @@ import IntakeWillsTrustsEstates from "@/pages/intake/intake-wills-trusts-estates
 import Admin from "@/pages/admin";
 import IntakeSubmissions from "@/pages/admin/intake-submissions";
 import IntakeMapper from "@/pages/admin/intake-mapper";
+import DemoScheduler from "@/pages/demo/scheduler";
+import DemoIntakeLanding from "@/pages/demo/intake";
+import DemoIntakePractice from "@/pages/demo/intake-practice";
+import DemoPay from "@/pages/demo/pay";
+import { integrationsConfig } from "@/lib/integrations";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -94,6 +99,10 @@ function AnimatedRoutes() {
           <Route path="/client-area" component={ClientArea} />
           <Route path="/client-portal" component={ClientPortal} />
           <Route path="/client-intake" component={ClientIntake} />
+          <Route path="/demo/scheduler" component={DemoScheduler} />
+          <Route path="/demo/intake/:practice" component={DemoIntakePractice} />
+          <Route path="/demo/intake" component={DemoIntakeLanding} />
+          <Route path="/demo/pay" component={DemoPay} />
           <Route path="/intake/basic" component={IntakeBasic} />
           <Route path="/intake/divorce" component={IntakeDivorce} />
           <Route path="/intake/adoption" component={IntakeAdoption} />
@@ -125,9 +134,16 @@ function Router() {
       </main>
       <Footer />
       <MobileDock />
+
+      {import.meta.env.DEV && integrationsConfig.demoActive ? (
+        <div className="fixed bottom-4 left-4 z-50 rounded-full border border-primary/30 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-lg">
+          DEMO INTEGRATIONS ACTIVE
+        </div>
+      ) : null}
     </div>
   );
 }
+
 
 function App() {
   return (

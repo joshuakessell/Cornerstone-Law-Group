@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Phone, CalendarClock, Shield } from "lucide-react";
-import { SITE_CONFIG } from "@/lib/siteConfig";
 
 export function MobileDock() {
   return (

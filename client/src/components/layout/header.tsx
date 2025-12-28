@@ -5,11 +5,12 @@ import { Menu, X, Phone, CalendarClock, CreditCard } from "lucide-react";
 import { useEffect, useState } from "react";
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { SITE_CONFIG } from "@/lib/siteConfig";
+import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
+  const generalIntakeUrl = getGrowIntakeUrl("general");
 
   useEffect(() => {
     setIsOpen(false);
@@ -113,9 +114,17 @@ export function Header() {
               <a href="/schedule">Schedule</a>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-full border-primary text-primary">
-              <a href={SITE_CONFIG.intakeUrls.general} target="_blank" rel="noreferrer">
-                Intake
-              </a>
+              {generalIntakeUrl ? (
+                isRelativeUrl(generalIntakeUrl) ? (
+                  <Link href={generalIntakeUrl}>Intake</Link>
+                ) : (
+                  <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
+                    Intake
+                  </a>
+                )
+              ) : (
+                <Link href="/contact">Contact</Link>
+              )}
             </Button>
           </div>
         </div>

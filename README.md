@@ -67,7 +67,7 @@ Both files are automatically copied to the build output during the Vite build pr
 For production builds, set these environment variables:
 
 - `VITE_SITE_ORIGIN`: The canonical site URL (e.g., `https://cornerstone-law-group.replit.app`). Used for canonical URLs and Open Graph tags. Defaults to the Replit domain if not set.
-- `VITE_CLIO_PORTAL_URL`: The Clio for Clients portal login URL. Defaults to `https://app.clio.com` if not set.
+- `VITE_CLIO_CLIENT_PORTAL_URL`: The Clio for Clients portal login URL. Defaults to `https://clients.clio.com/login` if not set.
 
 ### Build Process
 
@@ -139,23 +139,19 @@ You should see HTML containing actual page content (headings, text, etc.) rather
 
 ### Client Portal
 
-The `/client-portal` route provides a landing page that directs users to the Clio for Clients portal. Set `VITE_CLIO_PORTAL_URL` to customize the portal login URL.
+The `/client-portal` route provides a landing page that directs users to the Clio for Clients portal. Set `VITE_CLIO_CLIENT_PORTAL_URL` (or `NEXT_PUBLIC_CLIO_CLIENT_PORTAL_URL`) to customize the portal login URL.
 
 ## Environment Variables
 
-This project reads integration URLs from environment variables.
+Vite is configured with `envPrefix: ["VITE_", "NEXT_PUBLIC_"]`, so either prefix works.
 
-### Prefix rules
-- Next.js: use `NEXT_PUBLIC_` variables
-- Vite: use `VITE_` variables
+### Base keys
+- `{PREFIX}CLIO_SCHEDULER_URL`
+- `{PREFIX}CLIO_CLIENT_PORTAL_URL` (defaults to `https://clients.clio.com/login`)
+- `{PREFIX}LAWPAY_URL`
+- `{PREFIX}CLIO_GROW_INTAKE_BASE_URL`
 
-### Required
-- `{PREFIX}CLIO_SCHEDULER_URL` – Clio Scheduler booking page URL
-- `{PREFIX}CLIO_CLIENT_PORTAL_URL` – Clio for Clients portal login URL
-- `{PREFIX}LAWPAY_URL` – LawPay payment URL
-- `{PREFIX}CLIO_GROW_INTAKE_BASE_URL` – fallback Clio Grow public intake form URL
-
-### Optional per-practice overrides (take precedence over BASE)
+### Optional per-practice overrides (highest precedence)
 - `{PREFIX}CLIO_GROW_INTAKE_DIVORCE_URL`
 - `{PREFIX}CLIO_GROW_INTAKE_CHILD_CUSTODY_PARENTING_PLANS_URL`
 - `{PREFIX}CLIO_GROW_INTAKE_MODIFICATION_ENFORCEMENT_URL`
@@ -166,8 +162,23 @@ This project reads integration URLs from environment variables.
 - `{PREFIX}CLIO_GROW_INTAKE_WILLS_TRUSTS_ESTATES_URL`
 - `{PREFIX}CLIO_GROW_INTAKE_GENERAL_URL` (optional)
 
-### Resolution logic
-For a given practice area:
-1) Use the per-practice override URL if set
-2) Else use `CLIO_GROW_INTAKE_BASE_URL` if set
-3) Else hide the intake CTA or route to `/contact`
+### Precedence
+1) Use per-practice override if set  
+2) Else use `CLIO_GROW_INTAKE_BASE_URL` if set  
+3) Else hide/replace the intake CTA (production)  
+
+### Demo mode
+- Set URLs to `/demo/...` to use internal demo flows.
+- In development, missing scheduler/intake/pay URLs automatically fall back to `/demo/scheduler`, `/demo/intake`, and `/demo/pay`.
+- In production, missing values remain `null` and CTAs fall back to contact/call guidance.
+
+### Demo routes
+- `/demo/scheduler` — booking simulator with localStorage history
+- `/demo/intake` and `/demo/intake/:practice` — safe intake preview for each practice slug
+- `/demo/pay` — mock payment flow (no card entry)
+
+### Local development
+- Install: `pnpm install`
+- Terminal 1 (server + API): `pnpm dev`
+- Terminal 2 (client-only, optional split): `pnpm dev:client` (Vite on port 5000)
+- In dev, demo integrations auto-fill if env vars are absent.
