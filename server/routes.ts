@@ -12,6 +12,8 @@ import { buildIntakePdf } from "./intake/pdfBuild";
 import { generateThumbnail } from "./intake/thumb";
 import { sendPacketEmail } from "./intake/email";
 import { convertDocxTemplates } from "./intake/docxConvert";
+import crypto from "crypto";
+import { getAuthorizeUrl, isClioConfigured } from "./integrations/clio";
 import {
   allowedFormTypes,
   ensureTemplatesExist,
@@ -88,6 +90,42 @@ export async function registerRoutes(
         : "Internal Server Error";
     res.status(status).json({ message });
   };
+
+  app.get("/api/integrations/clio/status", (_req, res) => {
+    res.json({ configured: isClioConfigured() });
+  });
+
+  app.get("/api/integrations/clio/authorize", (req, res) => {
+    if (!isClioConfigured()) {
+      return res.status(400).json({ message: "Clio OAuth is not configured." });
+    }
+
+    const state = typeof req.query.state === "string" ? req.query.state : crypto.randomUUID();
+
+    try {
+      const authorizeUrl = getAuthorizeUrl(state);
+      return res.redirect(authorizeUrl);
+    } catch (error) {
+      return handleError(res, error);
+    }
+  });
+
+  app.get("/api/integrations/clio/callback", (req, res) => {
+    if (!isClioConfigured()) {
+      return res.status(501).json({ message: "Not implemented. Configure Clio OAuth to enable callback handling." });
+    }
+
+    const code = typeof req.query.code === "string" ? req.query.code : null;
+    if (!code) {
+      return res.status(400).json({ message: "Missing code query param." });
+    }
+
+    return res.json({
+      message: "TODO: exchange code for tokens.",
+      code,
+      state: typeof req.query.state === "string" ? req.query.state : null,
+    });
+  });
 
   // Completed forms index
   app.get("/api/client-intake/sessions/:sessionId/packets/:packetId/completed", async (req, res) => {

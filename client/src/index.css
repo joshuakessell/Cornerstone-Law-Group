@@ -41,8 +41,39 @@
   --font-serif: 'Playfair Display', serif;
 }
 
-/* Dark / Light design tokens for premium, edgy feel */
-:root,
+/* Light theme is default */
+:root {
+  --background: 42 32% 96%;
+  --foreground: 220 30% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 30% 12%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 30% 12%;
+  
+  --primary: 38 80% 48%;
+  --primary-foreground: 220 30% 10%;
+  
+  --secondary: 220 12% 92%;
+  --secondary-foreground: 220 28% 12%;
+  
+  --muted: 220 10% 90%;
+  --muted-foreground: 220 14% 36%;
+  
+  --accent: 220 16% 86%;
+  --accent-foreground: 220 28% 12%;
+  
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 18% 82%;
+  --input: 220 18% 82%;
+  --ring: 38 80% 48%;
+
+  --radius: 0.65rem;
+}
+
 .dark {
   --background: 220 28% 8%;
   --foreground: 42 35% 95%;
@@ -73,46 +104,28 @@
   --border: 220 20% 18%;
   --input: 220 20% 18%;
   --ring: 38 80% 52%;
-  
-  --radius: 0.65rem;
-}
-
-.light {
-  --background: 42 32% 96%;
-  --foreground: 220 30% 12%;
-
-  --card: 0 0% 100%;
-  --card-foreground: 220 30% 12%;
-  
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 30% 12%;
-  
-  --primary: 38 80% 48%;
-  --primary-foreground: 220 30% 10%;
-  
-  --secondary: 220 12% 92%;
-  --secondary-foreground: 220 28% 12%;
-  
-  --muted: 220 10% 90%;
-  --muted-foreground: 220 14% 36%;
-  
-  --accent: 220 16% 86%;
-  --accent-foreground: 220 28% 12%;
-  
-  --destructive: 0 72% 50%;
-  --destructive-foreground: 0 0% 100%;
-
-  --border: 220 18% 82%;
-  --input: 220 18% 82%;
-  --ring: 38 80% 48%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+    background-color: hsl(var(--background));
+  }
+  html.dark {
+    color-scheme: dark;
+  }
   body {
     @apply font-sans antialiased bg-background text-foreground selection:bg-accent/20 selection:text-foreground;
+    background-image:
+      radial-gradient(1000px circle at 12% 8%, hsl(var(--primary) / 0.08), transparent 45%),
+      radial-gradient(900px circle at 85% 0%, hsl(var(--accent) / 0.14), transparent 40%),
+      radial-gradient(700px circle at 50% 85%, hsl(var(--secondary) / 0.35), transparent 55%),
+      repeating-linear-gradient(120deg, hsl(var(--foreground) / 0.025) 0, hsl(var(--foreground) / 0.025) 1px, transparent 1px, transparent 7px);
+    background-attachment: fixed;
     font-weight: 600; /* Avenir Next LT Pro Demi equivalent - Inter Demi (600) */
   }
   h1, h2, h3, h4, h5, h6 {
@@ -128,6 +141,12 @@
     backdrop-filter: blur(12px);
     background: color-mix(in srgb, var(--color-card) 85%, transparent);
   }
+  .app-texture {
+    background-image:
+      radial-gradient(1200px circle at 8% 12%, hsl(var(--primary) / 0.12), transparent 45%),
+      radial-gradient(1000px circle at 90% 5%, hsl(var(--accent) / 0.18), transparent 40%),
+      radial-gradient(800px circle at 50% 90%, hsl(var(--secondary) / 0.5), transparent 55%);
+  }
 }
 
 @layer base {
@@ -138,5 +157,11 @@
   @keyframes pulse {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.8; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }

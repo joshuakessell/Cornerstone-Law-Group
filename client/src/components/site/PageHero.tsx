@@ -6,8 +6,8 @@ type Props = {
   kicker?: string;
   title: string;
   subtitle?: string;
-  ctaPrimary?: { label: string; href: string };
-  ctaSecondary?: { label: string; href: string };
+  ctaPrimary?: { label: string; href: string; external?: boolean };
+  ctaSecondary?: { label: string; href: string; external?: boolean };
   children?: ReactNode;
   align?: "left" | "center";
 };
@@ -22,22 +22,45 @@ export function PageHero({
   align = "left",
 }: Props) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-secondary/50 border-b border-border">
-      <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,#d6a84b22,transparent_30%),radial-gradient(circle_at_80%_0%,#7dd3fc18,transparent_25%)]" />
-      <div className={cn("container mx-auto px-6 md:px-12 py-16 md:py-20", align === "center" && "text-center")}>
-        <div className="max-w-4xl space-y-6">
-          {kicker ? <p className="uppercase tracking-[0.14em] text-xs text-primary font-semibold">{kicker}</p> : null}
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight text-foreground">{title}</h1>
-          {subtitle ? <p className="text-lg md:text-xl text-muted-foreground max-w-3xl">{subtitle}</p> : null}
-          <div className="flex flex-wrap gap-3">
+    <section className="relative overflow-hidden border-b border-border/70 bg-background/80">
+      <div className="pointer-events-none absolute inset-0 opacity-45 app-texture" />
+      <div
+        className={cn(
+          "container mx-auto px-6 md:px-12 py-4 md:py-6",
+          align === "center" && "text-center"
+        )}
+      >
+        <div className={cn("max-w-4xl space-y-2 md:space-y-3", align === "center" && "mx-auto")}>
+          {kicker ? (
+            <p className="uppercase tracking-[0.2em] text-xs text-primary font-semibold">{kicker}</p>
+          ) : null}
+          <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl leading-[1.05] text-foreground">{title}</h1>
+          {subtitle ? (
+            <p className={cn("text-sm md:text-base text-muted-foreground", align !== "center" && "max-w-3xl")}>
+              {subtitle}
+            </p>
+          ) : null}
+          <div className={cn("flex flex-wrap gap-2", align === "center" && "justify-center")}>
             {ctaPrimary ? (
-              <Button asChild size="lg" className="rounded-full px-8">
-                <a href={ctaPrimary.href}>{ctaPrimary.label}</a>
+              <Button asChild size="sm" className="rounded-full px-4">
+                <a
+                  href={ctaPrimary.href}
+                  target={ctaPrimary.external ? "_blank" : undefined}
+                  rel={ctaPrimary.external ? "noreferrer" : undefined}
+                >
+                  {ctaPrimary.label}
+                </a>
               </Button>
             ) : null}
             {ctaSecondary ? (
-              <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-primary text-primary">
-                <a href={ctaSecondary.href}>{ctaSecondary.label}</a>
+              <Button asChild variant="outline" size="sm" className="rounded-full px-4 border-primary text-primary">
+                <a
+                  href={ctaSecondary.href}
+                  target={ctaSecondary.external ? "_blank" : undefined}
+                  rel={ctaSecondary.external ? "noreferrer" : undefined}
+                >
+                  {ctaSecondary.label}
+                </a>
               </Button>
             ) : null}
           </div>

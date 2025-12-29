@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <style>
+      html, body { background-color: #f6f1e8; }
+    </style>
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("cs_theme") || "light";
+          if (theme === "dark") document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
 
     <title>Cornerstone Law Group, P.C. | Dallas Family Law</title>
     <meta name="description" content="Compassionate, strategic family law representation in Dallas. Divorce, custody, and collaborative law solutions protecting what matters most." />

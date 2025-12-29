@@ -2,7 +2,9 @@ export const COMPANY_INFO = {
   name: "Cornerstone Law Group, P.C.",
   tagline: "Family… the Cornerstone of Life.",
   phone: "(214) 214-9500",
+  fax: "(214) 370-3005",
   email: "info@cornerstonelawtexas.com",
+  website: "cornerstonelawtexas.com",
   address: {
     street: "8140 Walnut Hill Lane, Ste. 220",
     city: "Dallas",

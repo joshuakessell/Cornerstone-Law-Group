@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { PageHero } from "@/components/site/PageHero";
 
 export default function Resources() {
   return (
@@ -14,15 +15,13 @@ export default function Resources() {
         description="Practical family law guides for Dallas families. Divorce, custody, modifications, and FAQs."
         path="/resources"
       />
-      <Section background="none" padded>
-        <div className="max-w-3xl space-y-3">
-          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Resources</p>
-          <h1 className="font-serif text-4xl text-foreground">Guides & answers</h1>
-          <p className="text-muted-foreground">
-            Calm, practical guides—not fear mongering. Each guide includes FAQs and a clear invitation to schedule.
-          </p>
-        </div>
-      </Section>
+      <PageHero
+        kicker="Resources"
+        title="Guides & answers"
+        subtitle="Calm, practical guides that focus on decisions and next steps. Each guide includes FAQs and clear ways to connect."
+        ctaPrimary={{ label: "Schedule consultation", href: "/schedule" }}
+        ctaSecondary={{ label: "View FAQ", href: "/resources/faq" }}
+      />
 
       <Section background="muted" padded>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

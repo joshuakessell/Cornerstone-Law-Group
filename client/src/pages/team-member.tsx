@@ -19,12 +19,14 @@ export default function TeamMember() {
         path={`/our-team/${member.slug}`}
       />
       <Section background="none" padded>
-        <div className="grid lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2 space-y-4">
-            <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Team</p>
-            <h1 className="font-serif text-4xl text-foreground">{member.name}</h1>
-            <p className="text-primary text-sm font-semibold uppercase tracking-wide">{member.title}</p>
-            <p className="text-muted-foreground">{member.shortBio}</p>
+        <div className="grid lg:grid-cols-[2fr_1fr] gap-10">
+          <div className="space-y-6">
+            <div>
+              <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Team</p>
+              <h1 className="font-serif text-4xl text-foreground mt-2">{member.name}</h1>
+              <p className="text-primary text-sm font-semibold uppercase tracking-wide mt-1">{member.title}</p>
+              <p className="text-muted-foreground mt-3">{member.shortBio}</p>
+            </div>
             <div className="space-y-3">
               <h3 className="font-serif text-2xl text-foreground">Philosophy</h3>
               <p className="text-muted-foreground">{member.longBio}</p>
@@ -50,32 +52,27 @@ export default function TeamMember() {
                   </ul>
                 </div>
               ) : null}
+              {member.education?.length ? (
+                <div className="p-4 rounded-xl border border-border bg-card">
+                  <p className="font-semibold text-foreground mb-2">Education</p>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    {member.education.map((edu) => (
+                      <li key={edu}>• {edu}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {member.memberships?.length ? (
+                <div className="p-4 rounded-xl border border-border bg-card">
+                  <p className="font-semibold text-foreground mb-2">Memberships</p>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    {member.memberships.map((m) => (
+                      <li key={m}>• {m}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
-          </div>
-          <div className="space-y-6">
-            <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-muted border border-border">
-              <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
-            </div>
-            {member.education?.length ? (
-              <div className="p-4 rounded-xl border border-border bg-card">
-                <p className="font-semibold text-foreground mb-2">Education</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  {member.education.map((edu) => (
-                    <li key={edu}>• {edu}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {member.memberships?.length ? (
-              <div className="p-4 rounded-xl border border-border bg-card">
-                <p className="font-semibold text-foreground mb-2">Memberships</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  {member.memberships.map((m) => (
-                    <li key={m}>• {m}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
             {member.testimonials?.length ? (
               <div className="p-4 rounded-xl border border-border bg-card space-y-3">
                 <p className="font-semibold text-foreground">What clients say</p>
@@ -86,7 +83,12 @@ export default function TeamMember() {
                 ))}
               </div>
             ) : null}
-            <div className="space-y-3">
+          </div>
+          <div className="space-y-6">
+            <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-muted border border-border">
+              <img src={member.photo} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+            <div className="flex flex-col gap-3 items-center">
               <Button asChild className="w-full rounded-full">
                 <a href="/schedule">Schedule Consultation</a>
               </Button>

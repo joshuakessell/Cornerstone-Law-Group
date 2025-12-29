@@ -6,7 +6,7 @@ import { useIntakeDraft } from "./useIntakeDraft";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, ArrowLeft } from "lucide-react";
 import { TextField } from "./fields/TextField";
 import { TextAreaField } from "./fields/TextAreaField";
 import { RadioField } from "./fields/RadioField";
@@ -360,9 +360,16 @@ export function IntakeWizard({ def }: { def: IntakeDef }) {
         <CardContent className="p-6">
           {!isReview ? (
             <>
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-foreground">{currentStep.title}</h2>
-                {currentStep.description && <p className="mt-1 text-muted-foreground">{currentStep.description}</p>}
+              <div className="mb-6 flex items-start gap-4">
+                <Link href="/client-intake">
+                  <Button variant="ghost" size="icon" className="shrink-0" aria-label="Back to intake forms">
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold text-foreground">{currentStep.title}</h2>
+                  {currentStep.description && <p className="mt-1 text-muted-foreground">{currentStep.description}</p>}
+                </div>
               </div>
 
               <div className="grid gap-5">

@@ -3,6 +3,7 @@ import { ContactFlow } from "@/components/site/ContactFlow";
 import { SchedulerEmbed } from "@/components/site/SchedulerEmbed";
 import { COMPANY_INFO } from "@/lib/content";
 import { SEO } from "@/lib/seo";
+import { PageHero } from "@/components/site/PageHero";
 
 export default function Contact() {
   const mapQuery = `${COMPANY_INFO.address.street}, ${COMPANY_INFO.address.city}, ${COMPANY_INFO.address.state} ${COMPANY_INFO.address.zip}`;
@@ -14,15 +15,13 @@ export default function Contact() {
         description="Branching contact flow to select your matter and schedule a consultation. Secure intake links per practice area."
         path="/contact"
       />
-      <Section background="none" padded>
-        <div className="max-w-4xl space-y-4">
-          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Get Started</p>
-          <h1 className="font-serif text-4xl text-foreground">Schedule or start intake</h1>
-          <p className="text-muted-foreground">
-            Choose your matter, answer lightweight branching questions, then schedule. No sensitive data here—just the essentials.
-          </p>
-        </div>
-      </Section>
+      <PageHero
+        kicker="Get Started"
+        title="Schedule or start intake"
+        subtitle="Choose your matter, answer lightweight branching questions, then schedule. No sensitive data here, just the essentials."
+        ctaPrimary={{ label: "Schedule consultation", href: "/schedule" }}
+        ctaSecondary={{ label: "Start intake", href: "/client-intake" }}
+      />
 
       <Section background="muted" padded>
         <div className="max-w-5xl space-y-10">
@@ -38,7 +37,7 @@ export default function Contact() {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Submitting information does not create an attorney–client relationship. Please do not include sensitive personal
+            Submitting information does not create an attorney-client relationship. Please do not include sensitive personal
             data. We will provide secure upload links if documents are needed.
           </p>
         </div>
@@ -54,7 +53,7 @@ export default function Contact() {
           </div>
           <div className="p-4 bg-card border border-border rounded-xl">
             <p className="font-semibold text-foreground mb-2">Hours</p>
-            <p className="text-muted-foreground">Mon–Thu: {COMPANY_INFO.hours.mon_thu}</p>
+            <p className="text-muted-foreground">Mon-Thu: {COMPANY_INFO.hours.mon_thu}</p>
             <p className="text-muted-foreground">Fri: {COMPANY_INFO.hours.fri}</p>
           </div>
           <div className="p-4 bg-card border border-border rounded-xl">
@@ -79,4 +78,3 @@ export default function Contact() {
     </>
   );
 }
-

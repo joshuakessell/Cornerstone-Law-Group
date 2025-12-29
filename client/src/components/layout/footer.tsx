@@ -1,104 +1,108 @@
-import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
-import { Link } from "wouter";
-import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
-
-const quickLinks = [
-  ...NAV_LINKS,
-  { label: "Client Portal", href: "/client-portal" },
-  { label: "Pay Online", href: "/pay-online" },
-];
+import { COMPANY_INFO } from "@/lib/content";
 
 export function Footer() {
-  const generalIntakeUrl = getGrowIntakeUrl("general");
+  const formatPhone = (phone: string) => {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length === 10) {
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    }
+    return phone;
+  };
 
   return (
-    <footer className="bg-secondary/40 border-t border-border mt-16">
-      <div className="container mx-auto px-6 md:px-12 py-12 space-y-8">
-        <div className="grid gap-8 md:grid-cols-4">
-          <div className="space-y-4">
-            <div className="h-12 w-12 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center">
-              <span className="text-primary font-serif text-xl">CL</span>
+    <footer className="border-t-2 border-primary bg-background text-foreground">
+      <div className="container mx-auto px-4 sm:px-6 md:px-12 py-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 md:gap-4">
+          {/* Logo: shrink-to-content so it sits right beside the divider */}
+          <div className="shrink-0 flex items-center justify-center md:justify-start">
+            <img
+              src="/brand/full_black_logo.png"
+              alt="Cornerstone Law Group, P.C."
+              className="h-[120px] sm:h-[130px] md:h-[140px] lg:h-[155px] w-auto object-contain dark:hidden"
+            />
+            <img
+              src="/brand/full_white_logo.png"
+              alt="Cornerstone Law Group, P.C."
+              className="h-[120px] sm:h-[130px] md:h-[140px] lg:h-[155px] w-auto object-contain hidden dark:block"
+            />
+          </div>
+
+          {/* Mobile horizontal divider (black thin + gold thick) */}
+          <div className="md:hidden flex flex-col gap-[2px] w-full" aria-hidden="true">
+            <div className="h-[2px] w-full bg-foreground/90" />
+            <div className="h-[6px] w-full bg-primary" />
+          </div>
+
+          {/* Desktop vertical divider (inset top/bottom by ~10px) */}
+          <div
+            className="hidden md:flex flex-row gap-[2px] shrink-0 self-stretch py-[10px]"
+            aria-hidden="true"
+          >
+            <div className="w-[2px] h-full bg-foreground/90" />
+            <div className="w-[6px] h-full bg-primary" />
+          </div>
+
+          {/* Info block: do NOT stretch across the viewport on desktop */}
+          <div className="w-full md:w-auto md:max-w-[760px]">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-8 md:gap-x-10 gap-y-2">
+              {/* Row 1 left: Name + Title */}
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="text-sm md:text-base lg:text-lg font-semibold uppercase tracking-wide">
+                    CLINT C. BROWN,
+                  </span>
+                  <span className="text-sm md:text-base lg:text-lg font-semibold uppercase tracking-wide text-primary">
+                    MANAGING PARTNER
+                  </span>
+                </div>
+              </div>
+
+              {/* Row 1 right: LinkedIn (aligned with the title line) */}
+              <a
+                href={COMPANY_INFO.social.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="justify-self-end self-center inline-flex items-center justify-center w-9 h-9 rounded border-2 border-primary bg-background text-foreground hover:opacity-90 transition-opacity"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+              >
+                <span className="font-extrabold text-sm leading-none">in</span>
+              </a>
+
+              {/* Row 2 left: Firm */}
+              <div className="min-w-0 text-sm md:text-base font-semibold uppercase tracking-wide leading-tight">
+                CORNERSTONE LAW GROUP, P.C.
+              </div>
+
+              {/* Row 2 right: Phones under LinkedIn */}
+              <div className="justify-self-end self-start text-right text-sm md:text-base font-semibold whitespace-nowrap">
+                <div>
+                  <span className="font-bold">V</span> | {formatPhone(COMPANY_INFO.phone)}
+                </div>
+                <div>
+                  <span className="font-bold">F</span> | {formatPhone(COMPANY_INFO.fax)}
+                </div>
+              </div>
+
+              {/* Row 3 left: Address (2 lines like the reference) */}
+              <div className="min-w-0 text-sm md:text-base font-medium leading-snug">
+                <div>8140 Walnut Hill Ln. | Ste. 220</div>
+                <div>Dallas, Texas | 75231</div>
+              </div>
+              <div />
+
+              {/* Row 4 left: Website */}
+              <a
+                href={`https://${COMPANY_INFO.website}`}
+                target="_blank"
+                rel="noreferrer"
+                className="min-w-0 text-sm md:text-base font-semibold lowercase hover:text-primary transition-colors break-all"
+              >
+                {COMPANY_INFO.website}
+              </a>
+              <div />
             </div>
-            <p className="font-semibold text-foreground">Cornerstone Law Group, P.C.</p>
-            <p className="text-sm text-muted-foreground">
-              {COMPANY_INFO.address.street}
-              <br />
-              {COMPANY_INFO.address.city}, {COMPANY_INFO.address.state} {COMPANY_INFO.address.zip}
-            </p>
-            <a href={`tel:${COMPANY_INFO.phone}`} className="text-sm font-semibold text-primary">
-              {COMPANY_INFO.phone}
-            </a>
           </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-3">Quick Links</h3>
-            <div className="grid grid-cols-1 gap-2 text-sm">
-              {quickLinks.map((link) =>
-                link.href.startsWith("http") ? (
-                  <a key={link.href} href={link.href} className="text-muted-foreground hover:text-primary">
-                    {link.label}
-                  </a>
-                ) : (
-                  <Link key={link.href} href={link.href}>
-                    <a className="text-muted-foreground hover:text-primary">{link.label}</a>
-                  </Link>
-                ),
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-3">Hours</h3>
-            <p className="text-sm text-muted-foreground">
-              Mon–Thu: {COMPANY_INFO.hours.mon_thu}
-              <br />
-              Fri: {COMPANY_INFO.hours.fri}
-              <br />
-              Weekend: {COMPANY_INFO.hours.weekend}
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">Dallas & surrounding areas</p>
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="font-semibold text-foreground">Actions</h3>
-            <a href="/schedule" className="block text-primary font-semibold">
-              Schedule Consultation
-            </a>
-            {generalIntakeUrl ? (
-              isRelativeUrl(generalIntakeUrl) ? (
-                <Link href={generalIntakeUrl}>
-                  <a className="block text-muted-foreground hover:text-primary">Start Secure Intake</a>
-                </Link>
-              ) : (
-                <a
-                  href={generalIntakeUrl}
-                  className="block text-muted-foreground hover:text-primary"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Start Secure Intake
-                </a>
-              )
-            ) : (
-              <Link href="/contact">
-                <a className="block text-muted-foreground hover:text-primary">Contact us</a>
-              </Link>
-            )}
-            <a href="/client-portal" className="block text-muted-foreground hover:text-primary">
-              Client Portal
-            </a>
-            <a href="/pay-online" className="block text-muted-foreground hover:text-primary">
-              Pay Online
-            </a>
-          </div>
-        </div>
-
-        <div className="border-t border-border pt-6 grid gap-3 md:grid-cols-2 text-xs text-muted-foreground">
-          <p>
-            Submitting information does not create an attorney–client relationship. Please do not send confidential
-            information until an engagement is confirmed.
-          </p>
-          <p className="md:text-right">&copy; {new Date().getFullYear()} Cornerstone Law Group, P.C. All rights reserved.</p>
         </div>
       </div>
     </footer>

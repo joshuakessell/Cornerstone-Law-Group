@@ -1,13 +1,20 @@
 import { Section } from "@/components/ui/section";
-import { Button } from "@/components/ui/button";
 import { SERVICES } from "@/lib/content";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
 import { ArrowRight } from "lucide-react";
 import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
+import { PageHero } from "@/components/site/PageHero";
 
 export default function Services() {
   const generalIntakeUrl = getGrowIntakeUrl("general");
+  const intakeCta = generalIntakeUrl
+    ? {
+        label: "Start secure intake",
+        href: generalIntakeUrl,
+        external: !isRelativeUrl(generalIntakeUrl),
+      }
+    : { label: "Contact us", href: "/contact" };
 
   return (
     <>
@@ -16,37 +23,22 @@ export default function Services() {
         description="Divorce, custody, mediation, collaborative law, and estate planning for Dallas families."
         path="/services"
       />
-      <Section background="none" padded>
-        <div className="space-y-4 max-w-3xl">
-          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Services</p>
-          <h1 className="font-serif text-4xl text-foreground">Family law, modernized</h1>
-          <p className="text-muted-foreground">
-            Eight practice areas designed to reduce conflict, protect assets, and prioritize children. Each page below
-            shares how we help, what to expect, FAQs, and next steps.
-          </p>
-          <div className="flex gap-3">
-            <Button asChild className="rounded-full px-6">
-              <a href="/schedule">Schedule Consultation</a>
-            </Button>
-            <Button asChild variant="outline" className="rounded-full px-6 border-primary text-primary">
-              {generalIntakeUrl ? (
-                isRelativeUrl(generalIntakeUrl) ? (
-                  <Link href={generalIntakeUrl}>Start Secure Intake</Link>
-                ) : (
-                  <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
-                    Start Secure Intake
-                  </a>
-                )
-              ) : (
-                <Link href="/contact">Contact us</Link>
-              )}
-            </Button>
-          </div>
+      <PageHero
+        kicker="Services"
+        title="Family law, modernized"
+        subtitle="Eight practice areas designed to reduce conflict, protect assets, and prioritize children. Each page below shares how we help, what to expect, FAQs, and next steps."
+        ctaPrimary={{ label: "Schedule consultation", href: "/schedule" }}
+        ctaSecondary={intakeCta}
+      >
+        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+          <span className="px-3 py-2 rounded-full border border-border">Collaborative + mediation first</span>
+          <span className="px-3 py-2 rounded-full border border-border">Trial-ready when needed</span>
+          <span className="px-3 py-2 rounded-full border border-border">Clear next steps</span>
         </div>
-      </Section>
+      </PageHero>
 
       <Section background="muted" padded>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {SERVICES.map((service) => (
             <Link key={service.slug} href={`/services/${service.slug}`}>
               <a className="group bg-card border border-border rounded-xl p-5 h-full flex flex-col justify-between hover:border-primary/40 hover:-translate-y-1 transition-all">
@@ -54,10 +46,10 @@ export default function Services() {
                   <h2 className="font-serif text-2xl text-foreground group-hover:text-primary transition-colors">
                     {service.title}
                   </h2>
-                  <p className="text-sm text-muted-foreground line-clamp-4">{service.shortDescription}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-4 break-words">{service.shortDescription}</p>
                   <ul className="space-y-1 text-xs text-muted-foreground">
                     {service.howWeHelp.slice(0, 3).map((item) => (
-                      <li key={item}>• {item}</li>
+                      <li key={item} className="break-words">- {item}</li>
                     ))}
                   </ul>
                 </div>

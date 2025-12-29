@@ -1,6 +1,6 @@
 import { Section } from "@/components/ui/section";
 import { SEO } from "@/lib/seo";
-import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/site/PageHero";
 
 export default function OurApproach() {
   const pillars = [
@@ -18,19 +18,13 @@ export default function OurApproach() {
         description="A calm, strategic framework that puts children first, reduces conflict, and prepares for court when needed."
         path="/our-approach"
       />
-      <Section background="none" padded>
-        <div className="max-w-4xl space-y-4">
-          <p className="uppercase text-xs tracking-[0.16em] text-primary font-semibold">Our Approach</p>
-          <h1 className="font-serif text-4xl text-foreground">Calm decisions. Strong outcomes.</h1>
-          <p className="text-muted-foreground">
-            We blend collaborative mindset with decisive advocacy. Every matter starts with stabilization, then we pick
-            the right process: collaboration, mediation, or litigation.
-          </p>
-          <Button asChild className="rounded-full px-6">
-            <a href="/contact">Talk with us</a>
-          </Button>
-        </div>
-      </Section>
+      <PageHero
+        kicker="Our Approach"
+        title="Calm decisions. Strong outcomes."
+        subtitle="We blend a collaborative mindset with decisive advocacy. Every matter starts with stabilization, then we pick the right process: collaboration, mediation, or litigation."
+        ctaPrimary={{ label: "Talk with us", href: "/contact" }}
+        ctaSecondary={{ label: "Schedule consultation", href: "/schedule" }}
+      />
 
       <Section background="muted" padded>
         <div className="grid md:grid-cols-3 gap-6">

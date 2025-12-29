@@ -3,14 +3,13 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import { AppShell } from "@/components/layout/app-shell";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { IntroOverlay } from "@/components/site/IntroOverlay";
-import { MobileDock } from "@/components/layout/mobile-dock";
 import { LocalBusinessSchema } from "@/components/site/LocalBusinessSchema";
+import { useSpaLinkInterceptor } from "@/hooks/useSpaLinkInterceptor";
 
 import Home from "@/pages/home";
 import OurApproach from "@/pages/our-approach";
@@ -45,7 +44,6 @@ import DemoScheduler from "@/pages/demo/scheduler";
 import DemoIntakeLanding from "@/pages/demo/intake";
 import DemoIntakePractice from "@/pages/demo/intake-practice";
 import DemoPay from "@/pages/demo/pay";
-import { integrationsConfig } from "@/lib/integrations";
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -57,22 +55,33 @@ function ScrollToTop() {
   return null;
 }
 
-const pageVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 }
-};
-
-const pageTransition = {
-  duration: 0.3,
-  ease: [0.4, 0, 0.2, 1] as const
-};
-
 function AnimatedRoutes() {
   const [location] = useLocation();
+  const shouldReduceMotion = useReducedMotion();
+  const pageVariants = {
+    initial: {
+      opacity: 0,
+      y: shouldReduceMotion ? 0 : 8,
+      filter: shouldReduceMotion ? "blur(0px)" : "blur(6px)",
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+    },
+    exit: {
+      opacity: 0,
+      y: shouldReduceMotion ? 0 : -8,
+      filter: shouldReduceMotion ? "blur(0px)" : "blur(8px)",
+    },
+  };
+  const pageTransition = {
+    duration: shouldReduceMotion ? 0.15 : 0.4,
+    ease: [0.22, 1, 0.36, 1] as const,
+  };
   
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync" initial={false}>
       <motion.div
         key={location}
         initial="initial"
@@ -80,6 +89,8 @@ function AnimatedRoutes() {
         exit="exit"
         variants={pageVariants}
         transition={pageTransition}
+        className="relative w-full bg-background"
+        style={{ willChange: "opacity, transform, filter" }}
       >
         <Switch location={location}>
           <Route path="/" component={Home} />
@@ -123,24 +134,15 @@ function AnimatedRoutes() {
 }
 
 function Router() {
+  const anchorReturn = useSpaLinkInterceptor();
+
   return (
-    <div className="flex flex-col min-h-screen font-sans antialiased text-foreground bg-background">
+    <AppShell anchorReturn={anchorReturn}>
       <ScrollToTop />
       <LocalBusinessSchema />
       <IntroOverlay />
-      <Header />
-      <main className="flex-grow">
-        <AnimatedRoutes />
-      </main>
-      <Footer />
-      <MobileDock />
-
-      {import.meta.env.DEV && integrationsConfig.demoActive ? (
-        <div className="fixed bottom-4 left-4 z-50 rounded-full border border-primary/30 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-lg">
-          DEMO INTEGRATIONS ACTIVE
-        </div>
-      ) : null}
-    </div>
+      <AnimatedRoutes />
+    </AppShell>
   );
 }
 

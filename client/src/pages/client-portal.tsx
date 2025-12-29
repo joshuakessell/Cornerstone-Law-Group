@@ -1,89 +1,79 @@
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
-import { Lock, ExternalLink, FileText } from "lucide-react";
+import { ExternalLink, Lock } from "lucide-react";
 import { Link } from "wouter";
 import { SEO } from "@/lib/seo";
 import { integrationsConfig, isRelativeUrl } from "@/lib/integrations";
+import { PageHero } from "@/components/site/PageHero";
 
 export default function ClientPortal() {
+  const portalUrl = integrationsConfig.clientPortalUrl;
+  const isExternal = !isRelativeUrl(portalUrl);
+
   return (
     <>
       <SEO
         title="Client Portal"
-        description="Access your secure client portal to view documents, communicate with your attorney, and manage your case. Sign in with Clio for Clients."
+        description="Access your secure client portal to view documents, communicate with your attorney, and manage your case."
         path="/client-portal"
       />
-      <div className="min-h-[80vh] flex flex-col items-center justify-center bg-muted/30 py-12">
-        <Section className="text-center max-w-2xl mx-auto bg-card p-12 rounded-2xl shadow-xl border border-border">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
-            <Lock className="w-10 h-10 text-primary" />
-          </div>
-          
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-primary">Client Portal</h1>
-          <p className="text-lg text-muted-foreground mb-8 leading-relaxed max-w-xl mx-auto">
-            Use Clio for Clients for passwordless, secure access to documents, messages, and tasks. Sign in with the same email we use to contact you.
-          </p>
-          
-          <div className="space-y-4 mb-8">
-            <Button 
-              asChild 
-              size="lg" 
-              className="w-full rounded-full h-14 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
-            >
-              {isRelativeUrl(integrationsConfig.clientPortalUrl) ? (
-                <Link
-                  href={integrationsConfig.clientPortalUrl}
-                  className="flex items-center justify-center gap-2"
-                >
-                  Open Client Portal
-                  <ExternalLink className="w-5 h-5" />
-                </Link>
-              ) : (
-                <a
-                  href={integrationsConfig.clientPortalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2"
-                >
-                  Open Client Portal
-                  <ExternalLink className="w-5 h-5" />
-                </a>
-              )}
-            </Button>
-            
-            <p className="text-sm text-muted-foreground">
-              Tip: use the invitation email or reset with the same email on file for a passwordless link.
+      <PageHero
+        kicker="Client Portal"
+        title="Secure access, simple next steps"
+        subtitle="Use Clio for Clients to view documents, send messages, and stay aligned on your case timeline."
+        ctaPrimary={{
+          label: "Open Clio Client Portal",
+          href: portalUrl,
+          external: isExternal,
+        }}
+        ctaSecondary={{ label: "Need help?", href: "/contact" }}
+      />
+
+      <Section background="muted" padded>
+        <div className="max-w-2xl space-y-6">
+          <div className="rounded-2xl border border-border bg-card/95 p-6 shadow-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Lock className="h-5 w-5 text-primary" />
+              </div>
+              <h2 className="font-serif text-2xl text-foreground">Open your portal</h2>
+            </div>
+            <p className="text-muted-foreground">
+              Your portal keeps everything in one place: tasks, messages, and shared documents with your legal team.
             </p>
+            <div className="mt-6">
+              <Button asChild size="lg" className="rounded-full">
+                {isExternal ? (
+                  <a href={portalUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2">
+                    Open Clio Client Portal
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Link href={portalUrl} className="inline-flex items-center gap-2">
+                    Open Clio Client Portal
+                    <ExternalLink className="h-4 w-4" />
+                  </Link>
+                )}
+              </Button>
+            </div>
           </div>
 
-          <div className="border-t border-border pt-8 mt-8">
-            <h2 className="font-serif text-xl font-bold mb-4 text-foreground">New client?</h2>
-            <p className="text-muted-foreground mb-6">
-              Start with secure intake. We’ll send portal access after engagement.
-            </p>
-            <Button 
-              asChild 
-              variant="outline" 
-              size="lg" 
-              className="rounded-full h-12 border-primary text-primary hover:bg-primary/10"
-            >
-              <Link href="/client-intake" className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Start Client Intake
-              </Link>
-            </Button>
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-border">
+          <div className="rounded-2xl border border-border bg-background/80 p-6">
+            <h3 className="font-semibold text-foreground mb-2">How to access</h3>
             <p className="text-sm text-muted-foreground">
-              Need help accessing your portal?{" "}
-              <Link href="/contact" className="text-primary hover:underline font-medium">
+              You will receive an invitation email from the firm. Sign in using the same email address we have on file to
+              access your portal.
+            </p>
+            <p className="text-sm text-muted-foreground mt-4">
+              Need help?{" "}
+              <Link href="/contact" className="text-primary font-semibold hover:underline">
                 Contact us
               </Link>
+              .
             </p>
           </div>
-        </Section>
-      </div>
+        </div>
+      </Section>
     </>
   );
 }

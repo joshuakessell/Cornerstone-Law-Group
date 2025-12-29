@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface SectionProps {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export function Section({
   animate = true,
   id,
 }: SectionProps) {
+  const shouldReduceMotion = useReducedMotion();
   
   const bgStyles = {
     default: "bg-background",
@@ -41,7 +42,7 @@ export function Section({
     className
   );
 
-  if (animate) {
+  if (animate && !shouldReduceMotion) {
     return (
       <motion.section 
         id={id}
