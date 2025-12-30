@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
+import { useIntroOverlay } from "@/components/site/IntroOverlay";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const shouldReduceMotion = useReducedMotion();
-  
+  const { openIntro } = useIntroOverlay();
 
   const primaryNav = useMemo(
     () =>
@@ -102,6 +103,15 @@ export function Header() {
               className="hidden md:inline-flex rounded-full border-primary text-primary"
             >
               <Link href="/client-intake">Client Intake</Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={openIntro}
+              className="hidden md:inline-flex rounded-full text-xs text-muted-foreground hover:text-foreground border-0"
+              aria-label="Replay intro video"
+            >
+              Replay Video?
             </Button>
             <button
               className="p-2 rounded-full border border-border/70 hover:border-primary/40 hover:text-primary lg:hidden"

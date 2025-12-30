@@ -1,115 +1,568 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Play, X } from "lucide-react";
 
-const INTRO_KEY = "cs_intro_seen";
+const INTRO_KEY = "clg_intro_seen";
 
-export function IntroOverlay() {
-  const [visible, setVisible] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+type OverlayState = "closed" | "idle" | "playing" | "fadingToWhite" | "message" | "exiting";
 
+interface IntroOverlayProps {
+  onClose?: () => void;
+}
+
+export function IntroOverlay({ onClose }: IntroOverlayProps) {
+  const [state, setState] = useState<OverlayState>("closed");
+  const [showOverlay, setShowOverlay] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const whiteOverlayRef = useRef<HTMLDivElement>(null);
+  const messageRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const animationFrameRef = useRef<number>();
+
+  // Check if user has seen intro on mount
   useEffect(() => {
-    const prefersReduced =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReducedMotion(prefersReduced);
-
-    const hasSeen = localStorage.getItem(INTRO_KEY);
-    if (hasSeen || prefersReduced) {
-      return;
+    const hasSeen = localStorage.getItem(INTRO_KEY) === "1";
+    if (!hasSeen && !shouldReduceMotion) {
+      setShowOverlay(true);
+      setState("idle");
+      // Prevent body scroll
+      document.body.style.overflow = "hidden";
     }
-    setVisible(true);
 
-    const timer = window.setTimeout(() => {
-      handleClose();
-    }, 7200);
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [shouldReduceMotion]);
 
-    return () => window.clearTimeout(timer);
+  // Handle video time updates for fade-to-white
+  useEffect(() => {
+    if (state !== "playing" || !videoRef.current) return;
+
+    const video = videoRef.current;
+    const checkTime = () => {
+      if (!video.duration || !video.currentTime) return;
+
+      const timeRemaining = video.duration - video.currentTime;
+      
+      if (timeRemaining <= 1.0 && state === "playing") {
+        setState("fadingToWhite");
+        if (whiteOverlayRef.current) {
+          whiteOverlayRef.current.style.transition = "opacity 1000ms ease-out";
+          whiteOverlayRef.current.style.opacity = "1";
+        }
+      }
+
+      if (state === "playing") {
+        animationFrameRef.current = requestAnimationFrame(checkTime);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(checkTime);
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [state]);
+
+  // Handle video ended
+  useEffect(() => {
+    if (state !== "fadingToWhite" && state !== "playing") return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleEnded = () => {
+      // Ensure white overlay is fully opaque
+      if (whiteOverlayRef.current) {
+        whiteOverlayRef.current.style.opacity = "1";
+      }
+      
+      setState("message");
+      
+      // Fade in message
+      if (messageRef.current) {
+        messageRef.current.style.transition = "opacity 800ms ease-in";
+        messageRef.current.style.opacity = "1";
+      }
+
+      // Linger for 1500-2500ms, then fade out
+      const lingerTimer = setTimeout(() => {
+        setState("exiting");
+        if (whiteOverlayRef.current && messageRef.current) {
+          whiteOverlayRef.current.style.transition = "opacity 800ms ease-out";
+          whiteOverlayRef.current.style.opacity = "0";
+          messageRef.current.style.transition = "opacity 400ms ease-out";
+          messageRef.current.style.opacity = "0";
+        }
+        
+        // Complete exit after fade
+        setTimeout(() => {
+          handleComplete();
+        }, 800);
+      }, shouldReduceMotion ? 500 : 2000);
+
+      return () => clearTimeout(lingerTimer);
+    };
+
+    video.addEventListener("ended", handleEnded);
+    return () => video.removeEventListener("ended", handleEnded);
+  }, [state, shouldReduceMotion]);
+
+  const handlePlay = useCallback(() => {
+    if (videoRef.current) {
+      setState("playing");
+      videoRef.current.play().catch((error) => {
+        console.error("Error playing video:", error);
+      });
+    }
   }, []);
 
-  const handleClose = () => {
-    localStorage.setItem(INTRO_KEY, "true");
-    setVisible(false);
-  };
+  const handleSkip = useCallback(() => {
+    handleComplete();
+  }, []);
 
-  if (!visible) return null;
+  const handleComplete = useCallback(() => {
+    localStorage.setItem(INTRO_KEY, "1");
+    setState("closed");
+    setShowOverlay(false);
+    document.body.style.overflow = "";
+    if (onClose) {
+      onClose();
+    }
+  }, [onClose]);
+
+  // Handle ESC key
+  useEffect(() => {
+    if (state === "closed") return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleSkip();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [state, handleSkip]);
+
+  // Focus management
+  useEffect(() => {
+    if (state === "idle") {
+      // Focus the Play button when idle
+      const playButton = document.querySelector('[data-intro-play]') as HTMLElement;
+      if (playButton) {
+        playButton.focus();
+      }
+    }
+  }, [state]);
+
+  if (!showOverlay || state === "closed") return null;
+
+  // Reduced motion: skip to message quickly
+  if (shouldReduceMotion && state === "idle") {
+    return (
+      <div
+        className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Intro animation"
+      >
+        <div className="text-center space-y-4 px-6">
+          <p
+            className="text-white text-2xl md:text-4xl font-semibold"
+            style={{
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+            }}
+          >
+            It doesn't have to be like this...
+          </p>
+          <Button
+            onClick={handleComplete}
+            className="rounded-full"
+            aria-label="Close"
+          >
+            Continue
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      className={cn(
-        "fixed inset-0 z-[70] flex items-center justify-center bg-gradient-to-br from-[#050a14] via-[#0b1528] to-[#0f1f36] text-foreground/90"
-      )}
+      className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
       role="dialog"
       aria-modal="true"
-      aria-label="Intro animation"
+      aria-label="Intro video"
     >
-      <div className="absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_20%_20%,#d6a84b33,transparent_25%),radial-gradient(circle_at_80%_10%,#4ea6ff22,transparent_20%),radial-gradient(circle_at_50%_80%,#d6a84b22,transparent_22%)]" />
-      <div className="absolute inset-0 pointer-events-none">
-        <svg
-          className="w-full h-full"
-          viewBox="0 0 800 600"
-          preserveAspectRatio="xMidYMid slice"
-        >
-          <g
-            className={cn(
-              "transition-all duration-[1800ms] ease-out",
-              reducedMotion ? "opacity-80" : "opacity-100 animate-[pulse_6s_ease-in-out_infinite]"
-            )}
-            stroke="#d6a84b"
-            strokeWidth="2"
-            fill="none"
-            strokeLinecap="round"
+      {/* Dark overlay background */}
+      <div className="absolute inset-0 bg-black" />
+
+      {/* Video container */}
+      <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
+        {/* Volume hint text */}
+        {state === "idle" && (
+          <p className="text-white text-sm md:text-base text-center">
+            Volume up for the best experience.
+          </p>
+        )}
+
+        {/* Video element */}
+        <div className="relative w-full max-w-4xl aspect-video">
+          <video
+            ref={videoRef}
+            className="w-full h-full object-contain"
+            preload="metadata"
+            playsInline
+            muted={false}
           >
-            <path d="M120 420 Q220 260 340 360 T560 320" opacity="0.6" />
-            <path d="M160 380 Q260 240 380 340 T600 300" opacity="0.3" />
-            <path d="M100 450 Q220 300 360 380 T640 340" opacity="0.4" />
-          </g>
-          <g
-            className={cn(
-              "transition-all duration-700 ease-out delay-300",
-              reducedMotion ? "opacity-85" : "animate-[fadeIn_2s_ease-out_forwards]"
-            )}
-            fill="#0f1f36"
+            <source src="/intro_video.webm" type="video/webm" />
+            <source src="/intro_video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          {/* Play button overlay (when idle) */}
+          {state === "idle" && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <Button
+                data-intro-play
+                onClick={handlePlay}
+                size="lg"
+                className="rounded-full px-8 py-6 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm"
+                aria-label="Play intro video"
+              >
+                <Play className="w-6 h-6 mr-2" />
+                Play
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Disclaimer text */}
+        {state === "idle" && (
+          <p className="text-white/60 text-xs text-center">
+            Dramatization. No actual incidents occurred
+          </p>
+        )}
+
+        {/* Skip button */}
+        {state === "idle" && (
+          <Button
+            onClick={handleSkip}
+            variant="outline"
+            className="rounded-full px-6 border-white/30 text-white hover:bg-white/10"
+            aria-label="Skip intro video"
           >
-            <path d="M180 420 q20 -80 60 -120 q80 -40 140 30 q60 70 120 20 q40 -30 100 30 l0 150 l-420 0z" fill="#0a1529" opacity="0.35" />
-            <path d="M250 430 q30 -60 80 -70 q50 -10 90 40 q40 50 90 10 q40 -30 90 40 l0 120 l-340 0z" fill="#0d1c32" opacity="0.4" />
-          </g>
-        </svg>
+            Skip movie
+          </Button>
+        )}
       </div>
 
-      <div className="relative z-10 max-w-3xl text-center space-y-6 px-6">
-        <p
-          className={cn(
-            "text-lg md:text-xl text-foreground/80 tracking-[0.08em] uppercase",
-            reducedMotion ? "" : "animate-[fadeIn_1.2s_ease-out]"
-          )}
+      {/* White fade overlay */}
+      <div
+        ref={whiteOverlayRef}
+        className={cn(
+          "absolute inset-0 bg-white z-20 pointer-events-none",
+          state === "fadingToWhite" || state === "message" || state === "exiting" ? "opacity-0" : "opacity-0"
+        )}
+        style={{ opacity: 0 }}
+      />
+
+      {/* Message overlay */}
+      {(state === "message" || state === "exiting") && (
+        <div
+          ref={messageRef}
+          className="absolute inset-0 z-30 flex items-center justify-center bg-white"
+          style={{ opacity: 0 }}
         >
-          Cornerstone Law Group, P.C.
-        </p>
-        <h1
-          className={cn(
-            "font-serif text-3xl md:text-5xl leading-tight text-foreground",
-            reducedMotion ? "" : "animate-[fadeIn_1.6s_ease-out]"
-          )}
-        >
-          It doesn’t have to be like this.
-        </h1>
-        <p
-          className={cn(
-            "text-base md:text-lg text-foreground/75",
-            reducedMotion ? "" : "animate-[fadeIn_2s_ease-out]"
-          )}
-        >
-          Calm, strategic family law for Dallas families—protecting children, assets, and your ability to move forward.
-        </p>
-        <button
-          onClick={handleClose}
-          className="inline-flex items-center justify-center rounded-full px-6 py-3 bg-primary text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Skip
-        </button>
-      </div>
+          <p
+            className="text-black text-center px-6"
+            style={{
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              fontWeight: 600,
+            }}
+          >
+            It doesn't have to be like this...
+          </p>
+        </div>
+      )}
     </div>
   );
 }
 
+// Context for opening intro overlay programmatically
+import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+
+interface IntroOverlayContextType {
+  openIntro: () => void;
+}
+
+const IntroOverlayContext = createContext<IntroOverlayContextType | undefined>(undefined);
+
+export function IntroOverlayProvider({ children }: { children: ReactNode }) {
+  const [forceOpen, setForceOpen] = useState(false);
+
+  const openIntro = useCallback(() => {
+    setForceOpen(true);
+  }, []);
+
+  return (
+    <IntroOverlayContext.Provider value={{ openIntro }}>
+      {children}
+      <IntroOverlayInstance forceOpen={forceOpen} onClose={() => setForceOpen(false)} />
+    </IntroOverlayContext.Provider>
+  );
+}
+
+// Separate instance component for forced opens
+function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onClose: () => void }) {
+  const [state, setState] = useState<OverlayState>("closed");
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const whiteOverlayRef = useRef<HTMLDivElement>(null);
+  const messageRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const animationFrameRef = useRef<number>();
+
+  useEffect(() => {
+    if (forceOpen) {
+      setState("idle");
+      document.body.style.overflow = "hidden";
+      // Reset video if it exists
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.pause();
+      }
+    }
+
+    return () => {
+      if (!forceOpen) {
+        document.body.style.overflow = "";
+      }
+    };
+  }, [forceOpen]);
+
+  // Same video handling logic as main component
+  useEffect(() => {
+    if (state !== "playing" || !videoRef.current) return;
+
+    const video = videoRef.current;
+    const checkTime = () => {
+      if (!video.duration || !video.currentTime) return;
+
+      const timeRemaining = video.duration - video.currentTime;
+      
+      if (timeRemaining <= 1.0 && state === "playing") {
+        setState("fadingToWhite");
+        if (whiteOverlayRef.current) {
+          whiteOverlayRef.current.style.transition = "opacity 1000ms ease-out";
+          whiteOverlayRef.current.style.opacity = "1";
+        }
+      }
+
+      if (state === "playing") {
+        animationFrameRef.current = requestAnimationFrame(checkTime);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(checkTime);
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [state]);
+
+  useEffect(() => {
+    if (state !== "fadingToWhite" && state !== "playing") return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleEnded = () => {
+      if (whiteOverlayRef.current) {
+        whiteOverlayRef.current.style.opacity = "1";
+      }
+      
+      setState("message");
+      
+      if (messageRef.current) {
+        messageRef.current.style.transition = "opacity 800ms ease-in";
+        messageRef.current.style.opacity = "1";
+      }
+
+      const lingerTimer = setTimeout(() => {
+        setState("exiting");
+        if (whiteOverlayRef.current && messageRef.current) {
+          whiteOverlayRef.current.style.transition = "opacity 800ms ease-out";
+          whiteOverlayRef.current.style.opacity = "0";
+          messageRef.current.style.transition = "opacity 400ms ease-out";
+          messageRef.current.style.opacity = "0";
+        }
+        
+        setTimeout(() => {
+          setState("closed");
+          onClose();
+        }, 800);
+      }, shouldReduceMotion ? 500 : 2000);
+
+      return () => clearTimeout(lingerTimer);
+    };
+
+    video.addEventListener("ended", handleEnded);
+    return () => video.removeEventListener("ended", handleEnded);
+  }, [state, shouldReduceMotion, onClose]);
+
+  const handlePlay = useCallback(() => {
+    if (videoRef.current) {
+      setState("playing");
+      videoRef.current.play().catch((error) => {
+        console.error("Error playing video:", error);
+      });
+    }
+  }, []);
+
+  const handleSkip = useCallback(() => {
+    setState("closed");
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    if (state === "closed" || !forceOpen) return;
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleSkip();
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [state, forceOpen, handleSkip]);
+
+  if (!forceOpen || state === "closed") return null;
+
+  if (shouldReduceMotion && state === "idle") {
+    return (
+      <div
+        className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Intro animation"
+      >
+        <div className="text-center space-y-4 px-6">
+          <p
+            className="text-white text-2xl md:text-4xl font-semibold"
+            style={{
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+            }}
+          >
+            It doesn't have to be like this...
+          </p>
+          <Button
+            onClick={handleSkip}
+            className="rounded-full"
+            aria-label="Close"
+          >
+            Continue
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Intro video"
+    >
+      <div className="absolute inset-0 bg-black" />
+      <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
+        {state === "idle" && (
+          <p className="text-white text-sm md:text-base text-center">
+            Volume up for the best experience.
+          </p>
+        )}
+        <div className="relative w-full max-w-4xl aspect-video">
+          <video
+            ref={videoRef}
+            className="w-full h-full object-contain"
+            preload="metadata"
+            playsInline
+            muted={false}
+          >
+            <source src="/intro_video.webm" type="video/webm" />
+            <source src="/intro_video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          {state === "idle" && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+              <Button
+                onClick={handlePlay}
+                size="lg"
+                className="rounded-full px-8 py-6 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm"
+                aria-label="Play intro video"
+              >
+                <Play className="w-6 h-6 mr-2" />
+                Play
+              </Button>
+            </div>
+          )}
+        </div>
+        {state === "idle" && (
+          <p className="text-white/60 text-xs text-center">
+            Dramatization. No actual incidents occurred
+          </p>
+        )}
+        {state === "idle" && (
+          <Button
+            onClick={handleSkip}
+            variant="outline"
+            className="rounded-full px-6 border-white/30 text-white hover:bg-white/10"
+            aria-label="Skip intro video"
+          >
+            Skip movie
+          </Button>
+        )}
+      </div>
+      <div
+        ref={whiteOverlayRef}
+        className="absolute inset-0 bg-white z-20 pointer-events-none"
+        style={{ opacity: 0 }}
+      />
+      {(state === "message" || state === "exiting") && (
+        <div
+          ref={messageRef}
+          className="absolute inset-0 z-30 flex items-center justify-center bg-white"
+          style={{ opacity: 0 }}
+        >
+          <p
+            className="text-black text-center px-6"
+            style={{
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              fontWeight: 600,
+            }}
+          >
+            It doesn't have to be like this...
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function useIntroOverlay() {
+  const context = useContext(IntroOverlayContext);
+  if (!context) {
+    throw new Error("useIntroOverlay must be used within IntroOverlayProvider");
+  }
+  return context;
+}

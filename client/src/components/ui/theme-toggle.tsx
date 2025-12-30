@@ -8,7 +8,8 @@ export function ThemeToggle() {
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const saved = localStorage.getItem("cs_theme");
+    const saved = localStorage.getItem("clg_theme");
+    // Default to light if no saved theme
     const initial = saved === "dark" ? "dark" : "light";
 
     setTheme(initial);
@@ -18,7 +19,7 @@ export function ThemeToggle() {
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    localStorage.setItem("cs_theme", newTheme);
+    localStorage.setItem("clg_theme", newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 

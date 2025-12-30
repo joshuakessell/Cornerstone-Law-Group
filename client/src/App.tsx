@@ -7,7 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { IntroOverlay } from "@/components/site/IntroOverlay";
+import { IntroOverlay, IntroOverlayProvider } from "@/components/site/IntroOverlay";
 import { LocalBusinessSchema } from "@/components/site/LocalBusinessSchema";
 import { useSpaLinkInterceptor } from "@/hooks/useSpaLinkInterceptor";
 
@@ -155,8 +155,10 @@ function App() {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <Toaster />
-        <Router />
+        <IntroOverlayProvider>
+          <Toaster />
+          <Router />
+        </IntroOverlayProvider>
       </QueryClientProvider>
     </HelmetProvider>
   );
