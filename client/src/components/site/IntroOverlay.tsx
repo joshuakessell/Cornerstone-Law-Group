@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, createContext, useContext, ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -296,7 +296,6 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
 }
 
 // Context for opening intro overlay programmatically
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 
 interface IntroOverlayContextType {
   openIntro: () => void;
