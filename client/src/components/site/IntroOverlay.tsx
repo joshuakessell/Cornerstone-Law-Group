@@ -3,7 +3,7 @@ import { useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 const INTRO_KEY = "clg_intro_seen";
-const END_MESSAGE = "Sometimes... we could all use a helping hand.";
+const END_MESSAGE = "It doesn't have to be like this…";
 
 type OverlayState = "closed" | "idle" | "loading" | "playing" | "fadingToWhite" | "message" | "exiting";
 
@@ -236,7 +236,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
           <p
             className="text-black"
             style={{
-              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',
               fontSize: "clamp(1.5rem, 4vw, 3rem)",
               fontWeight: 600,
             }}
@@ -263,17 +263,15 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
       aria-modal="true"
       aria-label="Intro video"
     >
-      {/* Video container */}
-      <div className="relative z-10 w-full max-w-4xl aspect-video px-6">
+      {/* Video container - full screen */}
+      <div className="relative z-10 w-full h-full">
         <video
           ref={videoRef}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           preload="auto"
           playsInline
-          poster="/intro_poster.webp"
         >
-          <source src="/intro_video.webm" type="video/webm" />
-          <source src="/intro_video.mp4" type="video/mp4" />
+          <source src="/intro-video-cornerstone.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
@@ -312,7 +310,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
           <p
             className="text-black text-center px-6"
             style={{
-              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',
               fontSize: "clamp(1.5rem, 4vw, 3rem)",
               fontWeight: 600,
             }}
@@ -565,7 +563,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
           <p
             className="text-black"
             style={{
-              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',
               fontSize: "clamp(1.5rem, 4vw, 3rem)",
               fontWeight: 600,
             }}
@@ -592,17 +590,15 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
       aria-modal="true"
       aria-label="Intro video"
     >
-      {/* Video container */}
-      <div className="relative z-10 w-full max-w-4xl aspect-video px-6">
+      {/* Video container - full screen */}
+      <div className="relative z-10 w-full h-full">
         <video
           ref={videoRef}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           preload="auto"
           playsInline
-          poster="/intro_poster.webp"
         >
-          <source src="/intro_video.webm" type="video/webm" />
-          <source src="/intro_video.mp4" type="video/mp4" />
+          <source src="/intro-video-cornerstone.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
@@ -641,7 +637,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
           <p
             className="text-black text-center px-6"
             style={{
-              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',
               fontSize: "clamp(1.5rem, 4vw, 3rem)",
               fontWeight: 600,
             }}

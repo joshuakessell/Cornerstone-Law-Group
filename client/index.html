@@ -11,29 +11,8 @@
         try {
           var theme = localStorage.getItem("clg_theme") || "light";
           if (theme === "dark") document.documentElement.classList.add("dark");
-        } catch (e) {}
-      })();
-    </script>
-    <script>
-      // Preload intro video for first-time visitors
-      (function () {
-        try {
-          var hasSeen = localStorage.getItem("clg_intro_seen") === "1";
-          if (!hasSeen) {
-            var link = document.createElement("link");
-            link.rel = "preload";
-            link.as = "video";
-            link.href = "/intro_video.webm";
-            link.type = "video/webm";
-            document.head.appendChild(link);
-            
-            // Optionally preload poster
-            var posterLink = document.createElement("link");
-            posterLink.rel = "preload";
-            posterLink.as = "image";
-            posterLink.href = "/intro_poster.webp";
-            document.head.appendChild(posterLink);
-          }
+          // Ensure light mode is default if no theme preference exists
+          else document.documentElement.classList.remove("dark");
         } catch (e) {}
       })();
     </script>
@@ -53,30 +32,6 @@
     <meta name="twitter:image" content="/attached_assets/opengraph.png" />
 
     <link rel="icon" type="image/png" href="/favicon.png" />
-    
-    <!-- Preload intro video for first-time visitors -->
-    <script>
-      (function () {
-        try {
-          var hasSeen = localStorage.getItem("clg_intro_seen") === "1";
-          if (!hasSeen) {
-            var link = document.createElement("link");
-            link.rel = "preload";
-            link.as = "video";
-            link.href = "/intro_video.webm";
-            link.type = "video/webm";
-            document.head.appendChild(link);
-            
-            // Also preload poster image
-            var posterLink = document.createElement("link");
-            posterLink.rel = "preload";
-            posterLink.as = "image";
-            posterLink.href = "/intro_poster.webp";
-            document.head.appendChild(posterLink);
-          }
-        } catch (e) {}
-      })();
-    </script>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

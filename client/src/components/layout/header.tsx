@@ -10,7 +10,7 @@ import { useIntroOverlay } from "@/components/site/IntroOverlay";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const shouldReduceMotion = useReducedMotion();
   const { openIntro } = useIntroOverlay();
 
@@ -30,6 +30,20 @@ export function Header() {
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
+
+  const handleReplayVideo = () => {
+    setIsOpen(false);
+    // Navigate to home first, then open intro overlay
+    if (location !== "/") {
+      setLocation("/");
+      // Small delay to ensure navigation completes
+      setTimeout(() => {
+        openIntro();
+      }, 100);
+    } else {
+      openIntro();
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b-2 border-primary bg-background dark:bg-card">
@@ -57,12 +71,12 @@ export function Header() {
             </a>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-6 whitespace-nowrap">
             {primaryNav.map((link) => (
               <Link key={link?.href} href={link?.href ?? "#"}>
                 <a
                   className={cn(
-                    "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground hover:text-primary transition-colors",
+                    "text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground hover:text-primary transition-colors",
                     location === link?.href && "text-primary"
                   )}
                 >
@@ -169,6 +183,15 @@ export function Header() {
                   <Link href="/client-intake">Client Intake</Link>
                 </Button>
               </div>
+              <button
+                onClick={handleReplayVideo}
+                className="mt-4 rounded-xl px-3 py-3 text-sm font-semibold text-foreground hover:bg-muted text-left"
+                style={{
+                  fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif',
+                }}
+              >
+                Replay Video
+              </button>
             </div>
           </motion.div>
         ) : null}
