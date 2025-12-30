@@ -108,7 +108,7 @@ export function Header() {
               variant="ghost"
               size="sm"
               onClick={openIntro}
-              className="hidden md:inline-flex rounded-full text-xs text-muted-foreground hover:text-foreground border-0"
+              className="hidden md:inline-flex rounded-full text-xs text-white hover:text-white/80 bg-transparent border border-white/30 hover:border-white/50"
               aria-label="Replay intro video"
             >
               Replay Video?

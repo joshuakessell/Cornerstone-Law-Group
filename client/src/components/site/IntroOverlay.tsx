@@ -178,7 +178,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
               fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
             }}
           >
-            It doesn't have to be like this...
+            Sometimes... we all need a little help.
           </p>
           <Button
             onClick={handleComplete}
@@ -206,7 +206,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
       <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
         {/* Volume hint text */}
         {state === "idle" && (
-          <p className="text-white text-sm md:text-base text-center">
+          <p className="text-white text-xs text-center">
             Volume up for the best experience.
           </p>
         )}
@@ -245,7 +245,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
         {/* Disclaimer text */}
         {state === "idle" && (
           <p className="text-white/60 text-xs text-center">
-            Dramatization. No actual incidents occurred
+            Dramatization. No actual incidents occurred.
           </p>
         )}
 
@@ -287,7 +287,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
               fontWeight: 600,
             }}
           >
-            It doesn't have to be like this...
+            Sometimes... we all need a little help.
           </p>
         </div>
       )}
@@ -332,11 +332,6 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
     if (forceOpen) {
       setState("idle");
       document.body.style.overflow = "hidden";
-      // Reset video if it exists
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.pause();
-      }
     }
 
     return () => {
@@ -345,6 +340,14 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
       }
     };
   }, [forceOpen]);
+
+  // Reset video when state becomes idle (for replay)
+  useEffect(() => {
+    if (state === "idle" && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.pause();
+    }
+  }, [state]);
 
   // Same video handling logic as main component
   useEffect(() => {
@@ -462,7 +465,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
               fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
             }}
           >
-            It doesn't have to be like this...
+            Sometimes... we all need a little help.
           </p>
           <Button
             onClick={handleSkip}
@@ -486,7 +489,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
       <div className="absolute inset-0 bg-black" />
       <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
         {state === "idle" && (
-          <p className="text-white text-sm md:text-base text-center">
+          <p className="text-white text-xs text-center">
             Volume up for the best experience.
           </p>
         )}
@@ -518,7 +521,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
         </div>
         {state === "idle" && (
           <p className="text-white/60 text-xs text-center">
-            Dramatization. No actual incidents occurred
+            Dramatization. No actual incidents occurred.
           </p>
         )}
         {state === "idle" && (
@@ -551,7 +554,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
               fontWeight: 600,
             }}
           >
-            It doesn't have to be like this...
+            Sometimes... we all need a little help.
           </p>
         </div>
       )}
