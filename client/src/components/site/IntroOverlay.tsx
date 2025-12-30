@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, useCallback, createContext, useContext, ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Play, X } from "lucide-react";
 
 const INTRO_KEY = "clg_intro_seen";
+const END_MESSAGE = "Sometimes... we could all use a helping hand.";
 
-type OverlayState = "closed" | "idle" | "playing" | "fadingToWhite" | "message" | "exiting";
+type OverlayState = "closed" | "idle" | "loading" | "playing" | "fadingToWhite" | "message" | "exiting";
 
 interface IntroOverlayProps {
   onClose?: () => void;
@@ -20,6 +19,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
   const messageRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const animationFrameRef = useRef<number>();
+  const autoplayAttemptedRef = useRef(false);
 
   // Check if user has seen intro on mount
   useEffect(() => {
@@ -27,7 +27,11 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
     if (!hasSeen && !shouldReduceMotion) {
       setShowOverlay(true);
       setState("idle");
-      // Prevent body scroll
+      document.body.style.overflow = "hidden";
+    } else if (!hasSeen && shouldReduceMotion) {
+      // Show reduced motion version
+      setShowOverlay(true);
+      setState("idle");
       document.body.style.overflow = "hidden";
     }
 
@@ -36,13 +40,49 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
     };
   }, [shouldReduceMotion]);
 
+  // Autoplay logic: try unmuted first, then muted
+  useEffect(() => {
+    if (state !== "idle" || !videoRef.current || autoplayAttemptedRef.current || shouldReduceMotion) return;
+
+    const video = videoRef.current;
+    autoplayAttemptedRef.current = true;
+    setState("loading");
+
+    // Try unmuted autoplay first
+    video.muted = false;
+    video.play()
+      .then(() => {
+        setState("playing");
+      })
+      .catch(() => {
+        // If unmuted fails, try muted
+        video.muted = true;
+        return video.play();
+      })
+      .then(() => {
+        setState("playing");
+      })
+      .catch((error) => {
+        // Both attempts failed - keep overlay open with poster visible
+        console.warn("Autoplay failed, user can still interact:", error);
+        setState("idle");
+        autoplayAttemptedRef.current = false;
+      });
+  }, [state, shouldReduceMotion]);
+
   // Handle video time updates for fade-to-white
   useEffect(() => {
     if (state !== "playing" || !videoRef.current) return;
 
     const video = videoRef.current;
     const checkTime = () => {
-      if (!video.duration || !video.currentTime) return;
+      // Fix: Check for finite duration and currentTime, not just truthy values
+      if (!Number.isFinite(video.duration) || !Number.isFinite(video.currentTime)) {
+        if (state === "playing") {
+          animationFrameRef.current = requestAnimationFrame(checkTime);
+        }
+        return;
+      }
 
       const timeRemaining = video.duration - video.currentTime;
       
@@ -89,7 +129,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
         messageRef.current.style.opacity = "1";
       }
 
-      // Linger for 1500-2500ms, then fade out
+      // Linger for ~2 seconds, then fade out
       const lingerTimer = setTimeout(() => {
         setState("exiting");
         if (whiteOverlayRef.current && messageRef.current) {
@@ -103,23 +143,14 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
         setTimeout(() => {
           handleComplete();
         }, 800);
-      }, shouldReduceMotion ? 500 : 2000);
+      }, 2000);
 
       return () => clearTimeout(lingerTimer);
     };
 
     video.addEventListener("ended", handleEnded);
     return () => video.removeEventListener("ended", handleEnded);
-  }, [state, shouldReduceMotion]);
-
-  const handlePlay = useCallback(() => {
-    if (videoRef.current) {
-      setState("playing");
-      videoRef.current.play().catch((error) => {
-        console.error("Error playing video:", error);
-      });
-    }
-  }, []);
+  }, [state]);
 
   const handleSkip = useCallback(() => {
     handleComplete();
@@ -149,45 +180,78 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [state, handleSkip]);
 
-  // Focus management
+  // Cleanup on unmount
   useEffect(() => {
-    if (state === "idle") {
-      // Focus the Play button when idle
-      const playButton = document.querySelector('[data-intro-play]') as HTMLElement;
-      if (playButton) {
-        playButton.focus();
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
-    }
-  }, [state]);
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   if (!showOverlay || state === "closed") return null;
 
-  // Reduced motion: skip to message quickly
-  if (shouldReduceMotion && state === "idle") {
+  // Reduced motion: show white screen with message
+  if (shouldReduceMotion) {
+    const showMessage = state === "idle" || state === "message" || state === "exiting";
+    
+    if (state === "idle") {
+      // Start reduced motion flow
+      setTimeout(() => {
+        setState("message");
+        if (messageRef.current) {
+          messageRef.current.style.transition = "opacity 800ms ease-in";
+          messageRef.current.style.opacity = "1";
+        }
+      }, 100);
+    }
+
+    if (state === "message") {
+      // Show message for 500-1000ms, then exit
+      setTimeout(() => {
+        setState("exiting");
+        if (messageRef.current) {
+          messageRef.current.style.transition = "opacity 400ms ease-out";
+          messageRef.current.style.opacity = "0";
+        }
+        setTimeout(() => {
+          handleComplete();
+        }, 400);
+      }, 750);
+    }
+
     return (
       <div
-        className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+        className="fixed inset-0 z-[100] bg-white flex items-center justify-center"
         role="dialog"
         aria-modal="true"
         aria-label="Intro animation"
       >
-        <div className="text-center space-y-4 px-6">
+        <div
+          ref={messageRef}
+          className="text-center px-6"
+          style={{ opacity: 0 }}
+        >
           <p
-            className="text-white text-2xl md:text-4xl font-semibold"
+            className="text-black"
             style={{
               fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              fontWeight: 600,
             }}
           >
-            Sometimes... we all need a little help.
+            {END_MESSAGE}
           </p>
-          <Button
-            onClick={handleComplete}
-            className="rounded-full"
-            aria-label="Close"
-          >
-            Continue
-          </Button>
         </div>
+        <Button
+          onClick={handleSkip}
+          variant="outline"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full px-6 border-black/30 text-black hover:bg-black/10"
+          aria-label="Skip intro"
+        >
+          Skip movie
+        </Button>
       </div>
     );
   }
@@ -199,76 +263,42 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
       aria-modal="true"
       aria-label="Intro video"
     >
-      {/* Dark overlay background */}
-      <div className="absolute inset-0 bg-black" />
-
       {/* Video container */}
-      <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
-        {/* Volume hint text */}
-        {state === "idle" && (
-          <p className="text-white text-xs text-center">
-            Volume up for the best experience.
-          </p>
-        )}
+      <div className="relative z-10 w-full max-w-4xl aspect-video px-6">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain"
+          preload="auto"
+          playsInline
+          poster="/intro_poster.webp"
+        >
+          <source src="/intro_video.webm" type="video/webm" />
+          <source src="/intro_video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
-        {/* Video element */}
-        <div className="relative w-full max-w-4xl aspect-video">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-contain"
-            preload="metadata"
-            playsInline
-            muted={false}
-          >
-            <source src="/intro_video.webm" type="video/webm" />
-            <source src="/intro_video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-
-          {/* Play button overlay (when idle) */}
-          {state === "idle" && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <Button
-                data-intro-play
-                onClick={handlePlay}
-                size="lg"
-                className="rounded-full px-8 py-6 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm"
-                aria-label="Play intro video"
-              >
-                <Play className="w-6 h-6 mr-2" />
-                Play
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Disclaimer text */}
-        {state === "idle" && (
-          <p className="text-white/60 text-xs text-center">
-            Dramatization. No actual incidents occurred.
-          </p>
-        )}
-
-        {/* Skip button */}
-        {state === "idle" && (
-          <Button
-            onClick={handleSkip}
-            variant="outline"
-            className="rounded-full px-6 border-white/30 text-white hover:bg-white/10"
-            aria-label="Skip intro video"
-          >
-            Skip movie
-          </Button>
+        {/* Subtle loading spinner (only if loading) */}
+        {state === "loading" && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          </div>
         )}
       </div>
+
+      {/* Skip button - always visible at bottom center */}
+      <Button
+        onClick={handleSkip}
+        variant="outline"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 rounded-full px-6 border-white/30 text-white hover:bg-white/10"
+        aria-label="Skip intro video"
+      >
+        Skip movie
+      </Button>
 
       {/* White fade overlay */}
       <div
         ref={whiteOverlayRef}
-        className={cn(
-          "absolute inset-0 bg-white z-20 pointer-events-none",
-          state === "fadingToWhite" || state === "message" || state === "exiting" ? "opacity-0" : "opacity-0"
-        )}
+        className="absolute inset-0 bg-white z-20 pointer-events-none"
         style={{ opacity: 0 }}
       />
 
@@ -287,7 +317,7 @@ export function IntroOverlay({ onClose }: IntroOverlayProps) {
               fontWeight: 600,
             }}
           >
-            Sometimes... we all need a little help.
+            {END_MESSAGE}
           </p>
         </div>
       )}
@@ -318,7 +348,7 @@ export function IntroOverlayProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Separate instance component for forced opens
+// Separate instance component for forced opens (replay)
 function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onClose: () => void }) {
   const [state, setState] = useState<OverlayState>("closed");
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -326,11 +356,15 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
   const messageRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const animationFrameRef = useRef<number>();
+  const autoplayAttemptedRef = useRef(false);
 
   useEffect(() => {
     if (forceOpen) {
       setState("idle");
+      autoplayAttemptedRef.current = false;
       document.body.style.overflow = "hidden";
+    } else {
+      setState("closed");
     }
 
     return () => {
@@ -348,13 +382,49 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
     }
   }, [state]);
 
-  // Same video handling logic as main component
+  // Autoplay logic: try unmuted first, then muted
+  useEffect(() => {
+    if (state !== "idle" || !videoRef.current || autoplayAttemptedRef.current || shouldReduceMotion || !forceOpen) return;
+
+    const video = videoRef.current;
+    autoplayAttemptedRef.current = true;
+    setState("loading");
+
+    // Try unmuted autoplay first
+    video.muted = false;
+    video.play()
+      .then(() => {
+        setState("playing");
+      })
+      .catch(() => {
+        // If unmuted fails, try muted
+        video.muted = true;
+        return video.play();
+      })
+      .then(() => {
+        setState("playing");
+      })
+      .catch((error) => {
+        // Both attempts failed - keep overlay open with poster visible
+        console.warn("Autoplay failed, user can still interact:", error);
+        setState("idle");
+        autoplayAttemptedRef.current = false;
+      });
+  }, [state, forceOpen, shouldReduceMotion]);
+
+  // Handle video time updates for fade-to-white
   useEffect(() => {
     if (state !== "playing" || !videoRef.current) return;
 
     const video = videoRef.current;
     const checkTime = () => {
-      if (!video.duration || !video.currentTime) return;
+      // Fix: Check for finite duration and currentTime
+      if (!Number.isFinite(video.duration) || !Number.isFinite(video.currentTime)) {
+        if (state === "playing") {
+          animationFrameRef.current = requestAnimationFrame(checkTime);
+        }
+        return;
+      }
 
       const timeRemaining = video.duration - video.currentTime;
       
@@ -380,6 +450,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
     };
   }, [state]);
 
+  // Handle video ended
   useEffect(() => {
     if (state !== "fadingToWhite" && state !== "playing") return;
 
@@ -411,27 +482,19 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
           setState("closed");
           onClose();
         }, 800);
-      }, shouldReduceMotion ? 500 : 2000);
+      }, 2000);
 
       return () => clearTimeout(lingerTimer);
     };
 
     video.addEventListener("ended", handleEnded);
     return () => video.removeEventListener("ended", handleEnded);
-  }, [state, shouldReduceMotion, onClose]);
-
-  const handlePlay = useCallback(() => {
-    if (videoRef.current) {
-      setState("playing");
-      videoRef.current.play().catch((error) => {
-        console.error("Error playing video:", error);
-      });
-    }
-  }, []);
+  }, [state, onClose]);
 
   const handleSkip = useCallback(() => {
     setState("closed");
     onClose();
+    // Note: Do NOT set localStorage for replay - only for first visit
   }, [onClose]);
 
   useEffect(() => {
@@ -447,33 +510,77 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
     return () => window.removeEventListener("keydown", handleEsc);
   }, [state, forceOpen, handleSkip]);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   if (!forceOpen || state === "closed") return null;
 
-  if (shouldReduceMotion && state === "idle") {
+  // Reduced motion: show white screen with message
+  if (shouldReduceMotion) {
+    if (state === "idle") {
+      // Start reduced motion flow
+      setTimeout(() => {
+        setState("message");
+        if (messageRef.current) {
+          messageRef.current.style.transition = "opacity 800ms ease-in";
+          messageRef.current.style.opacity = "1";
+        }
+      }, 100);
+    }
+
+    if (state === "message") {
+      // Show message for 500-1000ms, then exit
+      setTimeout(() => {
+        setState("exiting");
+        if (messageRef.current) {
+          messageRef.current.style.transition = "opacity 400ms ease-out";
+          messageRef.current.style.opacity = "0";
+        }
+        setTimeout(() => {
+          setState("closed");
+          onClose();
+        }, 400);
+      }, 750);
+    }
+
     return (
       <div
-        className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+        className="fixed inset-0 z-[100] bg-white flex items-center justify-center"
         role="dialog"
         aria-modal="true"
         aria-label="Intro animation"
       >
-        <div className="text-center space-y-4 px-6">
+        <div
+          ref={messageRef}
+          className="text-center px-6"
+          style={{ opacity: 0 }}
+        >
           <p
-            className="text-white text-2xl md:text-4xl font-semibold"
+            className="text-black"
             style={{
               fontFamily: '"Avenir Next LT Pro Demi", "Avenir Next", Avenir, -apple-system, sans-serif',
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              fontWeight: 600,
             }}
           >
-            Sometimes... we all need a little help.
+            {END_MESSAGE}
           </p>
-          <Button
-            onClick={handleSkip}
-            className="rounded-full"
-            aria-label="Close"
-          >
-            Continue
-          </Button>
         </div>
+        <Button
+          onClick={handleSkip}
+          variant="outline"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full px-6 border-black/30 text-black hover:bg-black/10"
+          aria-label="Skip intro"
+        >
+          Skip movie
+        </Button>
       </div>
     );
   }
@@ -485,60 +592,46 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
       aria-modal="true"
       aria-label="Intro video"
     >
-      <div className="absolute inset-0 bg-black" />
-      <div className="relative z-10 flex flex-col items-center justify-center space-y-4 px-6 max-w-4xl w-full">
-        {state === "idle" && (
-          <p className="text-white text-xs text-center">
-            Volume up for the best experience.
-          </p>
-        )}
-        <div className="relative w-full max-w-4xl aspect-video">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-contain"
-            preload="metadata"
-            playsInline
-            muted={false}
-          >
-            <source src="/intro_video.webm" type="video/webm" />
-            <source src="/intro_video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          {state === "idle" && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-              <Button
-                onClick={handlePlay}
-                size="lg"
-                className="rounded-full px-8 py-6 bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm"
-                aria-label="Play intro video"
-              >
-                <Play className="w-6 h-6 mr-2" />
-                Play
-              </Button>
-            </div>
-          )}
-        </div>
-        {state === "idle" && (
-          <p className="text-white/60 text-xs text-center">
-            Dramatization. No actual incidents occurred.
-          </p>
-        )}
-        {state === "idle" && (
-          <Button
-            onClick={handleSkip}
-            variant="outline"
-            className="rounded-full px-6 border-white/30 text-white hover:bg-white/10"
-            aria-label="Skip intro video"
-          >
-            Skip movie
-          </Button>
+      {/* Video container */}
+      <div className="relative z-10 w-full max-w-4xl aspect-video px-6">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain"
+          preload="auto"
+          playsInline
+          poster="/intro_poster.webp"
+        >
+          <source src="/intro_video.webm" type="video/webm" />
+          <source src="/intro_video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        {/* Subtle loading spinner (only if loading) */}
+        {state === "loading" && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          </div>
         )}
       </div>
+
+      {/* Skip button - always visible at bottom center */}
+      <Button
+        onClick={handleSkip}
+        variant="outline"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 rounded-full px-6 border-white/30 text-white hover:bg-white/10"
+        aria-label="Skip intro video"
+      >
+        Skip movie
+      </Button>
+
+      {/* White fade overlay */}
       <div
         ref={whiteOverlayRef}
         className="absolute inset-0 bg-white z-20 pointer-events-none"
         style={{ opacity: 0 }}
       />
+
+      {/* Message overlay */}
       {(state === "message" || state === "exiting") && (
         <div
           ref={messageRef}
@@ -553,7 +646,7 @@ function IntroOverlayInstance({ forceOpen, onClose }: { forceOpen: boolean; onCl
               fontWeight: 600,
             }}
           >
-            Sometimes... we all need a little help.
+            {END_MESSAGE}
           </p>
         </div>
       )}
