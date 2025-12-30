@@ -428,6 +428,27 @@ export async function registerRoutes(
     }
   });
 
+  // Pre-intake submission endpoint (lightweight, flexible schema)
+  app.post("/api/pre-intake", async (req, res) => {
+    try {
+      const data = req.body;
+      
+      // Basic validation
+      if (!data.fullName || !data.email || !data.phone || !data.serviceType) {
+        return res.status(400).json({ error: "Missing required fields: fullName, email, phone, serviceType" });
+      }
+
+      // Store in a simple JSON file or log for now (can be migrated to DB later)
+      // For now, just log and return success
+      console.log("Pre-intake submission received:", JSON.stringify(data, null, 2));
+      
+      res.json({ success: true, message: "Pre-intake submission received" });
+    } catch (error) {
+      console.error("Error processing pre-intake submission:", error);
+      res.status(500).json({ error: "Failed to process pre-intake submission" });
+    }
+  });
+
   // Admin authentication
   app.post("/api/admin/login", async (req, res) => {
     try {

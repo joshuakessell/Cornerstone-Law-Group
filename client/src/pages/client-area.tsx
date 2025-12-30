@@ -18,13 +18,13 @@ export default function ClientArea() {
         
         <div className="space-y-4">
           <Button asChild className="w-full rounded-full h-12 bg-accent hover:bg-accent/90 text-white shadow-lg">
-             <Link href="/client-intake">Start New Client Intake Form</Link>
+             <Link href="/client-intake">Get Started Now</Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full rounded-full h-12">
+            <Link href="/schedule">Schedule Consultation</Link>
           </Button>
           <Button disabled variant="outline" className="w-full rounded-full h-12">
             Existing Client Portal (Coming Soon)
-          </Button>
-          <Button variant="ghost" asChild className="w-full rounded-full h-12">
-            <Link href="/contact">Contact Support</Link>
           </Button>
         </div>
       </Section>

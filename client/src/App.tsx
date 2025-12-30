@@ -28,6 +28,8 @@ import Contact from "@/pages/contact";
 import ClientArea from "@/pages/client-area";
 import ClientPortal from "@/pages/client-portal";
 import ClientIntake from "@/pages/client-intake";
+import PreIntakePage from "@/pages/pre-intake";
+import NextSteps from "@/pages/pre-intake/next-steps";
 import IntakeBasic from "@/pages/intake/intake-basic";
 import IntakeDivorce from "@/pages/intake/intake-divorce";
 import IntakeAdoption from "@/pages/intake/intake-adoption";
@@ -110,6 +112,8 @@ function AnimatedRoutes() {
           <Route path="/client-area" component={ClientArea} />
           <Route path="/client-portal" component={ClientPortal} />
           <Route path="/client-intake" component={ClientIntake} />
+          <Route path="/pre-intake/next-steps" component={NextSteps} />
+          <Route path="/pre-intake/:serviceType" component={PreIntakePage} />
           <Route path="/demo/scheduler" component={DemoScheduler} />
           <Route path="/demo/intake/:practice" component={DemoIntakePractice} />
           <Route path="/demo/intake" component={DemoIntakeLanding} />

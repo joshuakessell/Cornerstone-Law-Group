@@ -6,15 +6,12 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import { COMPANY_INFO, NAV_LINKS } from "@/lib/content";
-import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const shouldReduceMotion = useReducedMotion();
   
-  // Get intake URL for "Start intake" button
-  const generalIntakeUrl = getGrowIntakeUrl("general");
 
   const primaryNav = useMemo(
     () =>
@@ -104,17 +101,7 @@ export function Header() {
               size="sm"
               className="hidden md:inline-flex rounded-full border-primary text-primary"
             >
-              {generalIntakeUrl ? (
-                isRelativeUrl(generalIntakeUrl) ? (
-                  <Link href={generalIntakeUrl}>Start intake</Link>
-                ) : (
-                  <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
-                    Start intake
-                  </a>
-                )
-              ) : (
-                <Link href="/contact">Start intake</Link>
-              )}
+              <Link href="/client-intake">Client Intake</Link>
             </Button>
             <button
               className="p-2 rounded-full border border-border/70 hover:border-primary/40 hover:text-primary lg:hidden"
@@ -169,17 +156,7 @@ export function Header() {
                   <a href="/schedule">Schedule</a>
                 </Button>
                 <Button asChild variant="outline" className="rounded-full border-primary text-primary">
-                  {generalIntakeUrl ? (
-                    isRelativeUrl(generalIntakeUrl) ? (
-                      <Link href={generalIntakeUrl}>Start intake</Link>
-                    ) : (
-                      <a href={generalIntakeUrl} target="_blank" rel="noreferrer">
-                        Start intake
-                      </a>
-                    )
-                  ) : (
-                    <Link href="/contact">Start intake</Link>
-                  )}
+                  <Link href="/client-intake">Client Intake</Link>
                 </Button>
               </div>
             </div>

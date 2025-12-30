@@ -10,7 +10,6 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { SEO } from "@/lib/seo";
-import { getGrowIntakeUrl, isRelativeUrl } from "@/lib/integrations";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import {
@@ -52,12 +51,7 @@ const processSteps = [
 
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
-  const divorceIntakeUrl = getGrowIntakeUrl("divorce");
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-
-  const heroCta = divorceIntakeUrl
-    ? { href: divorceIntakeUrl, external: !isRelativeUrl(divorceIntakeUrl) }
-    : { href: "/contact", external: false };
 
   return (
     <>
@@ -102,7 +96,7 @@ export default function Home() {
                   </p>
                   <div className="flex flex-wrap gap-3 justify-center">
                     <Button asChild size="lg" className="rounded-full px-8 text-center">
-                      <a href="/schedule">Schedule consultation</a>
+                      <a href="/schedule">Schedule Consultation</a>
                     </Button>
                     <Button
                       asChild
@@ -110,13 +104,7 @@ export default function Home() {
                       size="lg"
                       className="rounded-full px-8 border-primary text-primary text-center"
                     >
-                      {heroCta.external ? (
-                        <a href={heroCta.href} target="_blank" rel="noreferrer">
-                          Start secure intake
-                        </a>
-                      ) : (
-                        <a href={heroCta.href}>Start secure intake</a>
-                      )}
+                      <Link href="/client-intake">Client Intake</Link>
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
@@ -385,21 +373,15 @@ export default function Home() {
               <p className="uppercase text-xs tracking-[0.16em] font-semibold">Next step</p>
               <h3 className="font-serif text-3xl">Ready for a calm, decisive plan?</h3>
               <p className="text-primary-foreground/80">
-                Schedule a confidential consultation or start the secure intake. Dallas and surrounding areas.
+                Schedule a confidential consultation or begin the client intake process. Dallas and surrounding areas.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full px-6 bg-primary-foreground text-primary">
-                <a href="/schedule">Schedule consultation</a>
+                <a href="/schedule">Schedule Consultation</a>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full px-6 border-primary-foreground text-primary-foreground">
-                {heroCta.external ? (
-                  <a href={heroCta.href} target="_blank" rel="noreferrer">
-                    Start secure intake
-                  </a>
-                ) : (
-                  <a href={heroCta.href}>Start secure intake</a>
-                )}
+                <Link href="/client-intake">Client Intake</Link>
               </Button>
             </div>
           </div>

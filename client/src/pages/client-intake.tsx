@@ -7,9 +7,6 @@ import { Section } from "@/components/ui/section";
 import {
   ArrowRight,
   ArrowLeft,
-  Download,
-  FileText,
-  CheckCircle,
   Eye,
   Loader2,
 } from "lucide-react";
@@ -235,7 +232,7 @@ export default function ClientIntake() {
         )}
 
         {matterType && (
-          <div className="grid gap-6 lg:grid-cols-[2fr_1.1fr]">
+          <div className={`grid gap-6 ${hasCompletedForms ? 'lg:grid-cols-[2fr_1.1fr]' : 'max-w-2xl mx-auto'}`}>
             <Card className="shadow-xl">
               <CardHeader>
                 <div className="flex items-center gap-4 mb-2">
@@ -251,122 +248,58 @@ export default function ClientIntake() {
                   <div className="flex-1">
                     <CardTitle className="font-serif text-2xl">Let's Get Started</CardTitle>
                     <CardDescription>
-                      Complete Basic Intake, then continue to your {selectedLabel.toLowerCase()} form.
+                      We'll collect some basic information, then guide you to our secure client portal.
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className={`p-4 rounded-lg border ${basicCompleted ? "bg-muted text-muted-foreground" : "bg-muted/50"}`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="text-sm text-muted-foreground">
-                        Start with Basic Intake
-                      </p>
-                      <p className="text-sm">
-                        Collects essential information about you and your matter.
-                      </p>
-                    </div>
-                    {basicCompleted && <CheckCircle className="h-5 w-5 text-primary" />}
-                  </div>
-                  <div className="space-y-3">
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">
+                    You'll create a secure client account and complete your intake online through our secure portal. 
+                    We'll collect some basic information first, then guide you through the process.
+                  </p>
+                  
+                  {hasContinueForm && (
                     <Button
                       asChild
-                      className="w-full"
                       size="lg"
-                      variant={basicCompleted ? "outline" : "default"}
-                      disabled={basicCompleted}
+                      className="w-full"
                     >
-                      <Link href="/intake/basic" onClick={() => window.scrollTo(0, 0)}>
-                        {basicCompleted ? "Basic Intake Completed" : "Start Basic Information"}
-                        {!basicCompleted && <ArrowRight className="w-4 h-4 ml-2" />}
+                      <Link href={`/pre-intake/${matterType}`} onClick={() => window.scrollTo(0, 0)}>
+                        Begin {selectedLabel} Intake
+                        <ArrowRight className="w-4 h-4 ml-2" />
                       </Link>
                     </Button>
-                    <a
-                      href="/documents/Intake Basic Information.docx"
-                      download
-                      className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
-                    >
-                      <Download className="w-4 h-4" />
-                      <FileText className="w-4 h-4" />
-                      Download Basic Intake Form (DOCX)
-                    </a>
-                  </div>
-                </div>
+                  )}
 
-                {hasContinueForm && (
-                  <div className={`p-4 rounded-lg border ${categoryCompleted ? "bg-muted text-muted-foreground" : basicCompleted ? "bg-amber-50 border-amber-200" : "bg-muted/30"}`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          {categoryCompleted ? "Category Intake completed" : "Next step"}
-                        </p>
-                        <p className="text-sm">
-                          Continue with the {selectedLabel.toLowerCase()} intake for details.
-                        </p>
-                      </div>
-                      {(basicCompleted || categoryCompleted) && categoryCompleted && <CheckCircle className="h-5 w-5 text-primary" />}
+                  {!hasContinueForm && matterType !== "not-sure" && (
+                    <div className="p-4 rounded-lg border bg-muted/30">
+                      <p className="text-sm text-muted-foreground">
+                        A detailed intake form for {selectedLabel.toLowerCase()} is coming soon. 
+                        Please contact us to discuss your needs.
+                      </p>
                     </div>
-                    <div className="space-y-3">
-                      <Button
-                      asChild
-                      size="lg"
-                      variant={categoryCompleted ? "outline" : "secondary"}
-                      className={
-                        categoryCompleted
-                          ? "w-full"
-                          : basicCompleted
-                            ? "w-full bg-amber-100 text-amber-900 hover:bg-amber-100 border-amber-200"
-                            : "w-full"
-                      }
-                      disabled={!hasContinueForm || categoryCompleted}
-                    >
-                        <Link href={getContinuePath()!} onClick={() => window.scrollTo(0, 0)}>
-                          {categoryCompleted ? `${selectedLabel} Intake Completed` : `Continue to ${selectedLabel} Intake`}
-                          {!categoryCompleted && <ArrowRight className="w-4 h-4 ml-2" />}
-                        </Link>
+                  )}
+
+                  {matterType === "not-sure" && (
+                    <div className="p-4 rounded-lg border bg-muted/30">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Not sure which service you need? We're here to help you find the right path forward.
+                      </p>
+                      <Button asChild variant="outline" className="w-full">
+                        <Link href="/contact">Contact Us</Link>
                       </Button>
-                      {getDocxFileName(matterType) && (
-                        <a
-                          href={`/documents/${getDocxFileName(matterType)}`}
-                          download
-                          className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
-                        >
-                          <Download className="w-4 h-4" />
-                          <FileText className="w-4 h-4" />
-                          Download {selectedLabel} Intake Form (DOCX)
-                        </a>
-                      )}
                     </div>
-                  </div>
-                )}
-
-                {!hasContinueForm && matterType !== "not-sure" && (
-                  <div className="border rounded-lg p-4 bg-muted/30">
-                    <p className="text-sm text-muted-foreground mb-4">
-                      A detailed intake form for {selectedLabel.toLowerCase()} is coming next.
-                      For now, please complete the basic intake form above.
-                    </p>
-                    {getDocxFileName(matterType) && (
-                      <a
-                        href={`/documents/${getDocxFileName(matterType)}`}
-                        download
-                        className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors border border-border rounded-md hover:bg-muted/50"
-                      >
-                        <Download className="w-4 h-4" />
-                        <FileText className="w-4 h-4" />
-                        Download {selectedLabel} Intake Form (DOCX)
-                      </a>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <div className="border-t pt-4">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Need to speak with someone directly?
+                    Prefer to schedule a consultation first?
                   </p>
                   <Button asChild variant="outline" className="w-full">
-                    <Link href="/contact" onClick={() => window.scrollTo(0, 0)}>Contact Us</Link>
+                    <Link href="/schedule" onClick={() => window.scrollTo(0, 0)}>Schedule Consultation</Link>
                   </Button>
                 </div>
               </CardContent>
